@@ -1,4 +1,4 @@
-# OneEpicPlace Website "Software"
+# One Epic Place Website "Software"
 
 ## User Levels (Listed From High To Low)
 - Admin
@@ -12,7 +12,7 @@
 - Member
   - Public profile
   - Ability to edit their information and room scheduling
-  - Spend money to continue membership add points
+  - Spend money to continue membership and add points
 - Profile Holder
   - Public profile
   - Ability to edit their information and room scheduling
