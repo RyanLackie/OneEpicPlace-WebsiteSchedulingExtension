@@ -1,0 +1,33 @@
+Virtual Environment Guide by Nicholas Moy
+
+For Virtual Environment Documentation: https://virtualenv.pypa.io/en/stable/
+
+In order to use the Virtual Environment, you must make sure that you have first created a directory for the virtual environment.
+
+	virtualenv (Name of the directory you wish to have the virtual environment created)
+
+The next step would to activate the virtual environment by using the command:
+
+	source (Virtual Environment Directory)/bin/activate
+
+	or 
+
+	source ./bin/activate
+
+This will actiavte virtual environment and you'll know that you are currently in the virtual environment if it shows:
+
+	(Virtual Environment Name)[user@wyvern v(Version #)]
+
+At this point you want to copy (if it's not already copied):
+
+	/var/www/projects/f17-08/flaskvue/v(Version #) into your virtual environment
+
+Once you have all of the following requirements done above you can run your python script
+
+	python (python script name).py 
+
+For this project we will be using:
+
+	python run.py
+
+*If it returns errors of missing pythons modules you can use pip to install the missing modules. Check the python script you want to run for modules that it has so you can install them before running the script.
