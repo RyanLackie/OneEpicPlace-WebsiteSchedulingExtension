@@ -56,7 +56,9 @@
         <div class="half-row-centered">
             <h3>Sign Up</h3>
 
-            <form method="post" action="register.cgi">
+            <!-- Choose what the submit button will do by the form "action" -->
+            <form method="post" action="register-to-database.php" method="POST" enctype="multipart/form-data">
+
                 <div class="form-group">
                     <label for="emailInputSection" class="register-section-label">Email</label>
                     <input type="email" id="emailInputSection" name="email" class="form-control" placeholder="Enter Your Email" required autofocus>

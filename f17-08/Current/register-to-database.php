@@ -3,6 +3,7 @@
 if (isset($_POST['RegisterButton'])) {
     include_once 'connect-to-database.php';
 
+    //Current fields being inserted into for current table
     $email = mysqli_real_escape_string($conn, $_POST['email']);
     $password = mysqli_real_escape_string($conn, $_POST['password']);
     $username = mysqli_real_escape_string($conn, $_POST['username']);
@@ -13,39 +14,42 @@ if (isset($_POST['RegisterButton'])) {
 
     //Error handelers - Check for empty fields
     if (empty($email)) {
-        header("Location: ../register.html?emailfield=empty");
+        header("Location: index.html?emailfield=empty");
         exit();
     }
     if (empty($password)) {
-        header("Location: ../register.html?passwordfield=empty");
+        header("Location: index.html?passwordfield=empty");
         exit();
     }
     if (empty($username)) {
-        header("Location: ../register.html?usernamefield=empty");
+        header("Location: index.html?usernamefield=empty");
         exit();
     }
     if (empty($firstname)) {
-        header("Location: ../register.html?firstnamefield=empty");
+        header("Location: index.html?firstnamefield=empty");
         exit();
     }
     if (empty($lastname)) {
-        header("Location: ../register.html?lastnamefield=empty");
+        header("Location: index.html?lastnamefield=empty");
         exit();
     }
 
-    //If no problems insert the post into the database
+    //If no problems insert the user into the database
     else {
-        $sql = "INSERT INTO user (Email, Password, Username, FirstName, LastName, Occupation, Description) VALUES 
-        ('{$email}', '{$password}', '{$username}', '{$firstname}', '{$lastname}', '{$occupation}', '{$description}');";
+        echo "inserting";
+
+        //Must be "INSERT INTO..." then the name of the table being inserted into
+        $sql = "INSERT INTO users (user_email, user_password, user_username, user_firstname, user_lastname, user_occupation, user_description)
+        VALUES ('{$email}', '{$password}', '{$username}', '{$firstname}', '{$lastname}', '{$occupation}', '{$description}');";
 
         $result = mysqli_query($conn, $sql);
 
-        header("Location: ../register.html?post=success");
+        header("Location: index.html?insert=success");
         exit();
     }
 }
 else {
-    header("Location: ../register.html");
+    header("Location: index.html?RegisterButton=notPressed");
     exit();
 }
 
