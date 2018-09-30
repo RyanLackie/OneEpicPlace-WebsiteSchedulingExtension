@@ -1,7 +1,0 @@
-username:  p_f17_8 
-
-
-password:  aj5qyk
-
- 
-database name:  p_f17_8_db
