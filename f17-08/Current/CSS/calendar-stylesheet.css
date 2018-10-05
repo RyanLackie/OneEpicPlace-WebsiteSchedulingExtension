@@ -1,0 +1,50 @@
+.calendar-container {
+    /* Position */
+    width: 70%;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 50px;    
+    /* Display */
+    outline: 3px black solid;
+}
+
+.calendar-month-header {
+    /* Position */
+    width: 100%;
+    /* Display */
+    background: orange;
+    font-size: 70px;
+    font-family: 'Quicksand', sans-serif;
+    text-transform: uppercase;
+    text-align: center;
+}
+.calendar-week {
+    /* Position */
+    display: block;
+    width: 14.28%;
+    /* Display */
+    text-align: center;
+    text-decoration: underline;
+    outline: 1px black solid;
+}
+.calendar-day {
+    /* Position */
+    display: block;
+    width: 14.28%;
+    height: 100px;
+    /* Display */
+    text-align: center;
+    text-decoration: underline;
+    outline: 1px black solid;
+}
+.calendar-next-month-day {
+    /* Position */
+    display: block;
+    width: 14.28%;
+    height: 100px;
+    /* Display */
+    text-align: center;
+    text-decoration: underline;
+    background: lightgray;
+    outline: 1px black solid;
+}
