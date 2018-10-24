@@ -4,6 +4,7 @@
   "description": "- Admin\r   - Public profile\r   - Stat analysis\r   - Ability to edit all information\r - Staff\r   - Public profile\r   - Stat analysis\r   - Ability to edit some information\r - Member\r   - Public profile\r   - Ability to edit their information and room scheduling\r   - Spend money to continue membership and add points\r - Profile Holder\r   - Public profile\r   - Ability to edit their information and room scheduling\r   - Spend money to rent a room\r   - Spend money to start a membership\r - Guest\r   - Can create a profile\r   - Spend money to rent a room\r   - Spend money to start a membership",
   "main": "index.js",
   "dependencies": {
+    "express": "^4.16.4",
     "node": "^10.12.0"
   },
   "devDependencies": {},
