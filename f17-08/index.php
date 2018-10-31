@@ -8,13 +8,13 @@
         
         <!-- Title And URL Icon -->
         <link rel="icon" type="image/png" href="assets/logo.png"/>
-		<title>One Epic Place - Home</title>
+		<title>One Epic Place</title>
 
         <!-- CSS Sheets -->
         <!-- Bootstrap -->
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
         <!-- Home Made CSS Sheets -->
-        <link rel="stylesheet" href="CSS/stylesheet.css">
+        <link rel="stylesheet" href="css/stylesheet.css">
 
         <!-- Fonts -->
         <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
@@ -23,34 +23,42 @@
 
     </head>
 
+    <?php
+        //Remove warnings
+        error_reporting(0);
+
+        include('php_methods/session.php');
+    ?>
+
     <body>
         <!-- Header -->
-        <div class="full-row-centered">
-            <div class="index-header-text">
-                <a href="calendar.html">
-                    One Epic Place
-                </a>
-            </div>
-        </div>
-
-        <div class="full-row-centered">
-            <img class="index-header-image" src="assets/logo.png"/>
-        </div>
+        <?php include('components/header.php'); ?>
 
         <!-- Nav Bar -->
-        <div class="index-nav-bar">
-            <ul>
-                <li>
-                    <a href="index.html">Home</a>
-                    <a href="register.html">Register</a>
-                    <a href="login.html">Login</a>
-                    <a href="about.html">About</a>
-                </li>
-            </ul>
-        </div>
+        <?php
+            if ($login_session == null) {
+                include('components/nonuser-navbar.php');
+            }
+            else {
+                include('components/user-navbar.php');
+            }
 
-        <!-- Divider -->
-        <div class="header-divider"></div>
+            if ($_SESSION['email_error'] == true) {
+                include('components/email-alert.php');
+            }
+        ?>
+
+        <!-- Welcome User -->
+        <h1 class="text-center">Welcome: 
+            <?php
+                if ($login_session == null) {
+                    echo "Non User";
+                }
+                else {
+                    echo $login_session;
+                }
+            ?>
+        </h1>
 
         <!-- Bottom Image -->
         <div class="full-row-centered">
@@ -62,12 +70,9 @@
             <h3>This is the home page for One Epic Place!</h3>
         </div>
         
-    </body>
+        <!-- Scripts -->
+        <?php include('components/scripts.php'); ?>
 
-    <body>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.js"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
-		<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
     </body>
 
 </html>

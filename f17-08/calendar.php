@@ -14,8 +14,8 @@
         <!-- Bootstrap -->
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
         <!-- Home Made CSS Sheets -->
-        <link rel="stylesheet" href="CSS/stylesheet.css">
-        <link rel="stylesheet" href="CSS/calendar-stylesheet.css">
+        <link rel="stylesheet" href="css/stylesheet.css">
+        <link rel="stylesheet" href="css/calendar-stylesheet.css">
 
         <!-- Fonts -->
         <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
@@ -24,34 +24,26 @@
 
     </head>
 
+    <?php
+        //Remove warnings
+        error_reporting(0);
+        
+        include('php_methods/session.php');
+    ?>
+
     <body>
         <!-- Header -->
-        <div class="full-row-centered">
-            <div class="index-header-text">
-                <a href="index.html">
-                    One Epic Place
-                </a>
-            </div>
-        </div>
-
-        <div class="full-row-centered">
-            <img class="index-header-image" src="assets/logo.png"/>
-        </div>
+        <?php include('html/header.php'); ?>
 
         <!-- Nav Bar -->
-        <div class="index-nav-bar">
-            <ul>
-                <li>
-                    <a href="index.html">Home</a>
-                    <a href="register.html">Register</a>
-                    <a href="login.html">Login</a>
-                    <a href="about.html">About</a>
-                </li>
-            </ul>
-        </div>
-
-        <!-- Divider -->
-        <div class="header-divider"></div>
+        <?php
+            if ($login_session == null) {
+                include('html/nonuser-navbar.php');
+            }
+            else {
+                include('html/user-navbar.php');
+            }
+        ?>
 
         <!-- Clock -->
         <canvas id="canvas" width="200" height="200"></canvas>
@@ -305,12 +297,9 @@
             </div>
         </div>
 
-    </body>
+        <!-- Scripts -->
+        <?php include('html/scripts.php'); ?>
 
-    <body>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.js"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
-		<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
     </body>
 
 </html>

@@ -14,7 +14,7 @@
         <!-- Bootstrap -->
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
         <!-- Home Made CSS Sheets -->
-        <link rel="stylesheet" href="CSS/stylesheet.css">
+        <link rel="stylesheet" href="css/stylesheet.css">
 
         <!-- Fonts -->
         <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
@@ -23,48 +23,40 @@
 
     </head>
 
+    <?php
+        //Remove warnings
+        error_reporting(0);
+        
+        include('php_methods/session.php');
+    ?>
+
     <body>
         <!-- Header -->
-        <div class="full-row-centered">
-            <div class="index-header-text">
-                <a href="index.html">
-                    One Epic Place
-                </a>
-            </div>
-        </div>
-
-        <div class="full-row-centered">
-            <img class="index-header-image" src="assets/logo.png"/>
-        </div>
+        <?php include('components/header.php'); ?>
 
         <!-- Nav Bar -->
-        <div class="index-nav-bar">
-            <ul>
-                <li>
-                    <a href="index.html">Home</a>
-                    <a href="register.html">Register</a>
-                    <a href="login.html">Login</a>
-                    <a href="about.html">About</a>
-                </li>
-            </ul>
-        </div>
-
-        <!-- Divider -->
-        <div class="header-divider"></div>
+        <?php
+            if ($login_session == null) {
+                include('components/nonuser-navbar.php');
+            }
+            else {
+                include('components/user-navbar.php');
+            }
+        ?>
 
         <!-- Register Form -->
         <div class="half-row-centered">
             <h3>Login</h3>
 
-            <form method="post" action="#action">
+            <form method="post" action="php_methods/login.php" method="POST" enctype="multipart/form-data">
                 <div class="form-group">
                     <label for="emailInputSection" class="register-section-label">Email</label>
-                    <input type="email" id="emailInputSection" class="form-control" placeholder="Enter Your Email" required autofocus>
+                    <input type="email" id="emailInputSection" name="email" class="form-control" placeholder="Enter Your Email" required autofocus>
                 </div>
                 
                 <div class="form-group">
                     <label for="passwordInputSection" class="register-section-label">Password</label>
-                    <input type="password" id="passwordInputSection" class="form-control" placeholder="Enter Your Password" required>
+                    <input type="password" id="passwordInputSection" name="password" class="form-control" placeholder="Enter Your Password" required>
                 </div>
 
                 <div class="checkbox">
@@ -76,13 +68,10 @@
                 <button class="btn btn-lg btn-outline-primary" type="submit" value="Submit" name="LoginButton">Login</button>
             </form>
         </div>
-        
-    </body>
 
-    <body>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.js"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
-		<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
+        <!-- Scripts -->
+        <?php include('components/scripts.php'); ?>
+        
     </body>
 
 </html>
