@@ -3,8 +3,8 @@
     <ul>
         <li>
             <a href="index.php">Home</a>
-            <a href="#" data-toggle="modal" data-target="#signupModal">Register</a>
-            <a href="#" data-toggle="modal" data-target="#loginModal">Login</a>
+            <a href="register.php">Register</a>
+            <a href="login.php">Login</a>
             <a href="about.php">About</a>
         </li>
     </ul>

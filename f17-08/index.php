@@ -27,6 +27,7 @@
         //Remove warnings
         error_reporting(0);
 
+        session_start();
         include('php_methods/session.php');
     ?>
 
@@ -36,29 +37,19 @@
 
         <!-- Nav Bar -->
         <?php
-            if ($login_session == null) {
+            if ($login_id == null) {
                 include('components/nonuser-navbar.php');
             }
             else {
                 include('components/user-navbar.php');
             }
-
-            if ($_SESSION['email_error'] == true) {
-                include('components/email-alert.php');
-            }
         ?>
 
         <!-- Welcome User -->
-        <h1 class="text-center">Welcome: 
-            <?php
-                if ($login_session == null) {
-                    echo "Non User";
-                }
-                else {
-                    echo $login_session;
-                }
-            ?>
-        </h1>
+        <?php
+            if ($login_id != null)
+                include('components/welcome-user.php');
+        ?>
 
         <!-- Bottom Image -->
         <div class="full-row-centered">

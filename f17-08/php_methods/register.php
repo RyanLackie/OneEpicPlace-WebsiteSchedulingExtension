@@ -49,6 +49,7 @@
             VALUES ('{$email}', '{$password}', '{$firstname}', '{$lastname}', '{$occupation}', '{$description}');";
 
             $result = mysqli_query($conn, $sql);
+            $row = mysqli_fetch_array($result, MYSQLI_ASSOC);
 
             $_SESSION['login_email'] = $email;
             $_SESSION['login_password'] = $password;
@@ -58,6 +59,7 @@
             exit();
         }
     }
+    
     else {
         header("Location: ../register.php?RegisterButton=notPressed");
         exit();

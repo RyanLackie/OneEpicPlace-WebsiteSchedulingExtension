@@ -33,15 +33,19 @@
 
     <body>
         <!-- Header -->
-        <?php include('html/header.php'); ?>
+        <?php include('components/header.php'); ?>
 
         <!-- Nav Bar -->
         <?php
             if ($login_session == null) {
-                include('html/nonuser-navbar.php');
+                include('components/nonuser-navbar.php');
             }
             else {
-                include('html/user-navbar.php');
+                include('components/user-navbar.php');
+            }
+            
+            if ($_SESSION['email_error'] == true) {
+                include('components/email-alert.php');
             }
         ?>
 

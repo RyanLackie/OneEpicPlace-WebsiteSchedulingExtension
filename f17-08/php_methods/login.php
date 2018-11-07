@@ -7,19 +7,14 @@
 
     //If connection sucessfull
     if ($conn) {
-        //Checks if feilds are coming from the form or from a resent register
-        if ($_SESSION['login_email'] == null) {
-            $email = mysqli_real_escape_string($conn, $_POST['email']);
-        }
-        else {
+        //Checks if feilds are coming from the form or from global session variables (Register)
+        if ($_SESSION['login_email'] != null && $_SESSION['login_password'] != null) {
             $email = $_SESSION['login_email'];
-        }
-
-        if ($_SESSION['login_password'] == null) {
-            $password = mysqli_real_escape_string($conn, $_POST['password']);
+            $password = $_SESSION['login_password'];
         }
         else {
-            $password = $_SESSION['login_password'];
+            $email = mysqli_real_escape_string($conn, $_POST['email']);
+            $password = mysqli_real_escape_string($conn, $_POST['password']);
         }
 
         //Error handelers - Check for empty fields
@@ -35,16 +30,15 @@
         //Try and find user in table "user"
         $sql = "SELECT user_id FROM user WHERE user_email = '$email' and user_password = '$password'";
         $result = mysqli_query($conn, $sql);
-        //Don't know why this is needed
-        /*
         $row = mysqli_fetch_array($result, MYSQLI_ASSOC);
-        $active = $row['active'];
-        */
+        //Don't know why this is needed
+        //$active = $row['active'];
         $count = mysqli_num_rows($result);
 
         //If result matched $email and $password, table row must be 1 row	
         if ($count == 1) {
-            $_SESSION['login_user'] = $email;
+            $_SESSION['login_id'] = $row['user_id'];
+
             header("location: ../index.php?login=successful");
         }
         else if ($count == 0) { 

@@ -3,6 +3,8 @@
     <ul>
         <li>
             <a href="index.php">Home</a>
+            <a href="#">Profile</a>
+            <a href="#">Scheduler</a>
             <a href="about.php">About</a>
             <a href="php_methods/logout.php">Logout</a>
         </li>
