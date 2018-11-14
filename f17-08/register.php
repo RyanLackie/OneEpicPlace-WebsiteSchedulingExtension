@@ -36,16 +36,13 @@
 
         <!-- Nav Bar -->
         <?php
-            if ($login_session == null) {
+            if ($login_session == null)
                 include('components/nonuser-navbar.php');
-            }
-            else {
+            else
                 include('components/user-navbar.php');
-            }
             
-            if ($_SESSION['email_error'] == true) {
+            if ($_SESSION['email_error'] == true)
                 include('components/email-alert.php');
-            }
         ?>
 
         <!-- Register Form -->

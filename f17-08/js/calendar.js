@@ -72,7 +72,13 @@ var calendar = {
         var picked = document.querySelectorAll(
           '[data-calendar-label="picked"]'
         )[0]
-        picked.innerHTML = this.dataset.calendarDate
+
+        //Change the result from picking a day
+        var calenderDate = this.dataset.calendarDate
+        var calenderDateArray = calenderDate.split(" ");
+        var date = calenderDateArray[1] + " " + calenderDateArray[2] + " " + calenderDateArray[3];
+        picked.innerHTML = date;
+
         _this.removeActiveClass()
         this.classList.add('vcal-date--selected')
       })

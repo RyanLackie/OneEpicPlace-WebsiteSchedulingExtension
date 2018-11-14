@@ -78,18 +78,19 @@
 			<!-- Demo for day selected, use for opening the day view for selected day -->
 			<p class="demo-picked">
 				Date picked:
-				<span data-calendar-label="picked"></span>
+                <span data-calendar-label="picked"></span>
 			</p>
 
 		</div>
 
+        <!-- Calendar -->
 		<script src="calendar.js" type="text/javascript"></script>
 		
 		<!-- Days in the month selected -->
 		<script>
-			window.addEventListener('load', function () {
-				calendar.init({});
-			})
+			window.addEventListener('load', function() {
+                calendar.init({});
+            })
 		</script>
 	</body>
 

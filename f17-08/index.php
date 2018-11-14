@@ -37,12 +37,10 @@
 
         <!-- Nav Bar -->
         <?php
-            if ($login_id == null) {
+            if ($login_id == null)
                 include('components/nonuser-navbar.php');
-            }
-            else {
+            else
                 include('components/user-navbar.php');
-            }
         ?>
 
         <!-- Welcome User -->

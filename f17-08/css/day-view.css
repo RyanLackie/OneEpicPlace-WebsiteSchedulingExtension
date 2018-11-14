@@ -1,0 +1,84 @@
+/* Calendar day view */
+.calendar-day-daterow {
+    /* Position */
+    width: 100%;
+    height: 25px;
+    /* Display */
+    text-align: center; 
+}
+.calendar-day-date {
+    /* Display */
+    text-align: center;
+}
+
+.calendar-day-hoursrow {
+    /* Position */
+    width: 100%;
+    height: 12px;
+    /* Display */
+    text-align: center;
+}
+.hours-space {
+    /* Position */
+    float: left;
+    width: 10%;
+    height: 12px;
+    /* Display */
+    background-color: black;
+}
+.hours-group {
+    /* Position */
+    float: right;
+    width: 90%;
+    height: 12px;
+}
+.hours {
+    /* Position */
+    float: left;
+    width: 7.69%;
+    /* Display */
+    text-align: center;
+    text-decoration: none;
+    font-size: 8px;
+    outline: 1px black solid;
+}
+
+.calendar-day-timerow {
+    /* Position */
+    width: 100%;
+    height: 15px;
+    /* Display */
+    outline: 1px black solid;
+}
+.room-box {
+    /* Position */
+    float: left;
+    width: 10%;
+    /* Display */
+    font-size: 10px;
+    font-family: 'Quicksand', sans-serif;
+    text-align: center;
+    color: white;
+    background-color: gray;
+}
+.timebox-group {
+    /* Position */
+    float: right;
+    width: 90%;
+}
+.timebox {
+    /* Position */
+    float: left;
+    width: 7.69%;
+    height: 15px;
+    /* Display */
+    background-color: red;
+    outline: 1px black solid;
+}
+
+.enter-button {
+    /* Position */
+    width: 100px;
+    
+    margin: 10px auto 0px auto;
+}
