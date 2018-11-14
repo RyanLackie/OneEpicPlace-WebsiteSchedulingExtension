@@ -45,8 +45,8 @@
             }
 
             //Must be "INSERT INTO..." then the name of the table being inserted into
-            $sql = "INSERT INTO user (user_email, user_password, user_firstname, user_lastname, user_occupation, user_description)
-            VALUES ('{$email}', '{$password}', '{$firstname}', '{$lastname}', '{$occupation}', '{$description}');";
+            $sql = "INSERT INTO user (user_email, user_password, user_firstname, user_lastname, user_occupation, user_description, sign_up_date)
+            VALUES ('{$email}', '{$password}', '{$firstname}', '{$lastname}', '{$occupation}', '{$description}', NOW());";
 
             $result = mysqli_query($conn, $sql);
             $row = mysqli_fetch_array($result, MYSQLI_ASSOC);
