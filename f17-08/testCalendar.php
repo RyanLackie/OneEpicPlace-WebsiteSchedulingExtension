@@ -45,7 +45,8 @@
             }
         ?>
 
-        <!-- About Section -->
+        <!-- Test Scheduler -->
+        
         <div class="half-row-centered">
         <table class="coolTable">
   	<tr>
@@ -121,40 +122,41 @@
    </tr>
 </table>
         </div>
-<style>
-a {
-    color:white;
-    text-decoration:none;
-} 
+    <style>
+        a {
+            color:white;
+            text-decoration:none;
+        } 
 
-#r1c1, #r1c2, #r1c3, #r1c4, #r2c1, #r2c2, #r2c3, #r2c4{
-	position:absolute;
-	display:none;
-    bottom:200px;
-	z-index:9;
-	color:black;
-}
+        #r1c1, #r1c2, #r1c3, #r1c4, #r2c1, #r2c2, #r2c3, #r2c4{
+            position:absolute;
+            display:none;
+            bottom:200px;
+            z-index:9;
+            color:black;
+        }
 
-#r1c1:target, #r1c2:target, #r1c3:target, #r1c4:target, #r2c1:target, #r2c2:target, #r2c3:target, #r2c4:target {
+        #r1c1:target, #r1c2:target, #r1c3:target, #r1c4:target, #r2c1:target, #r2c2:target, #r2c3:target, #r2c4:target {
 
-display:block;
-}
+        display:block;
+        }
 
-table.coolTable td {
-    background-color:blue;
-    color:green;
-}
+        table.coolTable td {
+            background-color:blue;
+            color:green;
+        }
 
-table.coolTable td:hover {
-    background-color:green;
-    color:green;
-}
+        table.coolTable td:hover {
+            background-color:green;
+            color:green;
+        }
 
-td a {
-    display:block;
-    width:100%;
-}
-</style>
+        td a {
+            display:block;
+            width:100%;
+        }
+    </style>
+
         <!-- Scripts -->
         <?php include('components/scripts.php'); ?>
         

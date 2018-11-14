@@ -1,6 +1,5 @@
 <?php
     //CHANGE FOR EACH DATABASE BEING USED!!!
-    
     $dbServername = "cs.newpaltz.edu";
     $dbUsername = "p_f17_8";
     $dbPassword = "aj5qyk";
