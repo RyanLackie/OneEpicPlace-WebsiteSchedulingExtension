@@ -27,6 +27,7 @@
         //Remove warnings
         error_reporting(0);
         
+        session_start();
         include('php_methods/session.php');
     ?>
 
@@ -36,7 +37,7 @@
 
         <!-- Nav Bar -->
         <?php
-            if ($login_session == null) {
+            if ($login_id == null) {
                 include('components/nonuser-navbar.php');
             }
             else {

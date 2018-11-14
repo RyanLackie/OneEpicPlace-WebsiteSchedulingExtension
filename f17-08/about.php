@@ -36,7 +36,7 @@
 
         <!-- Nav Bar -->
         <?php
-            if ($login_session == null) {
+            if ($login_id == null) {
                 include('components/nonuser-navbar.php');
             }
             else {

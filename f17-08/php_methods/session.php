@@ -17,6 +17,7 @@
     $login_lastname = $row['user_lastname'];
     $login_occupation = $row['user_occupation'];
     $login_description = $row['user_description'];
+    $login_regdate = $row['sign_up_date'];
 
     if (!isset($_SESSION['login_user'])) {
         header("../index.php?unknownUser");
