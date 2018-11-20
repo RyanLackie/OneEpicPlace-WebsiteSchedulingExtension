@@ -58,10 +58,9 @@
 
         <!-- Dropdown for time selection -->
         <div class="half-row-centered">
-            <form method="post" action="php_methods/register.php" method="POST" enctype="multipart/form-data"><div class="form-group">
+            <form>
                     <label for="exampleFormControlSelect1">Select a room:</label>
                     <select class="form-control" id="exampleFormControlSelect1">
-                    <input type="room" id="roomInputSection" name="room" class="form-control" placeholder="Choose a room..." required>
                     <option>The Green Room</option>
                     <option>The DaVinci Room</option>
                     <option>The Studio</option>
