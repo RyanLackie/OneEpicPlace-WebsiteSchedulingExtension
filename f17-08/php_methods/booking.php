@@ -39,8 +39,8 @@
         //    if ($count > 0) {
         //        $_SESSION['email_error'] = true;
         //        header("Location: ../register.php?email=used");
-                exit();
-            }
+        //        exit();
+        //    }
 
             //Must be "INSERT INTO..." then the name of the table being inserted into
             $sql = "INSERT INTO booking (user_bookedroom, user_starttime, user_endtime, register_time)
