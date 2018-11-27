@@ -49,10 +49,10 @@
             $result = mysqli_query($conn, $sql);
             $row = mysqli_fetch_array($result, MYSQLI_ASSOC);
 
-            $_SESSION['login_email'] = $email;
-            $_SESSION['login_bookedroom'] = $bookedroom;
+         //   $_SESSION['login_email'] = $email;
+         //   $_SESSION['login_bookedroom'] = $bookedroom;
 
-            header("Location: login.php");
+            header("Location: /p/f17-08/v20/index.php");
 
             exit();
         }
