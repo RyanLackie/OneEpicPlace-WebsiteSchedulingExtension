@@ -61,14 +61,14 @@
             <form method="post" action="php_methods/booking.php" method="POST" enctype="multipart/form-data">
             <div class="form-group">
                     <label for="bookedroom" class="booking-section-label">Select a room:</label>
-                    <select class="form-control" id="bookedroom" placeholder="Select a room...">
+                    <select class="form-control" name ="bookedroom" id="bookedroom" placeholder="Select a room...">
                     <option value="The Green Room">The Green Room</option>
                     <option value="The DaVinci Room">The DaVinci Room</option>
                     </select>
                 </div>
                 <div class="form-group">
                     <label for="starttime" class="booking-section-label">Select start time:</label>
-                    <select class="form-control" id="starttime" placeholder="Choose start time...">
+                    <select class="form-control" name="starttime" id="starttime" placeholder="Choose start time...">
                     <option value="00:00">00:00</option>
                     <option value="00:05">00:05</option>
                     <option value="00:10">00:10</option>
@@ -76,7 +76,7 @@
                 </div>
                 <div class="form-group">
                     <label for="endtime" class="booking-section-label">Select end time:</label>
-                    <select class="form-control" id="endtime" placeholder="Choose end time...">
+                    <select class="form-control" name="endtime" id="endtime" placeholder="Choose end time...">
                     <option value="00:00">00:00</option>
                     <option value="00:05">00:05</option>
                     <option value="00:10">00:10</option>
