@@ -43,8 +43,8 @@
         //    }
 
             //Must be "INSERT INTO..." then the name of the table being inserted into
-            $sql = "INSERT INTO booking (user_bookedroom, user_starttime, user_endtime, register_time)
-            VALUES ({$bookedroom}', '{$starttime}', '{$endtime}', NOW());";
+            $sql = "INSERT INTO booking (bookedroom, starttime, endtime)
+            VALUES ({$bookedroom}', '{$starttime}', '{$endtime}');";
 
             $result = mysqli_query($conn, $sql);
             $row = mysqli_fetch_array($result, MYSQLI_ASSOC);
