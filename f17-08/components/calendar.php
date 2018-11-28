@@ -75,12 +75,6 @@
 				<div class="vcal-body" data-calendar-area="month"></div>
 			</div>
 
-			<!-- Demo for day selected, use for opening the day view for selected day -->
-			<p class="demo-picked">
-				Date picked:
-                <span data-calendar-label="picked"></span>
-			</p>
-
 		</div>
 
         <!-- Calendar -->
