@@ -59,6 +59,9 @@
         <!-- Dropdown for time selection -->
         <div class="half-row-centered">
             <form method="post" action="php_methods/booking.php" method="POST" enctype="multipart/form-data">
+            <div>
+               Date: <input type="date" name="date">
+            </div>
             <div class="form-group">
                     <label for="bookedroom" class="booking-section-label">Select a room:</label>
                     <select class="form-control" name ="bookedroom" id="bookedroom" placeholder="Select a room...">

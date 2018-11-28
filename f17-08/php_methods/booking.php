@@ -10,6 +10,7 @@
         $bookedroom = mysqli_real_escape_string($conn, $_POST['bookedroom']);
         $starttime = mysqli_real_escape_string($conn, $_POST['starttime']);
         $endtime = mysqli_real_escape_string($conn, $_POST['endtime']);
+        $date = mysqli_real_escape_string($conn, $_POST['date']);
        
         //Error handelers - Check for empty fields
         if (empty($bookedroom)) {
@@ -29,8 +30,8 @@
         else {
 
             //Must be "INSERT INTO..." then the name of the table being inserted into
-            $sql = "INSERT INTO booking (bookedroom, starttime, endtime)
-            VALUES ('{$bookedroom}', '{$starttime}', '{$endtime}');";
+            $sql = "INSERT INTO booking (bookedroom, starttime, endtime, thedate)
+            VALUES ('{$bookedroom}', '{$starttime}', '{$endtime}', '{$date}');";
 
             $result = mysqli_query($conn, $sql);
             $row = mysqli_fetch_array($result, MYSQLI_ASSOC);
