@@ -5,12 +5,14 @@
 
         //Remove warnings
         error_reporting(0);
+        include('session.php');
 
         //Current fields being inserted into for current table
         $bookedroom = mysqli_real_escape_string($conn, $_POST['bookedroom']);
         $starttime = mysqli_real_escape_string($conn, $_POST['starttime']);
         $endtime = mysqli_real_escape_string($conn, $_POST['endtime']);
         $date = mysqli_real_escape_string($conn, $_POST['date']);
+
        
         //Error handelers - Check for empty fields
         if (empty($bookedroom)) {
@@ -28,7 +30,6 @@
 
         //If no problems insert the user into the database
         else {
-
             //Must be "INSERT INTO..." then the name of the table being inserted into
             $sql = "INSERT INTO booking (bookedroom, starttime, endtime, thedate, user_firstname, user_lastname)
             VALUES ('{$bookedroom}', '{$starttime}', '{$endtime}', '{$date}', '{$login_firstname}', '{$login_lastname}');";
