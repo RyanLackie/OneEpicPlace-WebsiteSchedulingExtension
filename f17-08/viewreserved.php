@@ -1,7 +1,25 @@
 <!DOCTYPE html>
 <html>
 <head>
- <title>Table with database</title>
+<meta charset="UTF-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <meta http-equiv="x-ua-compatible" content="ie=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        
+      <!-- Title And URL Icon -->
+      <link rel="icon" type="image/png" href="../assets/logo.png"/>
+		<title>One Epic Place - View Booked Rooms</title>
+
+      <!-- CSS Sheets -->
+      <!-- Bootstrap -->
+      <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
+      <!-- Home Made CSS Sheets -->
+      <link rel="stylesheet" href="css/stylesheet.css">
+
+      <!-- Fonts -->
+      <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+		<link href="https://fonts.googleapis.com/css?family=Playfair+Display" rel="stylesheet"> 
+		<link href="https://fonts.googleapis.com/css?family=Quicksand" rel="stylesheet"> 
  <style>
   table {
    border-collapse: collapse;
