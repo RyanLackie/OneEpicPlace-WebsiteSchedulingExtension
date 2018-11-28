@@ -3,9 +3,9 @@
     <ul>
         <li>
             <a href="index.php">Home</a>
-            <a href="register.php">Register</a>
-            <a href="login.php">Login</a>
-            <a href="about.php">About</a>
+            <a href="register.php">Sign-up</a>
+            <a href="about.php">About OEP</a>
+            <input class="btn btn-lg btn-outline-primary" type="button" value="Login" onclick="window.location.href='login.php'">
         </li>
     </ul>
 </div>

@@ -3,10 +3,11 @@
     <ul>
         <li>
             <a href="index.php">Home</a>
-            <a href="profile.php">Profile</a>
-            <a href="scheduler.php">Scheduler</a>
-            <a href="about.php">About</a>
-            <a href="php_methods/logout.php">Logout</a>
+            <a href="profile.php">Your Profile</a>
+            <a href="scheduler.php">Make A Reservation</a>
+            <a href="">View Schedule</a>
+            <a href="about.php">About OEP</a>
+            <input class="btn btn-lg btn-outline-primary" type="button" value="Logout" onclick="window.location.href='php_methods/logout.php'">
         </li>
     </ul>
 </div>
