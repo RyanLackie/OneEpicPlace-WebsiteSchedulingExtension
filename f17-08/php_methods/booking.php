@@ -36,7 +36,7 @@
             $result = mysqli_query($conn, $sql);
             $row = mysqli_fetch_array($result, MYSQLI_ASSOC);
             
-            header("Location: ../scheduler.php");
+            header("Location: ../viewreserved.php?congratulation_on_your_reservation");
 
             exit();
         }
