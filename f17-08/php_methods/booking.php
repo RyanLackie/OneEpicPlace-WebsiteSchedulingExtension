@@ -30,8 +30,8 @@
         else {
 
             //Must be "INSERT INTO..." then the name of the table being inserted into
-            $sql = "INSERT INTO booking (bookedroom, starttime, endtime, thedate)
-            VALUES ('{$bookedroom}', '{$starttime}', '{$endtime}', '{$date}');";
+            $sql = "INSERT INTO booking (bookedroom, starttime, endtime, thedate, user_firstname, user_lastname)
+            VALUES ('{$bookedroom}', '{$starttime}', '{$endtime}', '{$date}', '{$login_firstname}', '{$login_lastname}');";
 
             $result = mysqli_query($conn, $sql);
             $row = mysqli_fetch_array($result, MYSQLI_ASSOC);
