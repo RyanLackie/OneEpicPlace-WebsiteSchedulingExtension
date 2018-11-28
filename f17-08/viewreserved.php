@@ -61,15 +61,16 @@
   <th>Room</th> 
   <th>Start Time</th> 
   <th>End Time</th>
+  <th>Date</th>
  </tr>
  <?php
-  $sql = "SELECT bookedroom, starttime, endtime FROM booking";
+  $sql = "SELECT bookedroom, starttime, endtime, thedate FROM booking";
   $result = $conn->query($sql);
   if ($result->num_rows > 0) {
    // output data of each row
    while($row = $result->fetch_assoc()) {
     echo "<tr><td>" . $row["bookedroom"]. "</td><td>" . $row["starttime"] . "</td><td>"
-. $row["endtime"]. "</td></tr>";
+. $row["endtime"]. "</td><td>" . $row["thedate"] . "</td></tr>";
 }
 echo "</table>";
 } else { echo "0 results"; }
