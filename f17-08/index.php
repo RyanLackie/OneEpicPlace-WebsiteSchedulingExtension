@@ -51,7 +51,7 @@
 
         <!-- Bottom Image -->
         <div class="full-row-centered">
-            <img class="index-bottom-image" src="assets/clouds.jpg"/>
+            <img class="index-bottom-image" src="assets/ONEEPICPLACE-LOGO-TAGLINE.png"/>
         </div>
 
         <!-- Bottom Text -->
