@@ -62,7 +62,7 @@
   <th>Start Time</th> 
   <th>End Time</th>
   <th>Date</th>
-  <th>Fist Name</th>
+  <th>First Name</th>
   <th>Last Name</th>
  </tr>
  <?php

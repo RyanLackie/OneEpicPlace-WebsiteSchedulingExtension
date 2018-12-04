@@ -27,6 +27,10 @@
             header("Location: ../scheduler.php?endtimefield=empty");
             exit();
         }
+        if (empty($date)) {
+            header("Location: ../scheduler.php?datefield=empty");
+            exit();
+        }
 
         //If no problems insert the user into the database
         else {

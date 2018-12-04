@@ -31,6 +31,14 @@
             header("Location: ../register.php?lastnamefield=empty");
             exit();
         }
+        if (empty($occupation)) {
+            header("Location: ../register.php?occupationfield=empty");
+            exit();
+        }
+        if (empty($description)) {
+            header("Location: ../register.php?descriptionfield=empty");
+            exit();
+        }
 
         //If no problems insert the user into the database
         else {
