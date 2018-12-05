@@ -75,12 +75,12 @@
 
                 <div class="form-group">
                     <label for="occupationInputSection" class="register-section-label">Occupation</label>
-                    <input id="occupationInputSection" name="occupation" class="form-control" placeholder="Enter What You Do">
+                    <input id="occupationInputSection" name="occupation" class="form-control" placeholder="Enter What You Do" required>
                 </div>
 
                 <div class="form-group">
                     <label for="descriptionInputSection" class="register-section-label">Description</label>
-                    <textarea id="descriptionInputSection" name="description" class="form-control" placeholder="Tell Us About Yourself"></textarea>
+                    <textarea id="descriptionInputSection" name="description" class="form-control" placeholder="Tell Us About Yourself" required></textarea>
                 </div>
 
                 <button class="btn btn-lg btn-outline-primary" type="submit" value="Submit" name="RegisterButton">Sign Up</button>
