@@ -2,7 +2,7 @@
 <div class="full-row-centered">
     <div class="index-header-text">
         <a href="../index.php">
-            One Epic Place
+            One EPIC Place
         </a>
     </div>
 </div>

@@ -44,7 +44,7 @@
 
         <!-- About Section -->
         <div class="half-row-centered">
-            <h3>Welcome to One Epic Place!</h3>
+            <h3>Welcome to One EPIC Place!</h3>
             <h3>Schedule a room today!</h3>
             <a class="btn btn-outline-primary" href="https://oneepicplace.com" role="button">Go To Main Site</a>
         </div>

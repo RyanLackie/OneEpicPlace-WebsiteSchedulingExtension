@@ -58,7 +58,7 @@
 
         <!-- Bottom Text -->
         <div class="full-row-centered">
-            <h3>This is the home page for One Epic Place!</h3>
+            <h3>This is the home page for One EPIC Place!</h3>
         </div>
         
         <!-- Scripts -->
