@@ -6,12 +6,6 @@
     $dbPassword = "aj5qyk";
     $dbName = "p_f17_8_db";
     
-    /*
-    $dbServername = "localhost";
-    $dbUsername = "root";
-    $dbPassword = "";
-    $dbName = "p_f17_8_db";
-    */
     // Create connection
     $conn = mysqli_connect($dbServername, $dbUsername, $dbPassword, $dbName);
 

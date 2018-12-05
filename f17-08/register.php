@@ -27,6 +27,7 @@
         //Remove warnings
         error_reporting(0);
         
+        //include to access the session variables
         include('php_methods/session.php');
     ?>
 

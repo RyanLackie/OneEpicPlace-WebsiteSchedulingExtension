@@ -31,8 +31,6 @@
         $sql = "SELECT user_id FROM users WHERE user_email = '$email' and user_password = '$password'";
         $result = mysqli_query($conn, $sql);
         $row = mysqli_fetch_array($result, MYSQLI_ASSOC);
-        //Don't know why this is needed
-        //$active = $row['active'];
         $count = mysqli_num_rows($result);
 
         //If result matched $email and $password, table row must be 1 row	

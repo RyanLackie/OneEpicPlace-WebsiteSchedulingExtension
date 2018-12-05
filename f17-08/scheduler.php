@@ -30,6 +30,8 @@
         error_reporting(0);
         
         session_start();
+
+        //include to access the session variables
         include('php_methods/session.php');
     ?>
 

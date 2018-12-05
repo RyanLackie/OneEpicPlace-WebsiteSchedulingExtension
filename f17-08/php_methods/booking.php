@@ -5,6 +5,8 @@
 
         //Remove warnings
         error_reporting(0);
+
+        //Include to access the session varibales
         include('session.php');
 
         //Current fields being inserted into for current table
@@ -35,6 +37,7 @@
         //If no problems insert the user into the database
         else {
             //Must be "INSERT INTO..." then the name of the table being inserted into
+            //login_lastname and login_firstname are sessions variables
             $sql = "INSERT INTO booking (bookedroom, starttime, endtime, thedate, user_firstname, user_lastname)
             VALUES ('{$bookedroom}', '{$starttime}', '{$endtime}', '{$date}', '{$login_firstname}', '{$login_lastname}');";
 

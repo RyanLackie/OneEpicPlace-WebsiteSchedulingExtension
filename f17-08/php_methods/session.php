@@ -9,7 +9,7 @@
     $ses_sql = mysqli_query($conn, "select * from users where user_id = '$user_check' ");
     $row = mysqli_fetch_array($ses_sql, MYSQLI_ASSOC);
 
-    //Global Variables
+    //Global Session Variables
     //User information
     $login_id = $row['user_id'];
     $login_email = $row['user_email'];
