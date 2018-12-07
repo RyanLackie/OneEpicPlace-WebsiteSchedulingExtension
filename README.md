@@ -1,4 +1,4 @@
-# One Epic Place Website "Software"
+# One Epic Place Website Extension
 
 ## User Levels (Listed From High To Low)
 - Admin
