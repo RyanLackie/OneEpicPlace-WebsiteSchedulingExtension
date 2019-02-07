@@ -38,7 +38,7 @@
         else {
             //Must be "INSERT INTO..." then the name of the table being inserted into
             //login_lastname and login_firstname are sessions variables
-            $sql = "INSERT INTO booking (bookedroom, starttime, endtime, thedate, user_firstname, user_lastname)
+            $sql = "INSERT INTO s19_booking (bookedroom, starttime, endtime, thedate, user_firstname, user_lastname)
             VALUES ('{$bookedroom}', '{$starttime}', '{$endtime}', '{$date}', '{$login_firstname}', '{$login_lastname}');";
 
             $result = mysqli_query($conn, $sql);

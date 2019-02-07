@@ -43,7 +43,7 @@
         //If no problems insert the user into the database
         else {
             //Try and findif the email is already in use
-            $sql = "SELECT user_id FROM users WHERE user_email = '$email'";
+            $sql = "SELECT user_id FROM s19_users WHERE user_email = '$email'";
             $result = mysqli_query($conn, $sql);
             $count = mysqli_num_rows($result);
             if ($count > 0) {
@@ -53,7 +53,7 @@
             }
 
             //Must be "INSERT INTO..." then the name of the table being inserted into
-            $sql = "INSERT INTO users (user_email, user_password, user_firstname, user_lastname, user_occupation, user_description, sign_up_date)
+            $sql = "INSERT INTO s19_users (user_email, user_password, user_firstname, user_lastname, user_occupation, user_description, sign_up_date)
             VALUES ('{$email}', '{$password}', '{$firstname}', '{$lastname}', '{$occupation}', '{$description}', NOW());";
 
             $result = mysqli_query($conn, $sql);

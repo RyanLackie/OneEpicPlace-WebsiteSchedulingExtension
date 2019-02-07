@@ -6,7 +6,7 @@
     error_reporting(0);
 
     $user_check = $_SESSION['login_id'];
-    $ses_sql = mysqli_query($conn, "select * from users where user_id = '$user_check' ");
+    $ses_sql = mysqli_query($conn, "select * from s19_users where user_id = '$user_check' ");
     $row = mysqli_fetch_array($ses_sql, MYSQLI_ASSOC);
 
     //Global Session Variables
