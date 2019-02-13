@@ -1,23 +1,33 @@
 {
-  "name": "oneepicplace-websiteschedulingextention",
-  "version": "1.0.0",
-  "description": "- Admin\r   - Public profile\r   - Stat analysis\r   - Ability to edit all information\r - Staff\r   - Public profile\r   - Stat analysis\r   - Ability to edit some information\r - Member\r   - Public profile\r   - Ability to edit their information and room scheduling\r   - Spend money to continue membership and add points\r - Profile Holder\r   - Public profile\r   - Ability to edit their information and room scheduling\r   - Spend money to rent a room\r   - Spend money to start a membership\r - Guest\r   - Can create a profile\r   - Spend money to rent a room\r   - Spend money to start a membership",
-  "main": "index.js",
-  "dependencies": {
-    
-  },
-  "devDependencies": {},
+  "name": "oneepicplace-schedulingextension",
+  "version": "0.1.0",
+  "private": true,
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node server/index.js",
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build",
+    "lint": "vue-cli-service lint"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/RyanLackie/OneEpicPlace-WebsiteSoftware.git"
+  "dependencies": {
+    "bootstrap": "^4.2.1",
+    "express": "^4.16.4",
+    "jquery": "^3.3.1",
+    "mysql": "^2.16.0",
+    "popper.js": "^1.14.7",
+    "register-service-worker": "^1.5.2",
+    "vue": "^2.5.22",
+    "vue-router": "^3.0.1"
   },
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/RyanLackie/OneEpicPlace-WebsiteSoftware/issues"
-  },
-  "homepage": "https://github.com/RyanLackie/OneEpicPlace-WebsiteSoftware#readme"
+  "devDependencies": {
+    "@vue/cli-plugin-babel": "^3.4.0",
+    "@vue/cli-plugin-eslint": "^3.4.0",
+    "@vue/cli-plugin-pwa": "^3.4.0",
+    "@vue/cli-service": "^3.4.0",
+    "babel-eslint": "^10.0.1",
+    "eslint": "^5.8.0",
+    "eslint-plugin-vue": "^5.0.0",
+    "node-sass": "^4.9.0",
+    "sass-loader": "^7.1.0",
+    "vue-template-compiler": "^2.5.21"
+  }
 }

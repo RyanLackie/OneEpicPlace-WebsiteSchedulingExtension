@@ -1,0 +1,33 @@
+.Profile .form-container {
+    width: 60%;
+    margin: 0px auto;
+}
+
+.Profile .label {
+    font-size: 20px;
+    font-family: 'Quicksand', sans-serif;
+    text-transform: uppercase;
+}
+
+.Profile .input-box-sm-left {
+    width: 49%;
+    float: left;
+    margin-right: 2%;
+    margin-bottom: 20px;
+}
+.Profile .input-box-sm-right {
+    width: 49%;
+    float: left;
+    margin-bottom: 20px;
+}
+
+.Profile .input-box {
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.Profile .formButton {
+    display: block;
+    width: 60%;
+    margin: 20px auto;
+}

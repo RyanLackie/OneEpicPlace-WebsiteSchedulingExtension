@@ -1,0 +1,52 @@
+.Header .text-container {
+    text-align: center;
+    margin: 0px auto 20px auto;
+}
+.Header .text-container .text {
+    font-size: 50px;
+    text-decoration: none;
+    text-transform: uppercase;
+    color: black;
+}
+
+.Header .logo-container {
+    text-align: center;
+    margin: 0px auto 20px auto;
+}
+.Header .logo-container .logo {
+    max-width: 150px;
+}
+
+.Header .nonUserNavbar {
+    margin: 20px auto 0px auto;
+    text-align: center;
+}
+.Header .nonUserNavbar .text {
+    padding: 10px 2%;
+    color: black;
+    font-size: 20px;
+    text-decoration: none;
+}
+.Header .nonUserNavbar .text:hover {
+    color: gray;
+}
+
+.Header .userNavbar {
+    margin: 20px auto 0px auto;
+    text-align: center;
+}
+.Header .userNavbar .text {
+    padding: 10px 2%;
+    color: black;
+    font-size: 20px;
+    text-decoration: none;
+}
+.Header .userNavbar .text:hover {
+    color: gray;
+}
+
+.Header .line {
+    width: 80%;
+    margin: 30px auto 40px auto;
+    border-bottom: 5px black solid;
+}
