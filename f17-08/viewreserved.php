@@ -68,7 +68,7 @@
   <th>Last Name</th>
  </tr>
  <?php
-  $sql = "SELECT bookedroom, starttime, endtime, thedate, user_firstname, user_lastname FROM booking";
+  $sql = "SELECT bookedroom, starttime, endtime, thedate, user_firstname, user_lastname FROM s19_booking";
   $result = $conn->query($sql);
   if ($result->num_rows > 0) {
    // output data of each row
