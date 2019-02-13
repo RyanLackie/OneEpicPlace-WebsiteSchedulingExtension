@@ -22,16 +22,16 @@ app.use('/app', controller);
 
 
 //Server Stuff (Local Production)
-
-const port = 81;
-const server = 'localhost';
-
-
-//Server Stuff (Server Deployment)
 /*
 const port = 81;
-const server = '206.189.167.65';
+const server = 'localhost';
 */
+
+//Server Stuff (Server Deployment)
+
+const port = 81;
+const server = '206.189.167.65';
+
 
 //Port listen and message
 app.listen(port);
