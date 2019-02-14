@@ -130,7 +130,7 @@
 .Schedule .calendar .Loft {
     background-color: skyblue;
 }
-.Schedule .calendar .Poarch {
+.Schedule .calendar .Porch {
     background-color: burlywood;
 }
 .Schedule .calendar .Lawn {
@@ -144,60 +144,4 @@
 }
 .Schedule .calendar .timeWindow:hover {
     background-color: lightgray;
-}
-
-/*
-    Modal
-*/
-.Schedule .modal-popup {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    width: 35%;
-
-    -ms-transform: translate(-50%, -50%);
-    transform: translate(-50%, -50%);
-    transition: 0.5s;
-
-    /* Make larger modals scrollable */
-    max-height: calc(100vh - 100px);
-    overflow-y: auto;
-
-    background: whitesmoke;
-    color: black;
-    outline: 3px lightgray solid;
-    padding: 0px 20px;
-    opacity: 0;
-    visibility: hidden;
-}
-.Schedule .modal-popup .modal-header {
-    margin-bottom: 10px;
-}
-.Schedule .modal-popup .modal-title {
-    width: 100%;
-    margin-left: 30px;
-    font-size: 30px;
-    text-align: center;
-    font-weight: bold;
-    font-family: 'Quicksand', sans-serif;
-}
-.Schedule .modal-popup .close {
-    color: black;
-    opacity: 1;
-}
-
-.Schedule .modal-popup .submitBtn {
-    float: left;
-    width: 40%;
-    height: 50px;
-    margin: 10px 0px 30px 3%;
-    font-size: 20px;
-    opacity: 1;
-}
-.Schedule .modal-popup .cancelBtn {
-    float: right;
-    width: 40%;
-    height: 50px;
-    margin: 10px 3% 30px 0px;
-    font-size: 20px;
 }

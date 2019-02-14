@@ -33,35 +33,13 @@
                 <div class="timeWindow" v-for="index in 156" 
                 :key="'timeWindow'+index" :id="'timeWindow'+row+':'+index" 
                 @click="timeWindowClicked('timeWindow'+row+':'+index)"
+                @mouseover="timeWindowHover('timeWindow'+row+':'+index)"
+                @mouseout="timeWindowUnhover('timeWindow'+row+':'+index)"
                 data-booked="0"></div>
             </div>
         </div>
 
-        <!-- Modal -->
-        <div class="modal-popup" id="modal" aria-hidden="true">
-            
-            <div class="modal-header">
-                <div class="modal-title" id="modalTitle"></div>
-                <button type="button" class="close" aria-label="Close" @click="closeModal()">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-
-            <form id="bookingForm">
-                <div class="form-group">
-                    <label for="startTime" class="form-section-label">Start Time</label>
-                    <input type="time" min="9:00" max="21:00" id="startTime" class="form-control" placeholder="" required autofocus>
-                </div>
-                
-                <div class="form-group">
-                    <label for="endTime" class="form-section-label">End Time</label>
-                    <input type="time" min="9:00" max="21:00" id="endTime" class="form-control" placeholder="" required>
-                </div>
-
-                <button class="btn btn-success submitBtn" type="submit">Submit</button>
-                <button class="btn btn-secondary cancelBtn" type="button" @click="closeModal()">Cancel</button>
-            </form>
-        </div>
+        <BookingModal ref="BookingModal"></BookingModal>
 
     </div>
 </template>
@@ -73,8 +51,13 @@
 
 <script>
     import * as api from '@/services/api_access';
+    import BookingModal from '@/components/BookingModal.vue'
 
     export default {
+        components: {
+            BookingModal
+        },
+
         data() {
             return {
                 //date for calender
@@ -108,18 +91,15 @@
                     {id: 4, name: 'Zen Room'},
                     {id: 5, name: 'Studio'},
                     {id: 6, name: 'Loft'},
-                    {id: 7, name: 'Poarch'},
+                    {id: 7, name: 'Porch'},
                     {id: 8, name: 'Lawn'},
                 ],
                 roomSquareWidth: 0,
                 roomSquareHeight: 60,
 
                 bookings: [],
-                //bookingSelected include: id, name
-                bookingSelected: {id: null, name: null},
 
                 //Var name of the setInterval updater
-                loopInterval: 5000,
                 interval: null
             }
         },
@@ -176,8 +156,8 @@
                         document.getElementById('room'+index).classList.add('Studio');
                     else if (roomName == 'Loft')
                         document.getElementById('room'+index).classList.add('Loft');
-                    else if (roomName == 'Poarch')
-                        document.getElementById('room'+index).classList.add('Poarch');
+                    else if (roomName == 'Porch')
+                        document.getElementById('room'+index).classList.add('Porch');
                     else if (roomName == 'Lawn')
                         document.getElementById('room'+index).classList.add('Lawn');
                 }
@@ -212,6 +192,12 @@
                 })
             },
             addTimeWindowBookings() {
+                for (var resetRowIndex = 1; resetRowIndex <= this.rooms.length; resetRowIndex++) {
+                    for (var resetColIndex = 1; resetColIndex <= 156; resetColIndex++) {
+                        document.getElementById('timeWindow'+resetRowIndex+':'+resetColIndex).setAttribute('data-booked', '0');
+                    }
+                }
+                
                 for (var bookingIndex = 0; bookingIndex < this.bookings.length; bookingIndex++) {
                     var locationID = this.bookings[bookingIndex].locationID;
 
@@ -230,18 +216,21 @@
                         if (timeWindowIndex == endTimeWindow)
                             document.getElementById('timeWindow'+locationID+':'+timeWindowIndex).setAttribute('data-booked', '2');
                     }
-
-                    //Add styles to the time windows based on booking info
-                    this.addTimeWindowStyles();
                 }
+
+                //Add styles to the time windows based on booking info
+                this.addTimeWindowStyles();
             },
             addTimeWindowStyles() {
                 for (var row = 1; row < this.rooms.length; row++) {
                     for (var timeWindowIndex = 1; timeWindowIndex <= 156; timeWindowIndex++) {
                         if (timeWindowIndex%3 == 0)
                             document.getElementById('timeWindow'+row+':'+timeWindowIndex).style.borderRight = '1px black solid';
-
-                        if (document.getElementById('timeWindow'+row+':'+timeWindowIndex).getAttribute('data-booked') == '1') {
+   
+                        if (document.getElementById('timeWindow'+row+':'+timeWindowIndex).getAttribute('data-booked') == '0') {
+                            document.getElementById('timeWindow'+row+':'+timeWindowIndex).style.backgroundColor = 'white';
+                        }
+                        else if (document.getElementById('timeWindow'+row+':'+timeWindowIndex).getAttribute('data-booked') == '1') {
                             document.getElementById('timeWindow'+row+':'+timeWindowIndex).style.borderRight = '0px black solid';
                             document.getElementById('timeWindow'+row+':'+timeWindowIndex).style.backgroundColor = 'red';
                         }
@@ -256,69 +245,21 @@
                 //parse id
                 var input = id.slice(10);
                 input = input.split(':');
-
-                this.openModal();
-                this.bookingSelected.id = input[0];
-                this.bookingSelected.name = this.rooms[input[0]].name;
-
-                //Modal Title
-                document.getElementById('modalTitle').innerHTML = this.bookingSelected.name;
-
-                //Start Time
-                var hour = parseInt(((input[1]-1) / 12), 10) + 9;
-                if (hour < 10)
-                    hour = '0'+hour;
-                var min = (input[1]-1) % 12 * 5;
-                if (min < 10)
-                    min = '0'+min;
-                document.getElementById('startTime').value = hour + ":" + min;
-
-                //End Time
-                if (min == 55) {
-                    hour += 1;
-                    min = '00';
-                }
-                else if (min == '00')
-                    min = '05';
-                else if (min == '05')
-                    min = 10;
-                else
-                    min += 5
-                document.getElementById('endTime').value = hour + ":" + min;
+                this.$refs.BookingModal.openModal(this.date, input, this.rooms[input[0]].name);
             },
-            submitBooking(event) {
-                var locationID = this.bookingSelected.id;
-                var date = this.date.getMonth()+1+'/'+this.date.getDate()+'/'+this.date.getFullYear();
-                var startTime = document.getElementById('startTime').value;
-                var endTime = document.getElementById('endTime').value;
-
-                api.insertBooking("title", "description", locationID, date, startTime, endTime).then(bookingResult => {
-                    console.log(bookingResult);
-
-                    //Booking overlap
-
-                    //Booking too short
-
-                    //Booking time not in a multiple of 5
-
-                    //Successful booking
-                    if (bookingResult) {
-                        this.closeModal();
-                        this.checkBookings();
-                    }
-                });
-
-                //Prevent submit refresh
-                event.preventDefault();
+            timeWindowHover(id) {
+                /*
+                //parse id
+                var input = id.slice(10);
+                input = input.split(':');
+                console.log(input);
+                */
+                if (document.getElementById(id).getAttribute('data-booked') == '0')
+                    document.getElementById(id).style.backgroundColor = 'lightgray';
             },
-
-            openModal() {
-                document.getElementById("modal").style.opacity = "1.0";
-                document.getElementById("modal").style.visibility = "visible";
-            },
-            closeModal() {
-                document.getElementById("modal").style.opacity = "0.0";
-                document.getElementById("modal").style.visibility = "hidden";
+            timeWindowUnhover(id) {
+                if (document.getElementById(id).getAttribute('data-booked') == '0')
+                    document.getElementById(id).style.backgroundColor = 'white';
             },
 
             decDate: function() {
@@ -335,10 +276,7 @@
             //Create Calendar
             this.initCalendar();
             window.addEventListener('resize', this.resizeCalendar);
-            this.interval = setInterval(this.checkBookings, this.loopInterval);
-
-            //Listen for modal submit
-            document.getElementById('bookingForm').addEventListener('submit', this.submitBooking);
+            this.interval = setInterval(this.checkBookings, 5000);
         },
         destroyed() {
             //Stop checking for bookings
