@@ -51,6 +51,7 @@
 
 <script>
     import * as api from '@/services/api_access';
+
     import BookingModal from '@/components/BookingModal.vue'
 
     export default {
@@ -99,7 +100,6 @@
 
                 //Booking info
                 bookings: [],
-                bookedWindows: [],
 
                 //Var name of the setInterval updater
                 interval: null
@@ -108,8 +108,9 @@
 
         methods: {
             initCalendar() {
-                //Check the schedule for booked rooms
+                //Size the calendar for the device
                 this.resizeCalendar();
+                //Check the schedule for booked rooms
                 this.checkBookings();
             },
             resizeCalendar() {
@@ -122,7 +123,6 @@
                 //Place the windows of time
                 this.placeTimeWindows();
             },
-
 
             initSize() {
                 this.roomSquareWidth = document.getElementById('calendar').offsetWidth * 0.13;
@@ -194,15 +194,6 @@
                 })
             },
             addTimeWindowBookings() {
-                /*
-                for (var resetRowIndex = 1; resetRowIndex <= this.rooms.length; resetRowIndex++) {
-                    for (var resetColIndex = 1; resetColIndex <= 156; resetColIndex++) {
-                        document.getElementById('timeWindow'+resetRowIndex+':'+resetColIndex).setAttribute('data-booked', '0');
-                    }
-                }
-                */
-                this.bookedWindows = [];
-                
                 for (var bookingIndex = 0; bookingIndex < this.bookings.length; bookingIndex++) {
                     var locationID = this.bookings[bookingIndex].locationID;
 
@@ -217,11 +208,7 @@
                     var endTimeWindow = ((endTimeHour - 9) * 12) + (endTimeMin / 5);
 
                     for (var timeWindowIndex = startTimeWindow; timeWindowIndex <= endTimeWindow; timeWindowIndex++) {
-                        this.bookedWindows[this.bookedWindows.length] = 'timeWindow'+locationID+':'+timeWindowIndex;
-                        console.log(this.bookedWindows.length);
-
-                        //document.getElementById('timeWindow'+locationID+':'+timeWindowIndex).setAttribute('data-booked', this.bookings[bookingIndex]);
-                        //console.log(document.getElementById('timeWindow'+locationID+':'+timeWindowIndex).data('data-booked'));
+                        document.getElementById('timeWindow'+locationID+':'+timeWindowIndex).setAttribute('data-booked', JSON.stringify(this.bookings[bookingIndex]));
                     }
                 }
                 //Add styles to the time windows based on booking info
@@ -232,7 +219,7 @@
                     for (var timeWindowIndex = 1; timeWindowIndex <= 156; timeWindowIndex++) {
                         if (timeWindowIndex%3 == 0)
                             document.getElementById('timeWindow'+row+':'+timeWindowIndex).style.borderRight = '1px black solid';
-                        /*
+
                         if (document.getElementById('timeWindow'+row+':'+timeWindowIndex).getAttribute('data-booked') == '0') {
                             document.getElementById('timeWindow'+row+':'+timeWindowIndex).style.backgroundColor = 'white';
                         }
@@ -240,12 +227,7 @@
                             document.getElementById('timeWindow'+row+':'+timeWindowIndex).style.borderRight = '0px black solid';
                             document.getElementById('timeWindow'+row+':'+timeWindowIndex).style.backgroundColor = 'red';
                         }
-                        */
                     }
-                }
-                for (var i = 0; i < this.bookedWindows.length; i++) {
-                    document.getElementById(this.bookedWindows[i]).style.backgroundColor = 'red';
-                    document.getElementById(this.bookedWindows[i]).style.borderRight = '0px black solid';
                 }
             },
 
@@ -256,26 +238,15 @@
                 this.$refs.BookingModal.openModal(this.date, input, this.rooms[input[0]].name);
             },
 
-            //Problems here
             timeWindowHover(id) {
-                var bookingIsEmpty = false;
-                for (var bookingIndex = 0; bookingIndex < this.bookedWindows; bookingIndex++) {
-                    console.log(this.bookedWindows[bookingIndex] + "==" + id)
-                    if (this.bookedWindows[bookingIndex] == id) {
-                        bookingIsEmpty = true;
-                    }
-                }
-                if (!bookingIsEmpty)
+                if (document.getElementById(id).getAttribute('data-booked') == '0')
                     document.getElementById(id).style.backgroundColor = 'silver';
+                else {
+                    console.log(JSON.parse(document.getElementById(id).getAttribute('data-booked')));
+                }
             },
             timeWindowUnhover(id) {
-                var bookingIsEmpty = false;
-                for (var bookingIndex = 0; bookingIndex < this.bookedWindows; bookingIndex++) {
-                    if (this.bookedWindows[bookingIndex] == id) {
-                        bookingIsEmpty = true;
-                    }
-                }
-                if (!bookingIsEmpty)
+                if (document.getElementById(id).getAttribute('data-booked') == '0')
                     document.getElementById(id).style.backgroundColor = 'white';
             },
 

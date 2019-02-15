@@ -20,20 +20,18 @@
                 <textarea type="text" id="description" class="form-control" placeholder="Describe your booking..." required></textarea>
             </div>
 
-            <div>
-                <div class="inputSmLeft">
-                    <label for="startTime" class="sectionLabel">Start Time</label>
-                    <input type="time" min="9:00" max="21:00" step="300" id="startTime" class="form-control" placeholder="" required>
-                </div>
-                
-                <div class="inputSmRight">
-                    <label for="endTime" class="sectionLabel">End Time</label>
-                    <input type="time" min="9:00" max="21:00" step="300" id="endTime" class="form-control" placeholder="" required>
-                </div>
+            <div class="inputSmLeft">
+                <label for="startTime" class="sectionLabel">Start Time</label>
+                <input type="time" min="9:00" max="21:00" step="300" id="startTime" class="form-control" placeholder="" required>
+            </div>
+            
+            <div class="inputSmRight">
+                <label for="endTime" class="sectionLabel">End Time</label>
+                <input type="time" min="9:00" max="21:00" step="300" id="endTime" class="form-control" placeholder="" required>
             </div>
 
             <div class="colorSelectorContainer">
-                <div class="partLabel">Color</div>
+                <div class="partLabel">Booking Color</div>
                 <div id='colorBtn' class="colorBtn" @click="clickColorBtn()"></div>
                 <div id="colorSelector" class="colorSelector">
                     <div class="option blue" @click="selectColor(0)"></div>
@@ -107,11 +105,17 @@
 
             clickColorBtn() {
                 if (document.getElementById('colorSelector').style.visibility == 'hidden') {
-                    document.getElementById('colorBtn').style.left = '0px';
+                    document.getElementById('colorBtn').style.left = '0';
+                    document.getElementById('colorBtn').style.right = 'none';
+                    document.getElementById('colorBtn').style.margin = '24px 0px 0px 0px';
+                    
                     document.getElementById('colorSelector').style.visibility = 'visible';
                 }
                 else {
-                    document.getElementById('colorBtn').style.left = '92px';
+                    document.getElementById('colorBtn').style.left = '0';
+                    document.getElementById('colorBtn').style.right = '0';
+                    document.getElementById('colorBtn').style.margin = '24px auto 0px auto';
+
                     document.getElementById('colorSelector').style.visibility = 'hidden';
                 }
             },
