@@ -97,7 +97,9 @@
                 roomSquareWidth: 0,
                 roomSquareHeight: 60,
 
+                //Booking info
                 bookings: [],
+                bookedWindows: [],
 
                 //Var name of the setInterval updater
                 interval: null
@@ -192,11 +194,14 @@
                 })
             },
             addTimeWindowBookings() {
+                /*
                 for (var resetRowIndex = 1; resetRowIndex <= this.rooms.length; resetRowIndex++) {
                     for (var resetColIndex = 1; resetColIndex <= 156; resetColIndex++) {
                         document.getElementById('timeWindow'+resetRowIndex+':'+resetColIndex).setAttribute('data-booked', '0');
                     }
                 }
+                */
+                this.bookedWindows = [];
                 
                 for (var bookingIndex = 0; bookingIndex < this.bookings.length; bookingIndex++) {
                     var locationID = this.bookings[bookingIndex].locationID;
@@ -210,14 +215,15 @@
                     var endTimeHour = parseInt(endTime.split(':')[0], 10);
                     var endTimeMin = parseInt(endTime.split(':')[1], 10);
                     var endTimeWindow = ((endTimeHour - 9) * 12) + (endTimeMin / 5);
-                   
+
                     for (var timeWindowIndex = startTimeWindow; timeWindowIndex <= endTimeWindow; timeWindowIndex++) {
-                        document.getElementById('timeWindow'+locationID+':'+timeWindowIndex).setAttribute('data-booked', '1');
-                        if (timeWindowIndex == endTimeWindow)
-                            document.getElementById('timeWindow'+locationID+':'+timeWindowIndex).setAttribute('data-booked', '2');
+                        this.bookedWindows[this.bookedWindows.length] = 'timeWindow'+locationID+':'+timeWindowIndex;
+                        console.log(this.bookedWindows.length);
+
+                        //document.getElementById('timeWindow'+locationID+':'+timeWindowIndex).setAttribute('data-booked', this.bookings[bookingIndex]);
+                        //console.log(document.getElementById('timeWindow'+locationID+':'+timeWindowIndex).data('data-booked'));
                     }
                 }
-
                 //Add styles to the time windows based on booking info
                 this.addTimeWindowStyles();
             },
@@ -226,18 +232,20 @@
                     for (var timeWindowIndex = 1; timeWindowIndex <= 156; timeWindowIndex++) {
                         if (timeWindowIndex%3 == 0)
                             document.getElementById('timeWindow'+row+':'+timeWindowIndex).style.borderRight = '1px black solid';
-   
+                        /*
                         if (document.getElementById('timeWindow'+row+':'+timeWindowIndex).getAttribute('data-booked') == '0') {
                             document.getElementById('timeWindow'+row+':'+timeWindowIndex).style.backgroundColor = 'white';
                         }
-                        else if (document.getElementById('timeWindow'+row+':'+timeWindowIndex).getAttribute('data-booked') == '1') {
+                        else if (document.getElementById('timeWindow'+row+':'+timeWindowIndex).getAttribute('data-booked') != '0') {
                             document.getElementById('timeWindow'+row+':'+timeWindowIndex).style.borderRight = '0px black solid';
                             document.getElementById('timeWindow'+row+':'+timeWindowIndex).style.backgroundColor = 'red';
                         }
-                        else if (document.getElementById('timeWindow'+row+':'+timeWindowIndex).getAttribute('data-booked') == '2') {
-                            document.getElementById('timeWindow'+row+':'+timeWindowIndex).style.backgroundColor = 'red';
-                        }
+                        */
                     }
+                }
+                for (var i = 0; i < this.bookedWindows.length; i++) {
+                    document.getElementById(this.bookedWindows[i]).style.backgroundColor = 'red';
+                    document.getElementById(this.bookedWindows[i]).style.borderRight = '0px black solid';
                 }
             },
 
@@ -247,18 +255,27 @@
                 input = input.split(':');
                 this.$refs.BookingModal.openModal(this.date, input, this.rooms[input[0]].name);
             },
+
+            //Problems here
             timeWindowHover(id) {
-                /*
-                //parse id
-                var input = id.slice(10);
-                input = input.split(':');
-                console.log(input);
-                */
-                if (document.getElementById(id).getAttribute('data-booked') == '0')
-                    document.getElementById(id).style.backgroundColor = 'lightgray';
+                var bookingIsEmpty = false;
+                for (var bookingIndex = 0; bookingIndex < this.bookedWindows; bookingIndex++) {
+                    console.log(this.bookedWindows[bookingIndex] + "==" + id)
+                    if (this.bookedWindows[bookingIndex] == id) {
+                        bookingIsEmpty = true;
+                    }
+                }
+                if (!bookingIsEmpty)
+                    document.getElementById(id).style.backgroundColor = 'silver';
             },
             timeWindowUnhover(id) {
-                if (document.getElementById(id).getAttribute('data-booked') == '0')
+                var bookingIsEmpty = false;
+                for (var bookingIndex = 0; bookingIndex < this.bookedWindows; bookingIndex++) {
+                    if (this.bookedWindows[bookingIndex] == id) {
+                        bookingIsEmpty = true;
+                    }
+                }
+                if (!bookingIsEmpty)
                     document.getElementById(id).style.backgroundColor = 'white';
             },
 
