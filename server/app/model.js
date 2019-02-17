@@ -215,7 +215,7 @@ class Model {
     /*////////////////////////////////////////////////////////////////////////////////////////////////////////
     /////////////////////////////////           Booking Methods          /////////////////////////////////////
     */////////////////////////////////////////////////////////////////////////////////////////////////////////
-    insertBooking(email, password, firstName, lastName, title, description, locationID, date, startTime, endTime, call_back) {
+    insertBooking(email, password, firstName, lastName, date, locationID, title, description, startTime, endTime, bookingColor, noiseLevel, call_back) {
         // eslint-disable-next-line
         console.log("#################insertBooking()#################");
 
@@ -228,7 +228,7 @@ class Model {
                 var conn = this.getConnection();
 
                 //Insert booking
-                var sql = "INSERT INTO booking (email, firstName, lastName, title, description, locationID, date, startTime, endTime) VALUES ('"+email+"' ,'"+firstName+"', '"+lastName+"', '"+title+"', '"+description+"', '"+locationID+"', '"+date+"', '"+startTime+"', '"+endTime+"')";
+                var sql = "INSERT INTO booking (email, firstName, lastName, date, locationID, title, description, startTime, endTime, bookingColor, noiseLevel) VALUES ('"+email+"' ,'"+firstName+"', '"+lastName+"', '"+date+"', '"+locationID+"', '"+title+"', '"+description+"', '"+startTime+"', '"+endTime+"', '"+bookingColor+"', '"+noiseLevel+"')";
                 conn.query(sql, function(err, result) {
                     if (err) throw err;
                     // eslint-disable-next-line

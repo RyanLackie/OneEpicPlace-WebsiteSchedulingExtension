@@ -17,7 +17,7 @@
 
             <div class="inputLg">
                 <label for="description" class="sectionLabel">Description</label>
-                <textarea type="text" id="description" class="form-control" placeholder="Describe your booking..." required></textarea>
+                <textarea type="text" id="description" class="form-control" placeholder="Describe your booking..."></textarea>
             </div>
 
             <div class="inputSmLeft">
@@ -31,19 +31,26 @@
             </div>
 
             <div class="colorSelectorContainer">
-                <div class="partLabel">Booking Color</div>
-                <div id='colorBtn' class="colorBtn" @click="clickColorBtn()"></div>
-                <div id="colorSelector" class="colorSelector">
-                    <div class="option blue" @click="selectColor(0)"></div>
-                    <div class="option red" @click="selectColor(1)"></div>
-                    <div class="option yellow" @click="selectColor(2)"></div>
-                    <div class="option purple" @click="selectColor(3)"></div>
-                    <div class="option green" @click="selectColor(4)"></div>
+                <div class="colorLabel">Color</div>
+                
+                <div class="colorRow">
+                    <div id='colorOption0' class="colorOption" style="background:blue;" @click="selectColor('blue')"></div>
+                    <div id='colorOption1' class="colorOption" style="background:red;" @click="selectColor('red')"></div>
+                    <div id='colorOption2' class="colorOption" style="background:yellow;" @click="selectColor('yellow')"></div>
+                    <div id='colorOption3' class="colorOption" style="background:purple;" @click="selectColor('purple')"></div>
                 </div>
+                <div class="colorRow">
+                    <div id='colorOption4' class="colorOption" style="background:green;" @click="selectColor('green')"></div>
+                    <div id='colorOption5' class="colorOption" style="background:pink;" @click="selectColor('pink')"></div>
+                    <div id='colorOption6' class="colorOption" style="background:orange;" @click="selectColor('orange')"></div>
+                    <div id='colorOption7' class="colorOption" style="background:brown;" @click="selectColor('brown')"></div>
+                </div>
+
+                <div class="selectedColor" id='selectedColor' :style="{background: selectedColor}" @click="selectColor()"></div>
             </div>
             
             <div class="sliderContainer">
-                <div class="partLabel">Noise Level</div>
+                <div class="noiseLabel">Noise Level</div>
                 <div class="value" id="noiseValue">Quite</div>
                 <input type="range" min="1" max="3" value="1" class="slider" id="noiseSlider" @change="getRangeValue()">
             </div>
@@ -68,22 +75,27 @@
         data() {
             return {
                 //bookingSelected include: id, name
-                bookingSelected: {date: null, id: null, name: null}
+                bookingSelected: {date: null, id: null, name: null},
+
+                //Color options
+                selectedColor: 'blue'
             }
         },
 
         methods: {
             submitBooking(event) {
-                var title = document.getElementById('title').value;
-                var description = document.getElementById('description').value;
-                var locationID = this.bookingSelected.id;
                 var date = this.bookingSelected.date.getMonth()+1+'/'+
                             this.bookingSelected.date.getDate()+'/'+
                             this.bookingSelected.date.getFullYear();
+                var locationID = this.bookingSelected.id;
+                var title = document.getElementById('title').value;
+                var description = document.getElementById('description').value;               
                 var startTime = document.getElementById('startTime').value;
                 var endTime = document.getElementById('endTime').value;
+                var bookingColor = this.selectedColor;
+                var noiseLevel = document.getElementById('noiseSlider').value;
 
-                api.insertBooking(title, description, locationID, date, startTime, endTime).then(bookingResult => {
+                api.insertBooking(date, locationID, title, description, startTime, endTime, bookingColor, noiseLevel).then(bookingResult => {
                     console.log(bookingResult);
 
                     //Booking overlap
@@ -103,39 +115,19 @@
                 event.preventDefault();
             },
 
-            clickColorBtn() {
-                if (document.getElementById('colorSelector').style.visibility == 'hidden') {
-                    document.getElementById('colorBtn').style.left = '0';
-                    document.getElementById('colorBtn').style.right = 'none';
-                    document.getElementById('colorBtn').style.margin = '24px 0px 0px 0px';
-                    
-                    document.getElementById('colorSelector').style.visibility = 'visible';
+            selectColor(input) {
+                if (input == null) {
+                    document.getElementById('selectedColor').style.visibility = 'hidden';
+                    for (var index = 0; index < 8; index++) {
+                        document.getElementById('colorOption'+index).style.visibility = 'visible';
+                    }
                 }
                 else {
-                    document.getElementById('colorBtn').style.left = '0';
-                    document.getElementById('colorBtn').style.right = '0';
-                    document.getElementById('colorBtn').style.margin = '24px auto 0px auto';
-
-                    document.getElementById('colorSelector').style.visibility = 'hidden';
-                }
-            },
-            selectColor(id) {
-                switch(id) {
-                    case 0:
-                        document.getElementById('colorBtn').style.background = 'blue';
-                        break;
-                    case 1:
-                        document.getElementById('colorBtn').style.background = 'red';
-                        break;
-                    case 2:
-                        document.getElementById('colorBtn').style.background = 'yellow';
-                        break;
-                    case 3:
-                        document.getElementById('colorBtn').style.background = 'purple';
-                        break;
-                    case 4:
-                        document.getElementById('colorBtn').style.background = 'green';
-                        break;
+                    this.selectedColor = input;
+                    document.getElementById('selectedColor').style.visibility = 'visible';
+                    for (var index = 0; index < 8; index++) {
+                        document.getElementById('colorOption'+index).style.visibility = 'hidden';
+                    }
                 }
             },
 
@@ -184,6 +176,11 @@
             closeModal() {
                 document.getElementById("BookingModal").style.opacity = "0.0";
                 document.getElementById("BookingModal").style.visibility = "hidden";
+                //colors
+                document.getElementById('selectedColor').style.visibility = 'visible';
+                for (var index = 0; index < 8; index++) {
+                    document.getElementById('colorOption'+index).style.visibility = 'hidden';
+                }
             }
         },
 

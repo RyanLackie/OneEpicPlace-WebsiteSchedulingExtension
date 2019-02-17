@@ -30,7 +30,7 @@
     width: 70px;
     height: 40px;
     margin: -15px 2% 0px 0px;
-    background-color: green;
+    background-color: black;
     background-image: url("../../../assets/backarrow-white.png");
     background-size: 50%;
     background-repeat: no-repeat;
@@ -60,7 +60,7 @@
     width: 70px;
     height: 40px;
     margin: -15px 0px 0px 4%;
-    background-color: green;
+    background-color: black;
     background-image: url("../../../assets/forwardarrow-white.png");
     background-size: 50%;
     background-repeat: no-repeat;
@@ -144,4 +144,28 @@
 }
 .Schedule .calendar .timeWindow:hover {
     background-color: lightgray;
+}
+
+.Schedule .calendar .booking {
+    position: absolute;
+    width: 0px;
+    background-color: red;  /* Default color if error occurs */
+    overflow: hidden;
+    
+}
+.Schedule .calendar .booking .titleText {
+    position: absolute;
+    top: 0;
+    padding: 1px 0px 0px 5px;
+    font-size: 15px;
+    font-weight: bold;
+    color: black;
+    line-height: 18px;
+}
+.Schedule .calendar .booking .byText {
+    position: absolute;
+    bottom: 0;
+    padding: 0px 0px 0px 5px;
+    font-size: 15px;
+    color: black;
 }

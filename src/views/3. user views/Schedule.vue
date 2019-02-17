@@ -33,10 +33,16 @@
                 <div class="timeWindow" v-for="index in 156" 
                 :key="'timeWindow'+index" :id="'timeWindow'+row+':'+index" 
                 @click="timeWindowClicked('timeWindow'+row+':'+index)"
-                @mouseover="timeWindowHover('timeWindow'+row+':'+index)"
-                @mouseout="timeWindowUnhover('timeWindow'+row+':'+index)"
                 data-booked="0"></div>
             </div>
+
+            <!-- Bookings -->
+            <div class="booking" v-for="booking in this.bookings" :key="'booking'+booking.id" :id="'booking'+booking.id" 
+            @mouseover="bookingHover('booking'+booking.id)" data-booked='0'>
+                <div class="titleText" id="bookingText">{{booking.title}}</div>
+                <div class="byText" id="bookingText">{{"By: " + booking.firstName + " " + booking.lastName}}</div>
+            </div>
+
         </div>
 
         <BookingModal ref="BookingModal"></BookingModal>
@@ -100,9 +106,12 @@
 
                 //Booking info
                 bookings: [],
+                timeWindowWidth: 0,
+                timeWindowHeight: 60,
 
                 //Var name of the setInterval updater
-                interval: null
+                checkInterval: null,
+                renderInterval: null
             }
         },
 
@@ -110,8 +119,9 @@
             initCalendar() {
                 //Size the calendar for the device
                 this.resizeCalendar();
-                //Check the schedule for booked rooms
+                //Check the schedule for booked rooms and render them
                 this.checkBookings();
+                this.renderBookings();
             },
             resizeCalendar() {
                 //Set the dimmentions of all objects
@@ -127,6 +137,7 @@
             initSize() {
                 this.roomSquareWidth = document.getElementById('calendar').offsetWidth * 0.13;
                 this.timeSlotSquareWidth = (document.getElementById('calendar').offsetWidth - this.roomSquareWidth) / this.timeSlots.length;
+                this.timeWindowWidth = this.timeSlotSquareWidth / 12;
             },
 
             placeTimeSlots() {
@@ -178,10 +189,20 @@
                         this.roomSquareWidth + (this.timeSlotSquareWidth / timeWindowsPerHour) * (index-1) + 'px';
 
                         document.getElementById('timeWindow'+row+':'+index).style.width = 
-                        this.timeSlotSquareWidth / timeWindowsPerHour + 'px';
+                        this.timeWindowWidth + 'px';
 
                         document.getElementById('timeWindow'+row+':'+index).style.height = 
                         this.roomSquareHeight + 'px';
+                    }
+                }
+                //Add styles to the time windows
+                this.addTimeWindowStyles();
+            },
+            addTimeWindowStyles() {
+                for (var row = 1; row < this.rooms.length; row++) {
+                    for (var timeWindowIndex = 1; timeWindowIndex <= 156; timeWindowIndex++) {
+                        if (timeWindowIndex%3 == 0)
+                            document.getElementById('timeWindow'+row+':'+timeWindowIndex).style.borderRight = '1px black solid';
                     }
                 }
             },
@@ -189,13 +210,12 @@
             checkBookings() {
                 api.getBookings().then(bookingResult => {
                     this.bookings = bookingResult;
-                    //Add data values to the time windows that are currently booked
-                    this.addTimeWindowBookings();
                 })
             },
-            addTimeWindowBookings() {
+            renderBookings() {
+                //fill data-booked
                 for (var bookingIndex = 0; bookingIndex < this.bookings.length; bookingIndex++) {
-                    var locationID = this.bookings[bookingIndex].locationID;
+                    var row = this.bookings[bookingIndex].locationID;
 
                     var startTime = this.bookings[bookingIndex].startTime;
                     var startTimeHour = parseInt(startTime.split(':')[0], 10);
@@ -207,26 +227,20 @@
                     var endTimeMin = parseInt(endTime.split(':')[1], 10);
                     var endTimeWindow = ((endTimeHour - 9) * 12) + (endTimeMin / 5);
 
-                    for (var timeWindowIndex = startTimeWindow; timeWindowIndex <= endTimeWindow; timeWindowIndex++) {
-                        document.getElementById('timeWindow'+locationID+':'+timeWindowIndex).setAttribute('data-booked', JSON.stringify(this.bookings[bookingIndex]));
-                    }
-                }
-                //Add styles to the time windows based on booking info
-                this.addTimeWindowStyles();
-            },
-            addTimeWindowStyles() {
-                for (var row = 1; row < this.rooms.length; row++) {
-                    for (var timeWindowIndex = 1; timeWindowIndex <= 156; timeWindowIndex++) {
-                        if (timeWindowIndex%3 == 0)
-                            document.getElementById('timeWindow'+row+':'+timeWindowIndex).style.borderRight = '1px black solid';
+                    if (document.getElementById('booking'+this.bookings[bookingIndex].id) != null) {
+                        var top = document.getElementById('timeWindow'+row+':'+startTimeWindow).style.top;
+                        var left = document.getElementById('timeWindow'+row+':'+startTimeWindow).style.left;
+                        var numberOfTimeSlots = endTimeWindow - startTimeWindow + 1;
+                        
+                        document.getElementById('booking'+this.bookings[bookingIndex].id).style.top = parseInt(top) + 'px';
+                        document.getElementById('booking'+this.bookings[bookingIndex].id).style.left = parseInt(left) + 'px';
+                        document.getElementById('booking'+this.bookings[bookingIndex].id).style.width = 
+                        this.timeWindowWidth * numberOfTimeSlots + 'px';
+                        document.getElementById('booking'+this.bookings[bookingIndex].id).style.height = this.timeWindowHeight + 'px';
 
-                        if (document.getElementById('timeWindow'+row+':'+timeWindowIndex).getAttribute('data-booked') == '0') {
-                            document.getElementById('timeWindow'+row+':'+timeWindowIndex).style.backgroundColor = 'white';
-                        }
-                        else if (document.getElementById('timeWindow'+row+':'+timeWindowIndex).getAttribute('data-booked') != '0') {
-                            document.getElementById('timeWindow'+row+':'+timeWindowIndex).style.borderRight = '0px black solid';
-                            document.getElementById('timeWindow'+row+':'+timeWindowIndex).style.backgroundColor = 'red';
-                        }
+                        document.getElementById('booking'+this.bookings[bookingIndex].id).style.backgroundColor = this.bookings[bookingIndex].bookingColor;
+
+                        document.getElementById('booking'+this.bookings[bookingIndex].id).setAttribute('data-booked', JSON.stringify(this.bookings[bookingIndex]));
                     }
                 }
             },
@@ -238,16 +252,8 @@
                 this.$refs.BookingModal.openModal(this.date, input, this.rooms[input[0]].name);
             },
 
-            timeWindowHover(id) {
-                if (document.getElementById(id).getAttribute('data-booked') == '0')
-                    document.getElementById(id).style.backgroundColor = 'silver';
-                else {
-                    console.log(JSON.parse(document.getElementById(id).getAttribute('data-booked')));
-                }
-            },
-            timeWindowUnhover(id) {
-                if (document.getElementById(id).getAttribute('data-booked') == '0')
-                    document.getElementById(id).style.backgroundColor = 'white';
+            bookingHover(id) {
+                console.log(JSON.parse(document.getElementById(id).getAttribute('data-booked')));
             },
 
             decDate: function() {
@@ -264,11 +270,14 @@
             //Create Calendar
             this.initCalendar();
             window.addEventListener('resize', this.resizeCalendar);
-            this.interval = setInterval(this.checkBookings, 5000);
+            //Booking loop
+            this.checkInterval = setInterval(this.checkBookings, 5000);
+            this.renderInterval = setInterval(this.renderBookings, 1000);
         },
         destroyed() {
-            //Stop checking for bookings
-            clearInterval(this.interval);
+            //Stop checking and rendering for bookings
+            clearInterval(this.checkInterval);
+            clearInterval(this.renderInterval);
         }
     }
 

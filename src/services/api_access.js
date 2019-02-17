@@ -18,8 +18,7 @@ export function loginUser(email, password) {
     }).then(fetchedUser => user = fetchedUser);
 }
 export function checkUser() {
-    var email = null;
-    var password = null;
+    var email = null, password = null;
     if (user != null) {
         email = user.email;
         password = user.password;
@@ -38,8 +37,7 @@ export function setUser(newUser) {
 }
 
 export function updateProfile(newEmail, newPassword, firstName, lastName, occupation, description) {
-    var oldEmail = null;
-    var oldPassword = null;
+    var oldEmail = null, oldPassword = null;
     if (user != null) {
         oldEmail = user.email;
         oldPassword = user.password;
@@ -50,11 +48,8 @@ export function updateProfile(newEmail, newPassword, firstName, lastName, occupa
 }
 
 //Booking Methods
-export function insertBooking(title, description, locationID, date, startTime, endTime) {
-    var email = null;
-    var password = null;
-    var firstName = null;
-    var lastName = null
+export function insertBooking(date, locationID, title, description, startTime, endTime, bookingColor, noiseLevel) {
+    var email = null, password = null, firstName = null, lastName = null;
     if (user != null) {
         email = user.email;
         password = user.password;
@@ -62,7 +57,7 @@ export function insertBooking(title, description, locationID, date, startTime, e
         lastName = user.lastName
     }
     return myFetch(api_root + "/app/insertBooking", {
-        email, password, firstName, lastName, title, description, locationID, date, startTime, endTime
+        email, password, firstName, lastName, date, locationID, title, description, startTime, endTime, bookingColor, noiseLevel
     });
 }
 export function getBookings() {
