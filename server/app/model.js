@@ -241,18 +241,17 @@ class Model {
             }
         });    
     }
-    getBookings(call_back) {
+    getBookings(date, call_back) {
         // eslint-disable-next-line
-        //console.log("#################getBooking()#################");
+        console.log("#################getBooking()#################");
 
         //Connect to database
         var conn = this.getConnection();
 
         //Get booking
-        //conn.query('SELECT * FROM booking WHERE date = ' + mysql.escape(date), (err, result) => {
-        conn.query('SELECT * FROM booking', (err, result) => {
+        conn.query('SELECT * FROM booking WHERE date = ' + mysql.escape(date), (err, result) => {
             if (err) throw err;
-            //console.log(result.length + " Bookings found");
+            console.log(result.length + " Bookings found");
             call_back(result);
         });
 

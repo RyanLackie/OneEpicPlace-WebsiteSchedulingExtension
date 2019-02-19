@@ -45,7 +45,7 @@ app.post('/insertBooking', (req, res) => {
 })
 app.post('/getBookings', (req, res) => {
     model.getBookings(
-        //req.body.date, 
+        req.body.date, 
         bookingResult => res.send(bookingResult)
     );
 })

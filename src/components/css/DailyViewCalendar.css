@@ -1,0 +1,71 @@
+.DailyViewCalendar .calendar {
+    position: relative;
+    width: 97%;
+    margin: 0px auto;
+}
+
+.DailyViewCalendar .calendar .timeSlot {
+    position: absolute;
+    top: 0;
+    display: table;
+    background-color: lightgray;
+    text-align: center;
+    border-left: 1px black solid;
+    border-bottom: 1px black solid;
+}
+.DailyViewCalendar .calendar .timeSlot .text {
+    display: table-cell;
+    vertical-align: middle;
+    font-size: 1.4vw;
+    font-weight: bold;
+}
+
+.DailyViewCalendar .calendar .room {
+    position: absolute;
+    left: 0;
+    display: table;
+    overflow: hidden;
+    text-align: center;
+    border-right: 1px black solid;
+    border-bottom: 1px black solid;
+}
+.DailyViewCalendar .calendar .room .text {
+    display: table-cell;
+    vertical-align: middle;
+    font-size: 1.4vw;
+    font-weight: bold;
+    color: white;
+}
+
+.DailyViewCalendar .calendar .timeWindow {
+    position: absolute;
+    background-color: white;
+    border-bottom: 1px black solid;
+}
+.DailyViewCalendar .calendar .timeWindow:hover {
+    background-color: lightgray;
+}
+
+.DailyViewCalendar .calendar .booking {
+    position: absolute;
+    width: 0px;
+    background-color: red;  /* Default color if error occurs */
+    overflow: hidden;
+}
+.DailyViewCalendar .calendar .booking .titleText {
+    position: absolute;
+    top: 0;
+    padding: 1px 0px 0px 5px;
+    font-size: 15px;
+    font-weight: bold;
+    color: black;
+    white-space: nowrap;
+}
+.DailyViewCalendar .calendar .booking .byText {
+    position: absolute;
+    bottom: 0;
+    padding: 0px 0px 0px 5px;
+    font-size: 15px;
+    color: black;
+    white-space: nowrap;
+}

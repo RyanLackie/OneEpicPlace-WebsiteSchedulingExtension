@@ -149,7 +149,7 @@
                 document.getElementById('modalTitle').innerHTML = this.bookingSelected.name;
 
                 //Start Time
-                var hour = parseInt(((input[1]-1) / 12), 10) + 9;
+                var hour = parseInt(((input[1]-1) / 12), 10) + 7;   //7 refers to the earliest window of time availible
                 if (hour < 10)
                     hour = '0'+hour;
                 var min = (input[1]-1) % 12 * 5;
