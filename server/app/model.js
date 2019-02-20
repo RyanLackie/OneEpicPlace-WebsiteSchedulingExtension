@@ -215,29 +215,104 @@ class Model {
     /*////////////////////////////////////////////////////////////////////////////////////////////////////////
     /////////////////////////////////           Booking Methods          /////////////////////////////////////
     */////////////////////////////////////////////////////////////////////////////////////////////////////////
-    insertBooking(email, password, firstName, lastName, date, locationID, title, description, startTime, endTime, bookingColor, noiseLevel, call_back) {
+    insertBooking(email, password, firstName, lastName, date, locationID, locationType, title, description, startTime, endTime, bookingColor, noiseLevel, call_back) {
         // eslint-disable-next-line
         console.log("#################insertBooking()#################");
 
         //Check if user is valid
         this.checkUser(email, password, userCheck => {
-            if (userCheck == 'true') {
-                //Handle checking for booking overlaps
+            if (userCheck != 'true')
+                call_back('403');
+            else {
+                //Booking time must be between 7AM and 10PM and endTime must be larger than startTime
+                var insertStartTime = new Date();
+                insertStartTime.setHours(parseInt(startTime.split(":")[0]));
+                insertStartTime.setMinutes(parseInt(startTime.split(":")[1]));
+                insertStartTime.setSeconds(0);
 
-                //Connect to database
-                var conn = this.getConnection();
+                var insertEndTime = new Date();
+                insertEndTime.setHours(parseInt(endTime.split(":")[0]));
+                insertEndTime.setMinutes(parseInt(endTime.split(":")[1]));
+                insertEndTime.setSeconds(0);
 
-                //Insert booking
-                var sql = "INSERT INTO booking (email, firstName, lastName, date, locationID, title, description, startTime, endTime, bookingColor, noiseLevel) VALUES ('"+email+"' ,'"+firstName+"', '"+lastName+"', '"+date+"', '"+locationID+"', '"+title+"', '"+description+"', '"+startTime+"', '"+endTime+"', '"+bookingColor+"', '"+noiseLevel+"')";
-                conn.query(sql, function(err, result) {
-                    if (err) throw err;
-                    // eslint-disable-next-line
-                    console.log("Booking " + result.insertId + " inserted: " + locationID + " at " + startTime + " to " + endTime);
-                    
-                    call_back(true);
-                });
+                var minTime = new Date();
+                minTime.setHours(7);
+                minTime.setMinutes(0);
+                minTime.setMinutes(0);
+                minTime.setSeconds(0);
 
-                conn.end();
+                var maxTime = new Date();
+                maxTime.setHours(22);
+                maxTime.setMinutes(0);
+                maxTime.setMinutes(0);
+                maxTime.setSeconds(0);
+
+                //Booking time must be between 7AM and 10PM
+                console.log(insertStartTime<minTime);
+                console.log(insertEndTime > maxTime);
+                if (insertStartTime < minTime || insertEndTime > maxTime)
+                    call_back('404');
+                else {
+                    //endTime must be larger than startTime
+                    if (insertStartTime > insertEndTime)
+                        call_back('405')
+                    else {
+                        //Booking time not in a multiple of 5
+                        if (parseInt(startTime.split(":")[1]) % 5 != 0 || parseInt(endTime.split(":")[1]) % 5 != 0)
+                            call_back('406')
+                        else {
+                            //Connect to database
+                            var conn = this.getConnection();
+                            //Booking overlap
+                            conn.query('SELECT * FROM booking WHERE date = ' + mysql.escape(date), (err, result) => {
+                                if (err) throw err;
+
+                                for (var index1 = 0; index1 < result.length; index1++) {
+                                    if (result[index1].locationID != locationID)
+                                        result.splice(index1, 1);
+                                }
+                                
+                                var pass = true;
+                                for (var index2 = 0; index2 < result.length; index2++) {
+                                    var checkStartTime = new Date();
+                                    checkStartTime.setHours(result[index2].startTime.split(":")[0]);
+                                    checkStartTime.setMinutes(result[index2].startTime.split(":")[1]);
+                                    checkStartTime.setSeconds(0);
+
+                                    var checkEndTime = new Date();
+                                    checkEndTime.setHours(result[index2].endTime.split(":")[0]);
+                                    checkEndTime.setMinutes(result[index2].endTime.split(":")[1]);
+                                    checkEndTime.setSeconds(0);
+                                    
+                                    var checkOne = insertStartTime > checkStartTime && insertStartTime < checkEndTime;
+                                    var checkTwo = insertEndTime > checkStartTime && insertEndTime < checkEndTime;
+                                    var checkThree = checkStartTime > insertStartTime && checkEndTime < insertStartTime;
+                                    var checkFour = checkStartTime > insertEndTime && checkEndTime < insertEndTime;
+                                    console.log(checkStartTime + " > " + insertStartTime + " && " + checkEndTime + " < " + insertStartTime);
+                                    console.log(checkOne + " + " + checkTwo + " + " + checkThree + " + " + checkFour);
+                                    if (checkOne || checkTwo || checkThree || checkFour)
+                                        pass = false;
+                                }
+                                if (!pass) {
+                                    call_back('407');
+                                    conn.end();
+                                }
+                                else {
+                                    //Insert booking
+                                    var sql = "INSERT INTO booking (email, firstName, lastName, date, locationID, locationType, title, description, startTime, endTime, bookingColor, noiseLevel) VALUES ('"+email+"' ,'"+firstName+"', '"+lastName+"', '"+date+"', '"+locationID+"', '"+locationType+"', '"+title+"', '"+description+"', '"+startTime+"', '"+endTime+"', '"+bookingColor+"', '"+noiseLevel+"')";
+                                    conn.query(sql, function(err, result) {
+                                        if (err) throw err;
+                                        // eslint-disable-next-line
+                                        console.log("Booking " + result.insertId + " inserted: " + locationID + " at " + startTime + " to " + endTime);
+                                        
+                                        call_back(true);
+                                    });
+                                    conn.end();
+                                }
+                            });
+                        }
+                    }
+                }
             }
         });    
     }

@@ -15,22 +15,22 @@
                 <input type="text" id="title" class="form-control" placeholder="Title of your booking..." required autofocus>
             </div>
 
-            <div class="inputLg">
+            <div class="inputLg" v-if="this.bookingSelected.locationType == 'room'">
                 <label for="description" class="sectionLabel">Description</label>
                 <textarea type="text" id="description" class="form-control" placeholder="Describe your booking..."></textarea>
             </div>
 
             <div class="inputSmLeft">
                 <label for="startTime" class="sectionLabel">Start Time</label>
-                <input type="time" min="9:00" max="21:00" step="300" id="startTime" class="form-control" placeholder="" required>
+                <input type="time" min="7:00" max="22:00" step="300" id="startTime" class="form-control" placeholder="" required>
             </div>
             
             <div class="inputSmRight">
                 <label for="endTime" class="sectionLabel">End Time</label>
-                <input type="time" min="9:00" max="21:00" step="300" id="endTime" class="form-control" placeholder="" required>
+                <input type="time" min="7:00" max="22:00" step="300" id="endTime" class="form-control" placeholder="" required>
             </div>
 
-            <div class="colorSelectorContainer">
+            <div class="colorSelectorContainer" id="colorSelectorContainer">
                 <div class="colorLabel">Color</div>
                 
                 <div class="colorRow">
@@ -49,7 +49,7 @@
                 <div class="selectedColor" id='selectedColor' :style="{background: selectedColor}" @click="selectColor()"></div>
             </div>
             
-            <div class="sliderContainer">
+            <div class="sliderContainer" v-if="this.bookingSelected.locationType == 'room'">
                 <div class="noiseLabel">Noise Level</div>
                 <div class="value" id="noiseValue">Quite</div>
                 <input type="range" min="1" max="3" value="1" class="slider" id="noiseSlider" @change="getRangeValue()">
@@ -75,7 +75,7 @@
         data() {
             return {
                 //bookingSelected include: id, name
-                bookingSelected: {date: null, id: null, name: null},
+                bookingSelected: {date: null, id: null, name: null, locationType: null},
 
                 //Color options
                 selectedColor: 'blue'
@@ -84,28 +84,41 @@
 
         methods: {
             submitBooking(event) {
-                var date = this.bookingSelected.date.getMonth()+1+'/'+
-                            this.bookingSelected.date.getDate()+'/'+
-                            this.bookingSelected.date.getFullYear();
+                var date = this.bookingSelected.date.getMonth()+1+'/'+this.bookingSelected.date.getDate()+'/'+this.bookingSelected.date.getFullYear();
                 var locationID = this.bookingSelected.id;
+                var locationType = this.bookingSelected.locationType;
                 var title = document.getElementById('title').value;
-                var description = document.getElementById('description').value;               
+                   
+                var description = null;
+                if (this.bookingSelected.locationType == 'room')
+                    description = document.getElementById('description').value
+
                 var startTime = document.getElementById('startTime').value;
                 var endTime = document.getElementById('endTime').value;
                 var bookingColor = this.selectedColor;
-                var noiseLevel = document.getElementById('noiseSlider').value;
 
-                api.insertBooking(date, locationID, title, description, startTime, endTime, bookingColor, noiseLevel).then(bookingResult => {
-                    console.log(bookingResult);
+                var noiseLevel = 0;
+                if (this.bookingSelected.locationType == 'room')
+                    noiseLevel = document.getElementById('noiseSlider').value;
 
-                    //Booking overlap
-
-                    //Booking too short
-
+                api.insertBooking(date, locationID, locationType, title, description, startTime, endTime, bookingColor, noiseLevel).then(bookingResult => {
+                    //Not logged in
+                    if (bookingResult == '403') 
+                        alert('You are not logged in');
                     //Booking time not in a multiple of 5
-
+                    else if (bookingResult == '404') 
+                        alert('Booking time must be within the time range (watch out for AM PM)');
+                    //Not logged in
+                    if (bookingResult == '405') 
+                        alert('Start Time must be before End Time');
+                    //Booking time not in a multiple of 5
+                    if (bookingResult == '406') 
+                        alert('Time is not within a 5min interval');
+                    //Booking overlap
+                    if (bookingResult == '407') 
+                        alert('Time Overlap');
                     //Successful booking
-                    if (bookingResult) {
+                    if (bookingResult == true) {
                         this.closeModal();
                         this.$parent.checkBookings();
                     }
@@ -140,10 +153,11 @@
                     document.getElementById('noiseValue').innerHTML = 'Very Loud';
             },
 
-            openModal(date, input, bookingName) {
+            openModal(date, input, bookingName, locationType) {
                 this.bookingSelected.date = date;
                 this.bookingSelected.id = input[0];
                 this.bookingSelected.name = bookingName;
+                this.bookingSelected.locationType = locationType;
 
                 //Modal Title
                 document.getElementById('modalTitle').innerHTML = this.bookingSelected.name;
@@ -169,6 +183,11 @@
                 else
                     min += 5
                 document.getElementById('endTime').value = hour + ":" + min;
+
+                if (this.bookingSelected.locationType == 'desk') {
+                    document.getElementById('colorSelectorContainer').style.width = 100+'%';
+                    document.getElementById('colorSelectorContainer').style.margin = '0px auto';
+                }
 
                 document.getElementById("BookingModal").style.opacity = "1.0";
                 document.getElementById("BookingModal").style.visibility = "visible";

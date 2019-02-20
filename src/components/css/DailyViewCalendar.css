@@ -1,10 +1,63 @@
+/*
+    Date Selector 
+*/
+.DailyViewCalendar .dateSelector {
+    width: 100%;
+    margin: 0px auto;
+    text-align: center;
+    margin-bottom: 30px;
+}
+.DailyViewCalendar .dateSelector .backBtn {
+    width: 70px;
+    height: 40px;
+    margin: -15px 2% 0px 0px;
+    background-color: black;
+    background-image: url("../../assets/backarrow-white.png");
+    background-size: 50%;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+.DailyViewCalendar .dateSelector .date {
+    min-width: 200px;
+    width: 10%;
+    height: 40px;
+    text-align: center;
+    background: transparent;
+    border: 0;
+    border-radius: 3px;
+    font-size: 30px;
+}
+.DailyViewCalendar .dateSelector .calendarBtn {
+    width: 50px;
+    height: 40px;
+    margin-top: -15px;
+    background-color: lightgray;
+    background-image: url("../../assets/calendar-white.png");
+    background-size: 60%;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+.DailyViewCalendar .dateSelector .forwardBtn {
+    width: 70px;
+    height: 40px;
+    margin: -15px 0px 0px 4%;
+    background-color: black;
+    background-image: url("../../assets/forwardarrow-white.png");
+    background-size: 50%;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+/*
+    Calendar
+*/
 .DailyViewCalendar .calendar {
     position: relative;
     width: 97%;
     margin: 0px auto;
 }
 
-.DailyViewCalendar .calendar .timeSlot {
+.DailyViewCalendar .calendar .hour {
     position: absolute;
     top: 0;
     display: table;
@@ -13,7 +66,7 @@
     border-left: 1px black solid;
     border-bottom: 1px black solid;
 }
-.DailyViewCalendar .calendar .timeSlot .text {
+.DailyViewCalendar .calendar .hour .text {
     display: table-cell;
     vertical-align: middle;
     font-size: 1.4vw;
@@ -32,7 +85,7 @@
 .DailyViewCalendar .calendar .room .text {
     display: table-cell;
     vertical-align: middle;
-    font-size: 1.4vw;
+    font-size: 1.3vw;
     font-weight: bold;
     color: white;
 }
@@ -66,6 +119,17 @@
     bottom: 0;
     padding: 0px 0px 0px 5px;
     font-size: 15px;
+    color: black;
+    white-space: nowrap;
+}
+
+.DailyViewCalendar .calendar .booking .deskText {
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+    padding-left: 5px;
+    font-size: 15px;
+    font-weight: bold;
     color: black;
     white-space: nowrap;
 }

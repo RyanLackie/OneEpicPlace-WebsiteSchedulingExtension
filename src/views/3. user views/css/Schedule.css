@@ -10,59 +10,11 @@
     margin-bottom: 40px;
 }
 .Schedule .viewText {
+    margin: 0px 4%;
     font-size: 20px;
+    color: black;
+    text-decoration: none;
 }
-.Schedule .viewTextCenter {
-    margin: 0px 5%;
-    font-size: 20px;
-}
-
-/*
-    Date Selector 
-*/
-.Schedule .dateSelector {
-    width: 100%;
-    margin: 0px auto;
-    text-align: center;
-    margin-bottom: 30px;
-}
-.Schedule .dateSelector .backBtn {
-    width: 70px;
-    height: 40px;
-    margin: -15px 2% 0px 0px;
-    background-color: black;
-    background-image: url("../../../assets/backarrow-white.png");
-    background-size: 50%;
-    background-repeat: no-repeat;
-    background-position: center;
-}
-.Schedule .dateSelector .date {
-    min-width: 200px;
-    width: 10%;
-    height: 40px;
-    text-align: center;
-    background: transparent;
-    border: 0;
-    border-radius: 3px;
-    font-size: 30px;
-}
-.Schedule .dateSelector .calendarBtn {
-    width: 50px;
-    height: 40px;
-    margin-top: -15px;
-    background-color: lightgray;
-    background-image: url("../../../assets/calendar-white.png");
-    background-size: 60%;
-    background-repeat: no-repeat;
-    background-position: center;
-}
-.Schedule .dateSelector .forwardBtn {
-    width: 70px;
-    height: 40px;
-    margin: -15px 0px 0px 4%;
-    background-color: black;
-    background-image: url("../../../assets/forwardarrow-white.png");
-    background-size: 50%;
-    background-repeat: no-repeat;
-    background-position: center;
+.Schedule .viewText:hover {
+    color: gray;
 }

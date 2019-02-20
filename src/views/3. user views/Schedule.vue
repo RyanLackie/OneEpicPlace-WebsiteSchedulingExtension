@@ -3,21 +3,13 @@
 
         <!-- Calendar Navbar -->
         <div class="viewSelector">
-            <a class="viewText">Daily View</a>
-            <a class="viewTextCenter">Weekly View</a>
-            <a class="viewText">Monthly View</a>
-        </div>
-
-        <!-- Container for date selector -->
-        <div class="dateSelector">
-            <button id="dateSelectorPreviousBtn" class="btn backBtn" type="button" @click="decDate()"></button>
-            <input id="dateSelectorDate" class="date" :value="date.getMonth()+1+'/'+date.getDate()+'/'+date.getFullYear()" disabled>
-            <button id="dateSelectorCalendar" class="btn calendarBtn" type="button"></button>
-            <button id="dateSelectorPreviousBtn" class="btn forwardBtn" type="button" @click="incDate()"></button>
+            <a class="viewText" href="JavaScript:void(0)" @click="changeView(0)">Daily View</a>
+            <a class="viewText" href="JavaScript:void(0)" @click="changeView(1)">Weekly View</a>
+            <a class="viewText" href="JavaScript:void(0)" @click="changeView(2)">Monthly View</a>
         </div>
 
         <!-- Daily View Calendar -->
-        <DailyViewCalendar ref="DailyViewCalendar"></DailyViewCalendar>
+        <DailyViewCalendar ref="DailyViewCalendar" v-if="viewSelected == 0"></DailyViewCalendar>
 
     </div>
 </template>
@@ -39,27 +31,14 @@
 
         data() {
             return {
-                //date for calender
-                date: new Date(),
+                viewSelected: 0
             }
         },
 
         methods: {
-            decDate: function() {
-                this.date = new Date(this.date.setDate(this.date.getDate() - 1));
-                this.checkBookings();
-            },
-            incDate: function() {
-                this.date = new Date(this.date.setDate(this.date.getDate() + 1));
-                this.checkBookings();
+            changeView(input) {
+                this.viewSelected = input;
             }
-        },
-        
-        mounted() {
-            
-        },
-        destroyed() {
-            
         }
     }
 
