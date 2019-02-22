@@ -22,6 +22,7 @@
     padding: 0px 20px;
     opacity: 0;
     visibility: hidden;
+    z-index: 2;
 }
 .BookingModal .modal-header {
     margin-bottom: 10px;

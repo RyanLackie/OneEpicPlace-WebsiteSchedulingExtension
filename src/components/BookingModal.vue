@@ -10,7 +10,7 @@
 
         <form id="bookingForm">
                 
-            <div class="inputLg">
+            <div class="inputLg" v-if="this.bookingSelected.locationType == 'room'">
                 <label for="title" class="sectionLabel">Title</label>
                 <input type="text" id="title" class="form-control" placeholder="Title of your booking..." required autofocus>
             </div>
@@ -86,8 +86,10 @@
             submitBooking(event) {
                 var date = this.bookingSelected.date.getMonth()+1+'/'+this.bookingSelected.date.getDate()+'/'+this.bookingSelected.date.getFullYear();
                 var locationID = this.bookingSelected.id;
-                var locationType = this.bookingSelected.locationType;
-                var title = document.getElementById('title').value;
+
+                var title = null;
+                if (this.bookingSelected.locationType == 'room')
+                    description = document.getElementById('title').value
                    
                 var description = null;
                 if (this.bookingSelected.locationType == 'room')
@@ -101,7 +103,7 @@
                 if (this.bookingSelected.locationType == 'room')
                     noiseLevel = document.getElementById('noiseSlider').value;
 
-                api.insertBooking(date, locationID, locationType, title, description, startTime, endTime, bookingColor, noiseLevel).then(bookingResult => {
+                api.insertBooking(date, locationID, title, description, startTime, endTime, bookingColor, noiseLevel).then(bookingResult => {
                     //Not logged in
                     if (bookingResult == '403') 
                         alert('You are not logged in');
@@ -113,7 +115,7 @@
                         alert('Start Time must be before End Time');
                     //Booking time not in a multiple of 5
                     if (bookingResult == '406') 
-                        alert('Time is not within a 5min interval');
+                        alert('Time is not within a 5 min interval');
                     //Booking overlap
                     if (bookingResult == '407') 
                         alert('Time Overlap');
@@ -131,15 +133,15 @@
             selectColor(input) {
                 if (input == null) {
                     document.getElementById('selectedColor').style.visibility = 'hidden';
-                    for (var index = 0; index < 8; index++) {
-                        document.getElementById('colorOption'+index).style.visibility = 'visible';
+                    for (var index1 = 0; index1 < 8; index1++) {
+                        document.getElementById('colorOption'+index1).style.visibility = 'visible';
                     }
                 }
                 else {
                     this.selectedColor = input;
                     document.getElementById('selectedColor').style.visibility = 'visible';
-                    for (var index = 0; index < 8; index++) {
-                        document.getElementById('colorOption'+index).style.visibility = 'hidden';
+                    for (var index2 = 0; index2 < 8; index2++) {
+                        document.getElementById('colorOption'+index2).style.visibility = 'hidden';
                     }
                 }
             },
@@ -163,26 +165,30 @@
                 document.getElementById('modalTitle').innerHTML = this.bookingSelected.name;
 
                 //Start Time
-                var hour = parseInt(((input[1]-1) / 12), 10) + 7;   //7 refers to the earliest window of time availible
-                if (hour < 10)
-                    hour = '0'+hour;
-                var min = (input[1]-1) % 12 * 5;
-                if (min < 10)
-                    min = '0'+min;
-                document.getElementById('startTime').value = hour + ":" + min;
+                var startHour = parseInt(((input[1]-1) / 12), 10) + 7;   //7 refers to the earliest window of time availible
+                var startMin = (input[1]-1) % 12 * 5;
 
                 //End Time
-                if (min == 55) {
-                    hour += 1;
-                    min = '00';
+                var endHour = startHour;
+                var endMin = startMin;
+                if (startMin == 55) {
+                    endHour += 1;
+                    endMin = 0;
                 }
-                else if (min == '00')
-                    min = '05';
-                else if (min == '05')
-                    min = 10;
                 else
-                    min += 5
-                document.getElementById('endTime').value = hour + ":" + min;
+                    endMin += 5;
+
+                if (startHour < 10)
+                    startHour = '0'+startHour;
+                if (startMin < 10)
+                    startMin = '0'+startMin;
+                if (endHour < 10)
+                    endHour = '0'+endHour;
+                if (endMin < 10)
+                    endMin = '0'+endMin;
+
+                document.getElementById('startTime').value = startHour + ":" + startMin;
+                document.getElementById('endTime').value = endHour + ":" + endMin;
 
                 if (this.bookingSelected.locationType == 'desk') {
                     document.getElementById('colorSelectorContainer').style.width = 100+'%';

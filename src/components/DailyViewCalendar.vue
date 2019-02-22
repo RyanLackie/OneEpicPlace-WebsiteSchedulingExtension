@@ -1,5 +1,6 @@
 <template>
     <div class="DailyViewCalendar"> 
+
         <!-- Container for date selector -->
         <div class="dateSelector">
             <button id="dateSelectorPreviousBtn" class="btn backBtn" type="button" @click="decDate()"></button>
@@ -8,34 +9,49 @@
             <button id="dateSelectorPreviousBtn" class="btn forwardBtn" type="button" @click="incDate()"></button>
         </div>
 
-        <div class="calendar" id='calendar'>
-            <!-- Time Slots -->
-            <!-- Rename to hours -->
-            <div class="hour" v-for="hour in this.hours" :key="'hour'+hour.id" :id="'hour'+hour.id">
-                <div class="text">{{hour.time}}</div>
-            </div>
+        <!-- Calendar -->
+        <div class="calendar">
 
             <!-- Rooms -->
-            <div class="room" v-for="room in this.rooms" :key="'room'+room.id" :id="'room'+room.id" :style="{backgroundColor: room.style}">
-                <div class="text">{{room.name}}</div>
+            <div class="roomCol">
+                <div class="roomContainer" v-for="room in rooms" :key="'room'+room.id" :id="'room'+room.id" :style='styleDeskItem(room)'>
+                    <div class="room">
+                        <div class="text">{{room.name}}</div>
+                    </div>
+                </div>
             </div>
 
-            <!-- Time Windows -->
-            <div v-for="row in this.rooms.length" :key="'timeWindowRow'+row">
-                <!-- 180 is this.hours.length * 12 (this can not be accessed by a div inside a div) -->
-                <div class="timeWindow" v-for="index in 180"
-                :key="'timeWindow'+index" :id="'timeWindow'+row+':'+index" 
-                @click="timeWindowClicked('timeWindow'+row+':'+index)"
-                ></div>
-            </div>
-
-            <!-- Bookings -->
-            <div class="booking" v-for="booking in this.bookings" :key="'booking'+booking.id" :id="'booking'+booking.id" 
-            @mouseover="bookingHover('booking'+booking.id)" data-booked='0'>
-                <div v-if="booking.locationType == 'room'" class="titleText">{{booking.title}}</div>
-                <div v-if="booking.locationType == 'room'" class="byText">{{"By: " + booking.firstName + " " + booking.lastName}}</div>
+            <!-- Inner Scrollable Section -->
+            <div class="innerSection" id='innerSection' @scroll="handelInnerSectionScroll()">
                 
-                <div v-if="booking.locationType == 'desk'" class="deskText">{{booking.firstName + " " + booking.lastName}}</div>
+                <!-- Hours -->
+                <div class="topRow">
+                    <div class="hourContainer" v-for="hour in hours" :key="'hour'+hour.id" :id="'hour'+hour.id">
+                        <div class="hour">
+                            <div class="text">{{hour.time}}</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="calendarRow"></div> <!-- used to hold the spot for the hours row -->
+
+                <!-- Time Slots -->
+                <div class="calendarRow" v-for="room in rooms.slice(1, rooms.length)" :key="'room'+room.id" :id="'room'+room.id" :style='styleDeskItem(room)'>
+                    <!-- Booking Blocks -->
+                    <div class="booking" v-for="booking in bookings" :key="'booking'+booking.id" :id="'booking'+booking.id" :style='styleBooking(room.id, booking)'>
+                        <div v-if="room.type == 'room'" class="title">{{booking.title}}</div>
+                        <div v-if="room.type == 'room'" class="name">{{booking.firstName + " " + booking.lastName}}</div>
+                        <div v-if="room.type == 'desk'" class="centerText">{{booking.firstName + " " + booking.lastName}}</div>
+                    </div>
+                    <!-- Time Slots -->
+                    <div class="timeChunk" v-for="hour in hours" :key="'timeChunk'+hour.id" :id="'timeChunk'+hour.id">
+                        <div
+                            class="timeSlot" v-for="index in 12" :key="'timeSlot'+room.id+':'+(hour.id*12+index)" 
+                            :id="'timeSlot'+room.id+':'+(hour.id*12+index)" :style='styleTimeSlot((hour.id*12+index))'
+                            @click="timeSlotClicked('timeSlot'+room.id+':'+(hour.id*12+index))">
+                        </div>
+                    </div>
+                </div>
+
             </div>
 
         </div>
@@ -54,7 +70,6 @@
     import * as api from '@/services/api_access';
 
     import BookingModal from '@/components/BookingModal.vue';
-    
 
     export default {
         components: {
@@ -63,10 +78,42 @@
 
         data() {
             return {
-                //date for calender
+                //Date for calender
                 date: new Date(),
 
-                //hour include: id, location[x,y], time
+                //rooms include: id, name, type, style
+                rooms: [
+                    {id: 0, name: '',                               type: 'room', style: ''},
+                    {id: 1, name: 'DaVinci Room',                   type: 'room', style: ''},
+                    {id: 2, name: 'Green Room',                     type: 'room', style: ''},
+                    {id: 3, name: 'Sunshine Room',                  type: 'room', style: ''},
+                    {id: 4, name: 'Zen Room',                       type: 'room', style: ''},
+                    {id: 5, name: 'Studio',                         type: 'room', style: ''},
+                    {id: 6, name: 'EPIC Room',                      type: 'room', style: ''},
+                    {id: 7, name: 'Carriage House Treatment Room',  type: 'room', style: ''},
+                    {id: 8, name: 'Buissness Hub',                  type: 'room', style: ''},
+                    {id: 9, name: 'Loft',                           type: 'room', style: ''},
+                    {id: 10, name: 'Porch',                         type: 'room', style: ''},
+                    {id: 11, name: 'Lawn',                          type: 'room', style: ''},
+
+                    {id: 12, name: 'Hot Desk', type: 'desk', style: ''},
+                    {id: 13, name: 'Hot Desk', type: 'desk', style: ''},
+                    {id: 14, name: 'Hot Desk', type: 'desk', style: ''},
+                    {id: 15, name: 'Hot Desk', type: 'desk', style: ''},
+                    {id: 16, name: 'Hot Desk', type: 'desk', style: ''},
+                    {id: 17, name: 'Hot Desk', type: 'desk', style: ''},
+                    {id: 18, name: 'Hot Desk', type: 'desk', style: ''},
+                    {id: 19, name: 'Hot Desk', type: 'desk', style: ''},
+                    {id: 20, name: 'Hot Desk', type: 'desk', style: ''},
+                    {id: 21, name: 'Hot Desk', type: 'desk', style: ''},
+                    {id: 22, name: 'Hot Desk', type: 'desk', style: ''},
+                    {id: 23, name: 'Hot Desk', type: 'desk', style: ''},
+                    {id: 24, name: 'Hot Desk', type: 'desk', style: ''},
+                    {id: 25, name: 'Hot Desk', type: 'desk', style: ''},
+                    {id: 26, name: 'Hot Desk', type: 'desk', style: ''},
+                ],
+
+                //hour include: id, time
                 hours: [
                     {id: 0, time: '7AM'},
                     {id: 1, time: '8AM'},
@@ -84,206 +131,100 @@
                     {id: 13, time: '8PM'},
                     {id: 14, time: '9PM'},
                 ],
-                hourWidth: 0,
-                hourHeight: 60,
 
-                //rooms include: id, name, type, style
-                rooms: [
-                    {id: 0, name: '',                               type: 'room', style: 'black'},
-                    {id: 1, name: 'DaVinci Room',                   type: 'room', style: 'silver'},
-                    {id: 2, name: 'Green Room',                     type: 'room', style: 'gray'},
-                    {id: 3, name: 'Sunshine Room',                  type: 'room', style: 'silver'},
-                    {id: 4, name: 'Zen Room',                       type: 'room', style: 'gray'},
-                    {id: 5, name: 'Studio',                         type: 'room', style: 'silver'},
-                    {id: 6, name: 'EPIC Room',                      type: 'room', style: 'gray'},
-                    {id: 7, name: 'Carriage House Treatment Room',  type: 'room', style: 'silver'},
-                    {id: 8, name: 'Buissness Hub',                  type: 'room', style: 'gray'},
-                    {id: 9, name: 'Loft',                           type: 'room', style: 'silver'},
-                    {id: 10, name: 'Porch',                         type: 'room', style: 'gray'},
-                    {id: 11, name: 'Lawn',                          type: 'room', style: 'silver'},
-
-                    {id: 12, name: 'Hot Desk', type: 'desk', style: 'gray'},
-                    {id: 13, name: 'Hot Desk', type: 'desk', style: 'silver'},
-                    {id: 14, name: 'Hot Desk', type: 'desk', style: 'gray'},
-                    {id: 15, name: 'Hot Desk', type: 'desk', style: 'silver'},
-                    {id: 16, name: 'Hot Desk', type: 'desk', style: 'gray'},
-                    {id: 17, name: 'Hot Desk', type: 'desk', style: 'silver'},
-                    {id: 18, name: 'Hot Desk', type: 'desk', style: 'gray'},
-                    {id: 19, name: 'Hot Desk', type: 'desk', style: 'silver'},
-                    {id: 20, name: 'Hot Desk', type: 'desk', style: 'gray'},
-                    {id: 21, name: 'Hot Desk', type: 'desk', style: 'silver'},
-                    {id: 22, name: 'Hot Desk', type: 'desk', style: 'gray'},
-                    {id: 23, name: 'Hot Desk', type: 'desk', style: 'silver'},
-                    {id: 24, name: 'Hot Desk', type: 'desk', style: 'gray'},
-                    {id: 25, name: 'Hot Desk', type: 'desk', style: 'silver'},
-                    {id: 26, name: 'Hot Desk', type: 'desk', style: 'gray'},
-                ],
-                roomWidth: 0,
-                roomHeight: 60,
-
-                //Booking info
+                //List of returned bookings
                 bookings: [],
-                timeWindowWidth: 0,
-                timeWindowHeight: 60,
-                deskTimeWindowHeight: 30,
 
-                //Var name of the setInterval updater
+                //Interval to check the server for bookings
                 checkInterval: null,
-                renderInterval: null
+
+                //Listener for scrolling the inner section
+                scrollListener: null
             }
         },
 
         methods: {
+            /* Date Function */
             decDate: function() {
                 this.date = new Date(this.date.setDate(this.date.getDate() - 1));
+                this.bookings = [];
                 this.checkBookings();
             },
             incDate: function() {
                 this.date = new Date(this.date.setDate(this.date.getDate() + 1));
+                this.bookings = [];
                 this.checkBookings();
             },
 
-            initCalendar() {
-                //Size the calendar for the device
-                this.resizeCalendar();
-                //Check the schedule for booked rooms and render them
+            /* JavaScript Styling */
+            styleTimeSlot(timeSlot) {
+                if (timeSlot%3 == 0)
+                    return 'border-right: 1px black solid;'
+            },
+            styleDeskItem(room) {
+                if (room.type == 'room' && this.rooms[(room.id+1)].type == 'desk')
+                    return 'height: 60px; margin-bottom: 10px;'
+                else if (room.type == 'desk')
+                    return 'height: 30px;'
+            },
+            styleBooking(roomID, booking) {
+                if (booking.locationID == roomID) {
+                    var startTime = booking.startTime;
+                    var startTimeHour = parseInt(startTime.split(':')[0], 10);
+                    var startTimeMin = parseInt(startTime.split(':')[1], 10);
+                    var startTimeSlot = ((startTimeHour - this.hours[0].time.substring(0, this.hours[0].time.length - 2)) * 12) + (startTimeMin / 5) + 1;
+                    
+                    var endTime = booking.endTime;
+                    var endTimeHour = parseInt(endTime.split(':')[0], 10);
+                    var endTimeMin = parseInt(endTime.split(':')[1], 10);
+                    var endTimeSlot = ((endTimeHour - this.hours[0].time.substring(0, this.hours[0].time.length - 2)) * 12) + (endTimeMin / 5) + 1;
+
+                    /*  
+                    Left is tricky because getting the bounds is not relative to inside the row
+                    getting the left value of the first slot and subtractiing it from the used slot
+                    solves this problem
+                    */
+                    var left = document.getElementById('timeSlot'+roomID+':'+startTimeSlot).getBoundingClientRect().left - document.getElementById('timeSlot'+roomID+':'+1).getBoundingClientRect().left;
+                    var width = (endTimeSlot - startTimeSlot) * document.getElementById('timeSlot'+roomID+':'+startTimeSlot).getBoundingClientRect().width;
+
+                    var height = 60;
+                    if (this.rooms[roomID].type == 'desk')
+                        height = 30;
+
+                    return 'left:'+left+'px; width:'+width+'px; height:'+height+'px; background-color:'+booking.bookingColor+';'
+                }
+                return 'left: 0px; width: 0px; height: 0px; display: none'
+            },
+
+            /* Data Update */
+            startCheckBookingLoop() {
                 this.checkBookings();
+                this.checkInterval = setInterval(this.checkBookings, 5000);
             },
-            resizeCalendar() {
-                //Set the dimmentions of all objects
-                this.initSize();
-                //Render time slot squares in their locations
-                this.placeHours();
-                //Render room squares in their locations
-                this.placeRooms();
-                //Place the windows of time
-                this.placeTimeWindows();
-                //Place the bookings returned from the database
-                this.placeBookings();
-            },
-
-            initSize() {
-                this.roomWidth = document.getElementById('calendar').offsetWidth * 0.13;
-                this.hourWidth = (document.getElementById('calendar').offsetWidth - this.roomWidth) / this.hours.length;
-                this.timeWindowWidth = this.hourWidth / 12;
-            },
-
-            placeHours() {
-                for (var index = 0; index < this.hours.length; index++) {
-                    document.getElementById('hour'+index).style.left = this.roomWidth + this.hourWidth * index + 'px';
-                    document.getElementById('hour'+index).style.width = this.hourWidth + 'px';
-                    document.getElementById('hour'+index).style.height = this.hourHeight + 'px';
-                }
-            },
-
-            placeRooms() {
-                for (var index = 0; index < this.rooms.length; index++) {
-                    //Not hot Desk
-                    if (this.rooms[index].type == 'room') {
-                        document.getElementById('room'+index).style.top = this.roomHeight * index + 'px';
-                        document.getElementById('room'+index).style.height = this.roomHeight + 'px';
-                    }
-                    //Hot Desk
-                    else {
-                        document.getElementById('room'+index).style.top = this.roomHeight * 6 + this.deskTimeWindowHeight * index + 'px';
-                        document.getElementById('room'+index).style.height = this.deskTimeWindowHeight + 'px';
-                    }
-                    document.getElementById('room'+index).style.width = this.roomWidth + 'px';
-                }
-            },
-
-            placeTimeWindows() {
-                for (var row = 1; row < this.rooms.length; row++) {
-                    for (var index = 1; index <= this.hours.length*12; index++) {
-                        //1 squares per 5 min, 12 squares per 1 hour, 12 windows * 13 hours = 156
-                        //Not hot desk
-                        if (this.rooms[row].type == 'room') {                  
-                            document.getElementById('timeWindow'+row+':'+index).style.top = 
-                            this.hourHeight + this.roomHeight * (row-1) + 'px';
-                            document.getElementById('timeWindow'+row+':'+index).style.height = this.roomHeight + 'px';
-                        }
-                        //Hot desk
-                        else {
-                            document.getElementById('timeWindow'+row+':'+index).style.top = 
-                            this.roomHeight * 6 + this.deskTimeWindowHeight * row + 'px';
-                            document.getElementById('timeWindow'+row+':'+index).style.height = this.deskTimeWindowHeight + 'px';
-                        }
-
-                        var timeWindowsPerHour = 12;    //12 per hour for 5 miniute sized windows (12*5 = 60)
-                        document.getElementById('timeWindow'+row+':'+index).style.left = 
-                            this.roomWidth + (this.hourWidth / timeWindowsPerHour) * (index-1) + 'px';
-                        document.getElementById('timeWindow'+row+':'+index).style.width = this.timeWindowWidth + 'px';
-                        if (index%3 == 0)
-                            document.getElementById('timeWindow'+row+':'+index).style.borderRight = '1px black solid';
-                    }
-                }
-            },
-
             checkBookings() {
                 var checkDate = this.date.getMonth()+1+'/'+ this.date.getDate()+'/'+ this.date.getFullYear();
                 api.getBookings(checkDate).then(bookingResult => {
                     this.bookings = bookingResult;
-                })
-            },
-            placeBookings() {
-                for (var bookingIndex = 0; bookingIndex < this.bookings.length; bookingIndex++) {
-                    if (document.getElementById('booking'+this.bookings[bookingIndex].id) != null) {
-                        var startTime = this.bookings[bookingIndex].startTime;
-                        var startTimeHour = parseInt(startTime.split(':')[0], 10);
-                        var startTimeMin = parseInt(startTime.split(':')[1], 10);
-                        var startTimeWindow = ((startTimeHour - 7) * 12) + (startTimeMin / 5) + 1;  //7 refers to the earliest window of time availible
-
-                        var endTime = this.bookings[bookingIndex].endTime;
-                        var endTimeHour = parseInt(endTime.split(':')[0], 10);
-                        var endTimeMin = parseInt(endTime.split(':')[1], 10);
-                        var endTimeWindow = ((endTimeHour - 7) * 12) + (endTimeMin / 5);    //7 refers to the earliest window of time availible
-
-                        var top = document.getElementById('timeWindow'+this.bookings[bookingIndex].locationID+':'+startTimeWindow).style.top;
-                        var left = document.getElementById('timeWindow'+this.bookings[bookingIndex].locationID+':'+startTimeWindow).style.left;
-                        var numberOfTimeWindows = endTimeWindow - startTimeWindow + 1;
-                        
-                        document.getElementById('booking'+this.bookings[bookingIndex].id).style.top = parseInt(top) + 'px';
-                        document.getElementById('booking'+this.bookings[bookingIndex].id).style.left = parseInt(left) + 'px';
-                        document.getElementById('booking'+this.bookings[bookingIndex].id).style.width = 
-                        this.timeWindowWidth * numberOfTimeWindows + 'px';
-
-                        if (this.bookings[bookingIndex].locationType == 'room')
-                            document.getElementById('booking'+this.bookings[bookingIndex].id).style.height = this.timeWindowHeight + 'px';
-                        else if (this.bookings[bookingIndex].locationType == 'desk')
-                            document.getElementById('booking'+this.bookings[bookingIndex].id).style.height = this.deskTimeWindowHeight + 'px';
-
-                        document.getElementById('booking'+this.bookings[bookingIndex].id).style.backgroundColor = this.bookings[bookingIndex].bookingColor;
-
-                        document.getElementById('booking'+this.bookings[bookingIndex].id).setAttribute('data-booked', JSON.stringify(this.bookings[bookingIndex]));
-                    }
-                }
+                });
             },
 
-            timeWindowClicked(id) {
+            /* User Actions */
+            timeSlotClicked(id) {
                 //parse id
-                var input = id.slice(10);
+                var input = id.slice(8);
                 input = input.split(':');
                 this.$refs.BookingModal.openModal(this.date, input, this.rooms[input[0]].name, this.rooms[input[0]].type);
             },
-
-            bookingHover(id) {
-                console.log(JSON.parse(document.getElementById(id).getAttribute('data-booked')));
+            handelInnerSectionScroll() {
+                document.getElementById('innerSection').scrollTop = 0;
             }
         },
-        
+
         mounted() {
-            //Create Calendar
-            this.initCalendar();
-            window.addEventListener('resize', this.resizeCalendar);
-            //Booking loop
-            this.checkInterval = setInterval(this.checkBookings, 5000);
-            this.renderInterval = setInterval(this.placeBookings, 1000);
+            this.startCheckBookingLoop();
         },
-        destroyed() {
-            //Stop checking and rendering for bookings
+        beforeDestroy() {
             clearInterval(this.checkInterval);
-            clearInterval(this.renderInterval);
         }
     }
-
 </script>

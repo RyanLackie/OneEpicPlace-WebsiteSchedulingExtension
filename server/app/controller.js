@@ -38,9 +38,8 @@ app.post('/updateProfile', (req, res) => {
 app.post('/insertBooking', (req, res) => {
     model.insertBooking(
         req.body.email, req.body.password, req.body.firstName, req.body.lastName,
-        req.body.date, req.body.locationID, req.body.locationType, req.body.title, 
-        req.body.description, req.body.startTime, req.body.endTime, req.body.bookingColor, 
-        req.body.noiseLevel,
+        req.body.date, req.body.locationID, req.body.title, req.body.description, 
+        req.body.startTime, req.body.endTime, req.body.bookingColor, req.body.noiseLevel,
         bookingResult => res.send(bookingResult)
     );
 })

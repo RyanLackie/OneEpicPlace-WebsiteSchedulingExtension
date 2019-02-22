@@ -3,9 +3,80 @@ const mysql = require('mysql');
 
 class Model {
     constructor() {
-        
+        //Date for calender
+        this.date = new Date();
+
+        //rooms include: id, name, type, style
+        this.rooms = [
+            {id: 0, name: '',                               type: 'room', style: ''},
+            {id: 1, name: 'DaVinci Room',                   type: 'room', style: ''},
+            {id: 2, name: 'Green Room',                     type: 'room', style: ''},
+            {id: 3, name: 'Sunshine Room',                  type: 'room', style: ''},
+            {id: 4, name: 'Zen Room',                       type: 'room', style: ''},
+            {id: 5, name: 'Studio',                         type: 'room', style: ''},
+            {id: 6, name: 'EPIC Room',                      type: 'room', style: ''},
+            {id: 7, name: 'Carriage House Treatment Room',  type: 'room', style: ''},
+            {id: 8, name: 'Buissness Hub',                  type: 'room', style: ''},
+            {id: 9, name: 'Loft',                           type: 'room', style: ''},
+            {id: 10, name: 'Porch',                         type: 'room', style: ''},
+            {id: 11, name: 'Lawn',                          type: 'room', style: ''},
+
+            {id: 12, name: 'Hot Desk', type: 'desk', style: ''},
+            {id: 13, name: 'Hot Desk', type: 'desk', style: ''},
+            {id: 14, name: 'Hot Desk', type: 'desk', style: ''},
+            {id: 15, name: 'Hot Desk', type: 'desk', style: ''},
+            {id: 16, name: 'Hot Desk', type: 'desk', style: ''},
+            {id: 17, name: 'Hot Desk', type: 'desk', style: ''},
+            {id: 18, name: 'Hot Desk', type: 'desk', style: ''},
+            {id: 19, name: 'Hot Desk', type: 'desk', style: ''},
+            {id: 20, name: 'Hot Desk', type: 'desk', style: ''},
+            {id: 21, name: 'Hot Desk', type: 'desk', style: ''},
+            {id: 22, name: 'Hot Desk', type: 'desk', style: ''},
+            {id: 23, name: 'Hot Desk', type: 'desk', style: ''},
+            {id: 24, name: 'Hot Desk', type: 'desk', style: ''},
+            {id: 25, name: 'Hot Desk', type: 'desk', style: ''},
+            {id: 26, name: 'Hot Desk', type: 'desk', style: ''}
+        ];
+
+        //hour include: id, time
+        this.hours = [
+            {id: 0, time: '7AM'},
+            {id: 1, time: '8AM'},
+            {id: 2, time: '9AM'},
+            {id: 3, time: '10AM'},
+            {id: 4, time: '11AM'},
+            {id: 5, time: '12PM'},
+            {id: 6, time: '1PM'},
+            {id: 7, time: '2PM'},
+            {id: 8, time: '3PM'},
+            {id: 9, time: '4PM'},
+            {id: 10, time: '5PM'},
+            {id: 11, time: '6PM'},
+            {id: 12, time: '7PM'},
+            {id: 13, time: '8PM'},
+            {id: 14, time: '9PM'}
+        ];
     }
 
+    /*////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////             Get Data          //////////////////////////////////////////
+    */////////////////////////////////////////////////////////////////////////////////////////////////////////
+    getDate() {
+        return this.date;
+    }
+
+    getRooms() {
+        return this.rooms;
+    }
+
+    getHours() {
+        return this.hours;
+    }
+
+
+    /*////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////            Connection         //////////////////////////////////////////
+    */////////////////////////////////////////////////////////////////////////////////////////////////////////
     getConnection() {
         var conn = mysql.createConnection({
             //Laptop Environment
@@ -215,7 +286,7 @@ class Model {
     /*////////////////////////////////////////////////////////////////////////////////////////////////////////
     /////////////////////////////////           Booking Methods          /////////////////////////////////////
     */////////////////////////////////////////////////////////////////////////////////////////////////////////
-    insertBooking(email, password, firstName, lastName, date, locationID, locationType, title, description, startTime, endTime, bookingColor, noiseLevel, call_back) {
+    insertBooking(email, password, firstName, lastName, date, locationID, title, description, startTime, endTime, bookingColor, noiseLevel, call_back) {
         // eslint-disable-next-line
         console.log("#################insertBooking()#################");
 
@@ -229,27 +300,29 @@ class Model {
                 insertStartTime.setHours(parseInt(startTime.split(":")[0]));
                 insertStartTime.setMinutes(parseInt(startTime.split(":")[1]));
                 insertStartTime.setSeconds(0);
+                insertStartTime.setMilliseconds(0);
 
                 var insertEndTime = new Date();
                 insertEndTime.setHours(parseInt(endTime.split(":")[0]));
                 insertEndTime.setMinutes(parseInt(endTime.split(":")[1]));
                 insertEndTime.setSeconds(0);
+                insertEndTime.setMilliseconds(0);
 
                 var minTime = new Date();
                 minTime.setHours(7);
                 minTime.setMinutes(0);
                 minTime.setMinutes(0);
                 minTime.setSeconds(0);
+                minTime.setMilliseconds(0);
 
                 var maxTime = new Date();
                 maxTime.setHours(22);
                 maxTime.setMinutes(0);
                 maxTime.setMinutes(0);
                 maxTime.setSeconds(0);
+                maxTime.setMilliseconds(0);
 
                 //Booking time must be between 7AM and 10PM
-                console.log(insertStartTime<minTime);
-                console.log(insertEndTime > maxTime);
                 if (insertStartTime < minTime || insertEndTime > maxTime)
                     call_back('404');
                 else {
@@ -266,11 +339,10 @@ class Model {
                             //Booking overlap
                             conn.query('SELECT * FROM booking WHERE date = ' + mysql.escape(date), (err, result) => {
                                 if (err) throw err;
-
-                                for (var index1 = 0; index1 < result.length; index1++) {
-                                    if (result[index1].locationID != locationID)
-                                        result.splice(index1, 1);
-                                }
+                                
+                                result = result.filter(function(value) {
+                                    return value.locationID == locationID;
+                                });
                                 
                                 var pass = true;
                                 for (var index2 = 0; index2 < result.length; index2++) {
@@ -278,19 +350,27 @@ class Model {
                                     checkStartTime.setHours(result[index2].startTime.split(":")[0]);
                                     checkStartTime.setMinutes(result[index2].startTime.split(":")[1]);
                                     checkStartTime.setSeconds(0);
-
+                                    checkStartTime.setMilliseconds(0);
+                                    
                                     var checkEndTime = new Date();
                                     checkEndTime.setHours(result[index2].endTime.split(":")[0]);
                                     checkEndTime.setMinutes(result[index2].endTime.split(":")[1]);
                                     checkEndTime.setSeconds(0);
+                                    checkEndTime.setMilliseconds(0);
                                     
-                                    var checkOne = insertStartTime > checkStartTime && insertStartTime < checkEndTime;
-                                    var checkTwo = insertEndTime > checkStartTime && insertEndTime < checkEndTime;
-                                    var checkThree = checkStartTime > insertStartTime && checkEndTime < insertStartTime;
-                                    var checkFour = checkStartTime > insertEndTime && checkEndTime < insertEndTime;
-                                    console.log(checkStartTime + " > " + insertStartTime + " && " + checkEndTime + " < " + insertStartTime);
-                                    console.log(checkOne + " + " + checkTwo + " + " + checkThree + " + " + checkFour);
-                                    if (checkOne || checkTwo || checkThree || checkFour)
+                                    //getTime() is used so that there is real numarical data to compair
+                                    var check1 = checkStartTime.getTime() < insertStartTime.getTime() && checkEndTime.getTime() > insertStartTime.getTime();
+                                    var check2 = insertStartTime.getTime() < checkEndTime.getTime() && insertEndTime.getTime() > checkEndTime.getTime();
+                                    var check3 = insertStartTime.getTime() < checkStartTime.getTime() && insertEndTime.getTime() > checkStartTime.getTime();
+                                    var check4 = checkStartTime.getTime() < insertEndTime.getTime() && checkEndTime.getTime() > insertEndTime.getTime();
+                                    var check5 = checkStartTime.getTime() == insertStartTime.getTime() && checkEndTime.getTime() < insertEndTime.getTime();
+                                    var check6 = checkStartTime.getTime() == insertStartTime.getTime() && insertEndTime.getTime() < checkEndTime.getTime();
+                                    var check7 = checkStartTime.getTime() < insertStartTime.getTime() && checkEndTime.getTime() == insertEndTime.getTime();
+                                    var check8 = insertStartTime.getTime() < checkStartTime.getTime() && checkEndTime.getTime() == insertEndTime.getTime();
+                                    var check9 = insertStartTime.getTime() == checkStartTime.getTime() && checkEndTime.getTime() == insertEndTime.getTime();
+                                    
+                                    //console.log(check1 + " + " + check2 + " + " + check3 + " + " + check4 + " + " + check5 + " + " + check6 + " + " + check7 + " + " + check8 + " + " + check9);
+                                    if (check1 || check2 || check3 || check4 || check5 || check6 || check7 || check8 || check9)
                                         pass = false;
                                 }
                                 if (!pass) {
@@ -299,7 +379,7 @@ class Model {
                                 }
                                 else {
                                     //Insert booking
-                                    var sql = "INSERT INTO booking (email, firstName, lastName, date, locationID, locationType, title, description, startTime, endTime, bookingColor, noiseLevel) VALUES ('"+email+"' ,'"+firstName+"', '"+lastName+"', '"+date+"', '"+locationID+"', '"+locationType+"', '"+title+"', '"+description+"', '"+startTime+"', '"+endTime+"', '"+bookingColor+"', '"+noiseLevel+"')";
+                                    var sql = "INSERT INTO booking (email, firstName, lastName, date, locationID, title, description, startTime, endTime, bookingColor, noiseLevel) VALUES ('"+email+"' ,'"+firstName+"', '"+lastName+"', '"+date+"', '"+locationID+"', '"+title+"', '"+description+"', '"+startTime+"', '"+endTime+"', '"+bookingColor+"', '"+noiseLevel+"')";
                                     conn.query(sql, function(err, result) {
                                         if (err) throw err;
                                         // eslint-disable-next-line

@@ -53,83 +53,145 @@
 */
 .DailyViewCalendar .calendar {
     position: relative;
-    width: 97%;
+    width: 98%;
     margin: 0px auto;
 }
 
-.DailyViewCalendar .calendar .hour {
+/*
+    Left Side Room Col
+*/
+.DailyViewCalendar .calendar .roomCol {
     position: absolute;
-    top: 0;
-    display: table;
-    background-color: lightgray;
-    text-align: center;
-    border-left: 1px black solid;
-    border-bottom: 1px black solid;
+    width: 15.5%;
 }
-.DailyViewCalendar .calendar .hour .text {
+.DailyViewCalendar .calendar .roomCol .roomContainer {
+    float: left;
+    width: 100%;
+    height: 60px;
+    border: 1px purple solid;
+}
+.DailyViewCalendar .calendar .roomCol .roomContainer .room {
+    display: table;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+}
+.DailyViewCalendar .calendar .roomCol .roomContainer .room .text {
     display: table-cell;
     vertical-align: middle;
     font-size: 1.4vw;
     font-weight: bold;
+    cursor: context-menu;
 }
 
-.DailyViewCalendar .calendar .room {
+/*
+    Scrollable Caledar
+*/
+.DailyViewCalendar .calendar .innerSection {
     position: absolute;
-    left: 0;
-    display: table;
-    overflow: hidden;
-    text-align: center;
-    border-right: 1px black solid;
-    border-bottom: 1px black solid;
+    width: 84.5%;
+    left: 15.5%;
+    overflow-x: scroll;
+    overflow-y: hidden;
+    white-space: nowrap;
 }
-.DailyViewCalendar .calendar .room .text {
+.DailyViewCalendar .calendar .innerSection::-webkit-scrollbar-track {
+	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+	border-radius: 3px;
+    background-color: #F5F5F5;
+}
+.DailyViewCalendar .calendar .innerSection::-webkit-scrollbar {
+	width: 12px;
+	background-color: #F5F5F5;
+}
+.DailyViewCalendar .calendar .innerSection::-webkit-scrollbar-thumb {
+	border-radius: 3px;
+	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+	background-color: #555;
+}
+
+.DailyViewCalendar .calendar .innerSection .topRow {
+    /* This class was made to allow for a sticky top row to exist later */
+    position: absolute;
+    width: 100%;
+    height: 60px;
+    background-color: white;
+    z-index: 1;
+}
+.DailyViewCalendar .calendar .innerSection .topRow .hourContainer {
+    display: inline-block;
+    width: 120px;
+    height: 100%;
+    border-top: 1px blue solid;
+    border-right: 1px blue solid;
+    border-bottom: 1px blue solid;
+}
+.DailyViewCalendar .calendar .innerSection .topRow .hourContainer .hour {
+    display: table;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+}
+.DailyViewCalendar .calendar .innerSection .topRow .hourContainer .hour .text {
     display: table-cell;
     vertical-align: middle;
-    font-size: 1.3vw;
+    /*font-size: 1.4vw;*/
+    font-size: 25px;
     font-weight: bold;
-    color: white;
+    cursor: context-menu;
 }
 
-.DailyViewCalendar .calendar .timeWindow {
-    position: absolute;
+.DailyViewCalendar .calendar .innerSection .calendarRow {
+    width: 100%;
+    height: 60px;
     background-color: white;
+}
+.DailyViewCalendar .calendar .innerSection .calendarRow .timeChunk {
+    display: inline-block;
+    width: 120px;
+    height: 100%;
+    border-top: 1px black solid;
     border-bottom: 1px black solid;
 }
-.DailyViewCalendar .calendar .timeWindow:hover {
-    background-color: lightgray;
+.DailyViewCalendar .calendar .innerSection .calendarRow .timeChunk .timeSlot {
+    float: left;
+    width: 8.33%;
+    height: 100%;
+}
+.DailyViewCalendar .calendar .innerSection .calendarRow .timeChunk .timeSlot:hover {
+    background-color: silver;
 }
 
-.DailyViewCalendar .calendar .booking {
+.DailyViewCalendar .calendar .innerSection .calendarRow .booking {
     position: absolute;
-    width: 0px;
-    background-color: red;  /* Default color if error occurs */
+    width: 100px;
+    height: 60px;
+    border-right: 1px black solid;
+    border-bottom: 1px black solid;
+    background-color: black;  /* Default color if error occurs */
     overflow: hidden;
 }
-.DailyViewCalendar .calendar .booking .titleText {
+.DailyViewCalendar .calendar .innerSection .calendarRow .booking .title {
     position: absolute;
     top: 0;
-    padding: 1px 0px 0px 5px;
-    font-size: 15px;
-    font-weight: bold;
-    color: black;
-    white-space: nowrap;
+    padding-top: 2px;
+    padding-left: 5px;
+    color: white;
+    text-transform: capitalize;
 }
-.DailyViewCalendar .calendar .booking .byText {
+.DailyViewCalendar .calendar .innerSection .calendarRow .booking .name {
     position: absolute;
     bottom: 0;
-    padding: 0px 0px 0px 5px;
-    font-size: 15px;
-    color: black;
-    white-space: nowrap;
+    padding-bottom: 2px;
+    padding-left: 5px;
+    color: white;
+    text-transform: capitalize;
 }
-
-.DailyViewCalendar .calendar .booking .deskText {
-    position: relative;
+.DailyViewCalendar .calendar .innerSection .calendarRow .booking .centerText {
+    position: absolute;
     top: 50%;
     transform: translateY(-50%);
     padding-left: 5px;
-    font-size: 15px;
-    font-weight: bold;
-    color: black;
-    white-space: nowrap;
+    color: white;
+    text-transform: capitalize;
 }

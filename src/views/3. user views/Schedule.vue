@@ -20,7 +20,7 @@
 </style>
 
 <script>
-    import * as api from '@/services/api_access';
+    //import * as api from '@/services/api_access';
 
     import DailyViewCalendar from '@/components/DailyViewCalendar.vue'
 
