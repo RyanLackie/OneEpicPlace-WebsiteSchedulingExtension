@@ -10,7 +10,7 @@
         </div>
 
         <!-- Calendar -->
-        <div class="calendar">
+        <div class="calendar" id='calendar'>
 
             <!-- Rooms -->
             <div class="roomCol">
@@ -22,22 +22,22 @@
             </div>
 
             <!-- Inner Scrollable Section -->
-            <div class="innerSection" id='innerSection' @scroll="handelInnerSectionScroll()">
+            <div class="innerSection" id='innerSection' @scroll='handleInnerSectionScroll()'>
                 
                 <!-- Hours -->
-                <div class="topRow">
+                <div class="topRow" id='topRow'>
                     <div class="hourContainer" v-for="hour in hours" :key="'hour'+hour.id" :id="'hour'+hour.id">
                         <div class="hour">
                             <div class="text">{{hour.time}}</div>
                         </div>
                     </div>
                 </div>
-                <div class="calendarRow"></div> <!-- used to hold the spot for the hours row -->
+                <div class="calendarRow"></div>
 
                 <!-- Time Slots -->
                 <div class="calendarRow" v-for="room in rooms.slice(1, rooms.length)" :key="'room'+room.id" :id="'room'+room.id" :style='styleDeskItem(room)'>
                     <!-- Booking Blocks -->
-                    <div class="booking" v-for="booking in bookings" :key="'booking'+booking.id" :id="'booking'+booking.id" :style='styleBooking(room.id, booking)'>
+                    <div class="booking" v-for="booking in bookings" :key="'booking'+booking.id" :id="'booking'+booking.id" :style='styleBooking(room.id, booking)' @click='bookingClicked(booking)'>
                         <div v-if="room.type == 'room'" class="title">{{booking.title}}</div>
                         <div v-if="room.type == 'room'" class="name">{{booking.firstName + " " + booking.lastName}}</div>
                         <div v-if="room.type == 'desk'" class="centerText">{{booking.firstName + " " + booking.lastName}}</div>
@@ -47,7 +47,9 @@
                         <div
                             class="timeSlot" v-for="index in 12" :key="'timeSlot'+room.id+':'+(hour.id*12+index)" 
                             :id="'timeSlot'+room.id+':'+(hour.id*12+index)" :style='styleTimeSlot((hour.id*12+index))'
-                            @click="timeSlotClicked('timeSlot'+room.id+':'+(hour.id*12+index))">
+                            @click="timeSlotClicked('timeSlot'+room.id+':'+(hour.id*12+index))"
+                            @mouseenter="timeSlotHover('timeSlot'+room.id+':'+(hour.id*12+index), true)"
+                            @mouseleave="timeSlotHover('timeSlot'+room.id+':'+(hour.id*12+index), false)">
                         </div>
                     </div>
                 </div>
@@ -56,7 +58,11 @@
 
         </div>
 
-        <BookingModal ref="BookingModal"></BookingModal>
+        <!-- Modals -->
+        <BookingRoomModal ref="BookingRoomModal"></BookingRoomModal>
+        <BookedRoomModal ref="BookedRoomModal"></BookedRoomModal>
+
+        <BookingDeskModal ref="BookingDeskModal"></BookingDeskModal>
         
     </div>
 </template>
@@ -69,11 +75,17 @@
 <script>
     import * as api from '@/services/api_access';
 
-    import BookingModal from '@/components/BookingModal.vue';
+    import BookingRoomModal from '@/components/BookingRoomModal.vue';
+    import BookedRoomModal from '@/components/BookedRoomModal.vue';
+
+    import BookingDeskModal from '@/components/BookingDeskModal.vue';
 
     export default {
         components: {
-            BookingModal
+            BookingRoomModal,
+            BookedRoomModal,
+
+            BookingDeskModal
         },
 
         data() {
@@ -81,36 +93,36 @@
                 //Date for calender
                 date: new Date(),
 
-                //rooms include: id, name, type, style
+                //rooms include: id, name, type
                 rooms: [
-                    {id: 0, name: '',                               type: 'room', style: ''},
-                    {id: 1, name: 'DaVinci Room',                   type: 'room', style: ''},
-                    {id: 2, name: 'Green Room',                     type: 'room', style: ''},
-                    {id: 3, name: 'Sunshine Room',                  type: 'room', style: ''},
-                    {id: 4, name: 'Zen Room',                       type: 'room', style: ''},
-                    {id: 5, name: 'Studio',                         type: 'room', style: ''},
-                    {id: 6, name: 'EPIC Room',                      type: 'room', style: ''},
-                    {id: 7, name: 'Carriage House Treatment Room',  type: 'room', style: ''},
-                    {id: 8, name: 'Buissness Hub',                  type: 'room', style: ''},
-                    {id: 9, name: 'Loft',                           type: 'room', style: ''},
-                    {id: 10, name: 'Porch',                         type: 'room', style: ''},
-                    {id: 11, name: 'Lawn',                          type: 'room', style: ''},
+                    {id: 0, name: '',                               type: 'room'},
+                    {id: 1, name: 'DaVinci Room',                   type: 'room'},
+                    {id: 2, name: 'Green Room',                     type: 'room'},
+                    {id: 3, name: 'Sunshine Room',                  type: 'room'},
+                    {id: 4, name: 'Zen Room',                       type: 'room'},
+                    {id: 5, name: 'Studio',                         type: 'room'},
+                    {id: 6, name: 'EPIC Room',                      type: 'room'},
+                    {id: 7, name: 'Carriage House Treatment Room',  type: 'room'},
+                    {id: 8, name: 'Buissness Hub',                  type: 'room'},
+                    {id: 9, name: 'Loft',                           type: 'room'},
+                    {id: 10, name: 'Porch',                         type: 'room'},
+                    {id: 11, name: 'Lawn',                          type: 'room'},
 
-                    {id: 12, name: 'Hot Desk', type: 'desk', style: ''},
-                    {id: 13, name: 'Hot Desk', type: 'desk', style: ''},
-                    {id: 14, name: 'Hot Desk', type: 'desk', style: ''},
-                    {id: 15, name: 'Hot Desk', type: 'desk', style: ''},
-                    {id: 16, name: 'Hot Desk', type: 'desk', style: ''},
-                    {id: 17, name: 'Hot Desk', type: 'desk', style: ''},
-                    {id: 18, name: 'Hot Desk', type: 'desk', style: ''},
-                    {id: 19, name: 'Hot Desk', type: 'desk', style: ''},
-                    {id: 20, name: 'Hot Desk', type: 'desk', style: ''},
-                    {id: 21, name: 'Hot Desk', type: 'desk', style: ''},
-                    {id: 22, name: 'Hot Desk', type: 'desk', style: ''},
-                    {id: 23, name: 'Hot Desk', type: 'desk', style: ''},
-                    {id: 24, name: 'Hot Desk', type: 'desk', style: ''},
-                    {id: 25, name: 'Hot Desk', type: 'desk', style: ''},
-                    {id: 26, name: 'Hot Desk', type: 'desk', style: ''},
+                    {id: 12, name: 'Hot Desk',                      type: 'desk'},
+                    {id: 13, name: 'Hot Desk',                      type: 'desk'},
+                    {id: 14, name: 'Hot Desk',                      type: 'desk'},
+                    {id: 15, name: 'Hot Desk',                      type: 'desk'},
+                    {id: 16, name: 'Hot Desk',                      type: 'desk'},
+                    {id: 17, name: 'Hot Desk',                      type: 'desk'},
+                    {id: 18, name: 'Hot Desk',                      type: 'desk'},
+                    {id: 19, name: 'Hot Desk',                      type: 'desk'},
+                    {id: 20, name: 'Hot Desk',                      type: 'desk'},
+                    {id: 21, name: 'Hot Desk',                      type: 'desk'},
+                    {id: 22, name: 'Hot Desk',                      type: 'desk'},
+                    {id: 23, name: 'Hot Desk',                      type: 'desk'},
+                    {id: 24, name: 'Hot Desk',                      type: 'desk'},
+                    {id: 25, name: 'Hot Desk',                      type: 'desk'},
+                    {id: 26, name: 'Hot Desk',                      type: 'desk'}
                 ],
 
                 //hour include: id, time
@@ -129,17 +141,22 @@
                     {id: 11, time: '6PM'},
                     {id: 12, time: '7PM'},
                     {id: 13, time: '8PM'},
-                    {id: 14, time: '9PM'},
+                    {id: 14, time: '9PM'}
                 ],
 
                 //List of returned bookings
                 bookings: [],
 
                 //Interval to check the server for bookings
-                checkInterval: null,
+                checkBookingsTimeout: null,
+                bookingDelays: 0,
 
-                //Listener for scrolling the inner section
-                scrollListener: null
+                //A timeout function that runs every min
+                timeHighlighterTimeout: null,
+                timeHighlighterDelay: 0,
+
+                //Time slot hover highlighting
+                previousTimeSlotColor: ''
             }
         },
 
@@ -148,26 +165,71 @@
             decDate: function() {
                 this.date = new Date(this.date.setDate(this.date.getDate() - 1));
                 this.bookings = [];
-                this.checkBookings();
+                clearTimeout(this.checkBookingsTimeout);
+                this.bookingsDelay = 0;
+                this.checkBookingsLoop();
             },
             incDate: function() {
                 this.date = new Date(this.date.setDate(this.date.getDate() + 1));
                 this.bookings = [];
-                this.checkBookings();
+                clearTimeout(this.checkBookingsTimeout);
+                this.bookingsDelay = 0;
+                this.checkBookingsLoop();
             },
 
             /* JavaScript Styling */
             styleTimeSlot(timeSlot) {
+                var style = '';
+
+                style = style + 'background-color: white;';
+
                 if (timeSlot%3 == 0)
-                    return 'border-right: 1px black solid;'
+                    style = style + 'border-right: 1px black solid;';
+
+                return style;
+            },
+            styleTimeHighlighterLoop() {
+                var THIS = this;
+                this.timeHighlighterTimeout = setTimeout(function() {
+                    THIS.timeHighlighterDelay = (60 - new Date().getSeconds()) * 1000;
+
+                    var currentHour = parseInt(new Date().getHours());
+                    var currentMin = parseInt(new Date().getMinutes());
+                    for (var row = 1; row < THIS.rooms.length; row++) {
+                        for (var timeSlot = 1; timeSlot <= THIS.hours.length*12; timeSlot++) {
+                            var timeSlotHour = parseInt((timeSlot-1)/12, 10) + parseInt(THIS.hours[0].time.substring(0, THIS.hours[0].time.length - 2));
+                            var timeSlotMin = (timeSlot-1) % 12 * 5;
+                            
+                            if (timeSlotHour == currentHour) {
+                                if (currentMin >= 0 && currentMin < 15 && timeSlotMin >= 0 && timeSlotMin < 15)
+                                    document.getElementById('timeSlot'+row+':'+timeSlot).style.backgroundColor = 'Gainsboro';
+                                else if (currentMin >= 15 && currentMin < 30 && timeSlotMin >= 15 && timeSlotMin < 30)
+                                    document.getElementById('timeSlot'+row+':'+timeSlot).style.backgroundColor = 'Gainsboro';
+                                else if (currentMin >= 30 && currentMin < 45 && timeSlotMin >= 30 && timeSlotMin < 45)
+                                    document.getElementById('timeSlot'+row+':'+timeSlot).style.backgroundColor = 'Gainsboro';
+                                else if (currentMin >= 45 && currentMin < 60 && timeSlotMin >= 45 && timeSlotMin < 60)
+                                    document.getElementById('timeSlot'+row+':'+timeSlot).style.backgroundColor = 'Gainsboro';
+                                else
+                                    document.getElementById('timeSlot'+row+':'+timeSlot).style.backgroundColor = 'white';
+                            }
+                        }
+                    }
+
+                    THIS.styleTimeHighlighterLoop();
+                }, this.timeHighlighterDelay)
             },
             styleDeskItem(room) {
+                var style = '';
                 if (room.type == 'room' && this.rooms[(room.id+1)].type == 'desk')
-                    return 'height: 60px; margin-bottom: 10px;'
+                    style = style + 'margin-bottom: 20px;';
                 else if (room.type == 'desk')
-                    return 'height: 30px;'
+                    style = style + 'height: 30px;';
+                
+                return style;
             },
             styleBooking(roomID, booking) {
+                var style = '';
+
                 if (booking.locationID == roomID) {
                     var startTime = booking.startTime;
                     var startTimeHour = parseInt(startTime.split(':')[0], 10);
@@ -180,51 +242,91 @@
                     var endTimeSlot = ((endTimeHour - this.hours[0].time.substring(0, this.hours[0].time.length - 2)) * 12) + (endTimeMin / 5) + 1;
 
                     /*  
-                    Left is tricky because getting the bounds is not relative to inside the row
-                    getting the left value of the first slot and subtractiing it from the used slot
-                    solves this problem
+                    Left is tricky because getting the bounds is not relative to inside the row getting the left value of the 
+                    first slot and subtractiing it from the used slot solves this problem
                     */
                     var left = document.getElementById('timeSlot'+roomID+':'+startTimeSlot).getBoundingClientRect().left - document.getElementById('timeSlot'+roomID+':'+1).getBoundingClientRect().left;
                     var width = (endTimeSlot - startTimeSlot) * document.getElementById('timeSlot'+roomID+':'+startTimeSlot).getBoundingClientRect().width;
-
                     var height = 60;
                     if (this.rooms[roomID].type == 'desk')
                         height = 30;
 
-                    return 'left:'+left+'px; width:'+width+'px; height:'+height+'px; background-color:'+booking.bookingColor+';'
+                    style = style + 'left:'+left+'px; width:'+width+'px; height:'+height+'px; background-color:'+booking.bookingColor+';';
                 }
-                return 'left: 0px; width: 0px; height: 0px; display: none'
+                else
+                    style = style + 'left: 0px; width: 0px; height: 0px; display: none;';
+
+                return style;
             },
 
             /* Data Update */
-            startCheckBookingLoop() {
-                this.checkBookings();
-                this.checkInterval = setInterval(this.checkBookings, 5000);
-            },
-            checkBookings() {
-                var checkDate = this.date.getMonth()+1+'/'+ this.date.getDate()+'/'+ this.date.getFullYear();
-                api.getBookings(checkDate).then(bookingResult => {
-                    this.bookings = bookingResult;
-                });
+            checkBookingsLoop() {
+                var THIS = this;
+                this.checkBookingsTimeout = setTimeout(function() {
+                    THIS.bookingsDelay = 5000;
+                    var checkDate = THIS.date.getMonth()+1+'/'+ THIS.date.getDate()+'/'+ THIS.date.getFullYear();
+                    api.getBookings(checkDate).then(bookingsResult => {
+                        THIS.bookings = bookingsResult;
+                        THIS.checkBookingsLoop();
+                    });
+                }, this.bookingsDelay)
             },
 
             /* User Actions */
+            handlePageScroll() {
+                //Top Row Sticky Movment
+                var originalTop = document.getElementById('calendar').getBoundingClientRect().top + window.scrollY;
+                if (window.scrollY >= originalTop)
+                    document.getElementById('topRow').style.top = window.scrollY - originalTop + 'px';
+                else
+                    document.getElementById('topRow').style.top = '0px';
+            },
+            handleInnerSectionScroll() {
+                //Make sure calender y cant be changed
+                document.getElementById('innerSection').scrollTop = 0;
+            },
+            
+            timeSlotHover(id, mouseOverTimeSlot) {
+                if (mouseOverTimeSlot) {
+                    this.previousTimeSlotColor = document.getElementById(id).style.backgroundColor;
+                    document.getElementById(id).style.backgroundColor = 'silver';
+                }
+                else
+                    document.getElementById(id).style.backgroundColor = this.previousTimeSlotColor;
+            },
             timeSlotClicked(id) {
                 //parse id
                 var input = id.slice(8);
                 input = input.split(':');
-                this.$refs.BookingModal.openModal(this.date, input, this.rooms[input[0]].name, this.rooms[input[0]].type);
+
+                if (this.rooms[input[0]].type == 'room')
+                    this.$refs.BookingRoomModal.openModal(this.date, input, this.rooms[input[0]].name, this.rooms[input[0]].type);
+                else if (this.rooms[input[0]].type == 'desk')
+                    this.$refs.BookingDeskModal.openModal(this.date, input, this.rooms[input[0]].name, this.rooms[input[0]].type);
             },
-            handelInnerSectionScroll() {
-                document.getElementById('innerSection').scrollTop = 0;
+
+            bookingClicked(booking) {
+                this.$refs.BookedRoomModal.openModal(booking);
             }
         },
 
         mounted() {
-            this.startCheckBookingLoop();
+            //console.log('mounted');
+            //Start check booking loop
+            this.checkBookingsLoop();
+            //Start time highlighter loop
+            this.styleTimeHighlighterLoop();
+            //Start page scroll listener
+            window.addEventListener('scroll', this.handlePageScroll);
         },
         beforeDestroy() {
-            clearInterval(this.checkInterval);
+            //console.log('beforeDestroy');
+            //End check booking loop
+            clearTimeout(this.checkBookingsTimeout);
+            //End time highlighter loop
+            clearTimeout(this.timeHighlighterTimeout);
+            //Start page scroll listener
+            window.removeEventListener('scroll', this.handlePageScroll);
         }
     }
 </script>

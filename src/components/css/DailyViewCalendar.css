@@ -81,6 +81,7 @@
     vertical-align: middle;
     font-size: 1.4vw;
     font-weight: bold;
+    line-height: 25px;
     cursor: context-menu;
 }
 
@@ -111,17 +112,16 @@
 }
 
 .DailyViewCalendar .calendar .innerSection .topRow {
-    /* This class was made to allow for a sticky top row to exist later */
     position: absolute;
     width: 100%;
     height: 60px;
-    background-color: white;
     z-index: 1;
 }
 .DailyViewCalendar .calendar .innerSection .topRow .hourContainer {
     display: inline-block;
     width: 120px;
     height: 100%;
+    background-color: white;
     border-top: 1px blue solid;
     border-right: 1px blue solid;
     border-bottom: 1px blue solid;
@@ -157,9 +157,8 @@
     float: left;
     width: 8.33%;
     height: 100%;
-}
-.DailyViewCalendar .calendar .innerSection .calendarRow .timeChunk .timeSlot:hover {
-    background-color: silver;
+    background-color: white;
+    cursor: pointer; /* Maybe take out */
 }
 
 .DailyViewCalendar .calendar .innerSection .calendarRow .booking {
@@ -178,6 +177,7 @@
     padding-left: 5px;
     color: white;
     text-transform: capitalize;
+    cursor: context-menu;
 }
 .DailyViewCalendar .calendar .innerSection .calendarRow .booking .name {
     position: absolute;
@@ -186,6 +186,7 @@
     padding-left: 5px;
     color: white;
     text-transform: capitalize;
+    cursor: context-menu;
 }
 .DailyViewCalendar .calendar .innerSection .calendarRow .booking .centerText {
     position: absolute;
@@ -194,4 +195,5 @@
     padding-left: 5px;
     color: white;
     text-transform: capitalize;
+    cursor: context-menu;
 }
