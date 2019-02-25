@@ -396,15 +396,31 @@ class Model {
             }
         });    
     }
-    getBookings(date, call_back) {
+    getBookingsDay(date, call_back) {
         // eslint-disable-next-line
-        console.log("#################getBooking()#################");
+        console.log("#################getBookingsDay()#################");
 
         //Connect to database
         var conn = this.getConnection();
 
-        //Get booking
+        //Get bookings
         conn.query('SELECT * FROM booking WHERE date = ' + mysql.escape(date), (err, result) => {
+            if (err) throw err;
+            console.log(result.length + " Bookings found");
+            call_back(result);
+        });
+
+        conn.end();
+    }
+    getBookingsRange(startDate, endDate, call_back) {
+        // eslint-disable-next-line
+        console.log("#################getBookingsRange()#################");
+
+        //Connect to database
+        var conn = this.getConnection();
+        
+        //Get bookings
+        conn.query('SELECT * FROM booking WHERE date >= ' + mysql.escape(startDate) + ' and  date <= ' + mysql.escape(endDate), (err, result) => {
             if (err) throw err;
             console.log(result.length + " Bookings found");
             call_back(result);

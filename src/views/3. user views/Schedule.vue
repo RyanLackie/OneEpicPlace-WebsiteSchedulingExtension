@@ -8,8 +8,9 @@
             <a class="viewText" href="JavaScript:void(0)" @click="changeView(2)">Monthly View</a>
         </div>
 
-        <!-- Daily View Calendar -->
+        <!-- Calendars -->
         <DailyViewCalendar ref="DailyViewCalendar" v-if="viewSelected == 0"></DailyViewCalendar>
+        <WeeklyViewCalendar ref="WeeklyViewCalendar" v-if="viewSelected == 1"></WeeklyViewCalendar>
 
     </div>
 </template>
@@ -23,10 +24,12 @@
     //import * as api from '@/services/api_access';
 
     import DailyViewCalendar from '@/components/DailyViewCalendar.vue'
+    import WeeklyViewCalendar from '@/components/WeeklyViewCalendar.vue'
 
     export default {
         components: {
-            DailyViewCalendar
+            DailyViewCalendar,
+            WeeklyViewCalendar
         },
 
         data() {

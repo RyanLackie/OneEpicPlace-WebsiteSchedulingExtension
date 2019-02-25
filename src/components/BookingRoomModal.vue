@@ -85,7 +85,7 @@
 
         methods: {
             submitBooking(event) {
-                var date = this.bookingSelected.date.getMonth()+1+'/'+this.bookingSelected.date.getDate()+'/'+this.bookingSelected.date.getFullYear();
+                var date = this.bookingSelected.date.toJSON().slice(0, 10);
                 var locationID = this.bookingSelected.id;
                 var title = document.getElementById('BookingRoomModal-Title').value;           
                 var description = document.getElementById('BookingRoomModal-Description').value;

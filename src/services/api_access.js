@@ -60,8 +60,11 @@ export function insertBooking(date, locationID, title, description, startTime, e
         email, password, firstName, lastName, date, locationID, title, description, startTime, endTime, bookingColor, noiseLevel
     });
 }
-export function getBookings(date) {
-    return myFetch(api_root + "/app/getBookings", {date});
+export function getBookingsDay(date) {
+    return myFetch(api_root + "/app/getBookingsDay", {date});
+}
+export function getBookingsRange(startDate, endDate) {
+    return myFetch(api_root + "/app/getBookingsRange", {startDate, endDate});
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////

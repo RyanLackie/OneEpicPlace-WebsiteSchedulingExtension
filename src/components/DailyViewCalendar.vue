@@ -14,7 +14,7 @@
 
             <!-- Rooms -->
             <div class="roomCol">
-                <div class="roomContainer" v-for="room in rooms" :key="'room'+room.id" :id="'room'+room.id" :style='styleDeskItem(room)'>
+                <div class="roomContainer" v-for="room in rooms" :key="'room'+room.id" :id="'room'+room.id" :style='styleDeskElements(room)'>
                     <div class="room">
                         <div class="text">{{room.name}}</div>
                     </div>
@@ -34,8 +34,8 @@
                 </div>
                 <div class="calendarRow"></div>
 
-                <!-- Time Slots -->
-                <div class="calendarRow" v-for="room in rooms.slice(1, rooms.length)" :key="'room'+room.id" :id="'room'+room.id" :style='styleDeskItem(room)'>
+                <!-- Calendar Rows -->
+                <div class="calendarRow" v-for="room in rooms.slice(1, rooms.length)" :key="'room'+room.id" :id="'room'+room.id" :style='styleDeskElements(room)'>
                     <!-- Booking Blocks -->
                     <div class="booking" v-for="booking in bookings" :key="'booking'+booking.id" :id="'booking'+booking.id" :style='styleBooking(room.id, booking)' @click='bookingClicked(booking)'>
                         <div v-if="room.type == 'room'" class="title">{{booking.title}}</div>
@@ -91,7 +91,7 @@
         data() {
             return {
                 //Date for calender
-                date: new Date(),
+                date: null,
 
                 //rooms include: id, name, type
                 rooms: [
@@ -146,7 +146,6 @@
 
                 //List of returned bookings
                 bookings: [],
-
                 //Interval to check the server for bookings
                 checkBookingsTimeout: null,
                 bookingDelays: 0,
@@ -161,23 +160,32 @@
         },
 
         methods: {
-            /* Date Function */
+            /* Date Functions */
+            getDate() {
+                var date = new Date();
+                date.setHours(0, 0, 0, 0);
+                this.date = date;
+            },
             decDate: function() {
                 this.date = new Date(this.date.setDate(this.date.getDate() - 1));
-                this.bookings = [];
-                clearTimeout(this.checkBookingsTimeout);
-                this.bookingsDelay = 0;
-                this.checkBookingsLoop();
+                this.checkBookings();
             },
             incDate: function() {
                 this.date = new Date(this.date.setDate(this.date.getDate() + 1));
-                this.bookings = [];
-                clearTimeout(this.checkBookingsTimeout);
-                this.bookingsDelay = 0;
-                this.checkBookingsLoop();
+                this.checkBookings();
             },
 
             /* JavaScript Styling */
+            styleDeskElements(room) {
+                var style = '';
+
+                if (room.type == 'room' && this.rooms[(room.id+1)].type == 'desk')
+                    style = style + 'margin-bottom: 20px;';
+                if (room.type == 'desk')
+                    style = style + 'height: 30px;';
+                
+                return style;
+            },
             styleTimeSlot(timeSlot) {
                 var style = '';
 
@@ -199,6 +207,8 @@
                         for (var timeSlot = 1; timeSlot <= THIS.hours.length*12; timeSlot++) {
                             var timeSlotHour = parseInt((timeSlot-1)/12, 10) + parseInt(THIS.hours[0].time.substring(0, THIS.hours[0].time.length - 2));
                             var timeSlotMin = (timeSlot-1) % 12 * 5;
+
+                            document.getElementById('timeSlot'+row+':'+timeSlot).style.backgroundColor = 'white';
                             
                             if (timeSlotHour == currentHour) {
                                 if (currentMin >= 0 && currentMin < 15 && timeSlotMin >= 0 && timeSlotMin < 15)
@@ -209,8 +219,6 @@
                                     document.getElementById('timeSlot'+row+':'+timeSlot).style.backgroundColor = 'Gainsboro';
                                 else if (currentMin >= 45 && currentMin < 60 && timeSlotMin >= 45 && timeSlotMin < 60)
                                     document.getElementById('timeSlot'+row+':'+timeSlot).style.backgroundColor = 'Gainsboro';
-                                else
-                                    document.getElementById('timeSlot'+row+':'+timeSlot).style.backgroundColor = 'white';
                             }
                         }
                     }
@@ -218,19 +226,10 @@
                     THIS.styleTimeHighlighterLoop();
                 }, this.timeHighlighterDelay)
             },
-            styleDeskItem(room) {
-                var style = '';
-                if (room.type == 'room' && this.rooms[(room.id+1)].type == 'desk')
-                    style = style + 'margin-bottom: 20px;';
-                else if (room.type == 'desk')
-                    style = style + 'height: 30px;';
-                
-                return style;
-            },
             styleBooking(roomID, booking) {
                 var style = '';
 
-                if (booking.locationID == roomID) {
+                if (roomID == booking.locationID) {
                     var startTime = booking.startTime;
                     var startTimeHour = parseInt(startTime.split(':')[0], 10);
                     var startTimeMin = parseInt(startTime.split(':')[1], 10);
@@ -264,12 +263,18 @@
                 var THIS = this;
                 this.checkBookingsTimeout = setTimeout(function() {
                     THIS.bookingsDelay = 5000;
-                    var checkDate = THIS.date.getMonth()+1+'/'+ THIS.date.getDate()+'/'+ THIS.date.getFullYear();
-                    api.getBookings(checkDate).then(bookingsResult => {
+                    var date = THIS.date.toJSON().slice(0, 10);
+                    api.getBookingsDay(date).then(bookingsResult => {
                         THIS.bookings = bookingsResult;
                         THIS.checkBookingsLoop();
                     });
                 }, this.bookingsDelay)
+            },
+            checkBookings() {
+                this.bookings = [];
+                clearTimeout(this.checkBookingsTimeout);
+                this.bookingsDelay = 0;
+                this.checkBookingsLoop();
             },
 
             /* User Actions */
@@ -309,7 +314,11 @@
                 this.$refs.BookedRoomModal.openModal(booking);
             }
         },
-
+        
+        beforeMount() {
+            //console.log('beforeMount');
+            this.getDate();
+        },
         mounted() {
             //console.log('mounted');
             //Start check booking loop

@@ -43,10 +43,16 @@ app.post('/insertBooking', (req, res) => {
         bookingResult => res.send(bookingResult)
     );
 })
-app.post('/getBookings', (req, res) => {
-    model.getBookings(
+app.post('/getBookingsDay', (req, res) => {
+    model.getBookingsDay(
         req.body.date, 
-        bookingResult => res.send(bookingResult)
+        bookingsResult => res.send(bookingsResult)
+    );
+})
+app.post('/getBookingsRange', (req, res) => {
+    model.getBookingsRange(
+        req.body.startDate, req.body.endDate,
+        bookingsResult => res.send(bookingsResult)
     );
 })
 
