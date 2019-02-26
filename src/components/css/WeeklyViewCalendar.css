@@ -164,6 +164,7 @@
     border-top: 1px black solid;
     border-bottom: 1px black solid;
     border-right: 1px black solid;
+    overflow: hidden;
 }
 
 .WeeklyViewCalendar .calendar .innerSection .calendarRow .searchBtn {
@@ -207,7 +208,7 @@
 
 .WeeklyViewCalendar .calendar .innerSection .calendarRow .block .booking {
     width: 230px;
-    height: 24%;
+    height: 25%;
     padding: 1%;
 }
 .WeeklyViewCalendar .calendar .innerSection .calendarRow .block .booking .timeBox {

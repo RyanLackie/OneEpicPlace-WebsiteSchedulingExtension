@@ -262,6 +262,7 @@
             checkBookingsLoop() {
                 var THIS = this;
                 this.checkBookingsTimeout = setTimeout(function() {
+                    //console.log(new Date().getTime());
                     THIS.bookingsDelay = 5000;
                     var date = THIS.date.toJSON().slice(0, 10);
                     api.getBookingsDay(date).then(bookingsResult => {
@@ -273,7 +274,7 @@
             checkBookings() {
                 this.bookings = [];
                 clearTimeout(this.checkBookingsTimeout);
-                this.bookingsDelay = 0;
+                this.bookingsDelay = 500;
                 this.checkBookingsLoop();
             },
 
@@ -334,7 +335,7 @@
             clearTimeout(this.checkBookingsTimeout);
             //End time highlighter loop
             clearTimeout(this.timeHighlighterTimeout);
-            //Start page scroll listener
+            //End page scroll listener
             window.removeEventListener('scroll', this.handlePageScroll);
         }
     }

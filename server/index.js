@@ -20,18 +20,13 @@ app.use("/", express.static(__dirname + "/../dist/"));
 const controller = require('./app/controller');
 app.use('/app', controller);
 
+const port = 81;
 
 //Server Stuff (Local Production)
-
-const port = 81;
-const server = 'localhost';
-
+//const server = 'localhost';
 
 //Server Stuff (Server Deployment)
-/*
-const port = 81;
 const server = '206.189.167.65';
-*/
 
 //Port listen and message
 app.listen(port);

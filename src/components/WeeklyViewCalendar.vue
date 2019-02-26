@@ -3,12 +3,12 @@
 
         <!-- Container for date selector -->
         <div class="dateSelector">
-            <button id="dateSelectorPreviousBtn" class="btn backBtn" type="button" @click="decDate()"></button>
+            <button id="dateSelectorPreviousBtn" class="btn backBtn" type="button" @click="decWeek()"></button>
             <input id="dateSelectorDate" class="date" :value="week[0].getMonth()+1+'/'+week[0].getDate()+'/'+week[0].getFullYear()" disabled>
             <div class="hyphen">-</div>
             <input id="dateSelectorDate" class="date" :value="week[6].getMonth()+1+'/'+week[6].getDate()+'/'+week[6].getFullYear()" disabled>
             <!--button id="dateSelectorCalendar" class="btn calendarBtn" type="button"></button-->
-            <button id="dateSelectorPreviousBtn" class="btn forwardBtn" type="button" @click="incDate()"></button>
+            <button id="dateSelectorPreviousBtn" class="btn forwardBtn" type="button" @click="incWeek()"></button>
         </div>
 
         <!-- Calendar -->
@@ -140,30 +140,36 @@
             getWeek(day) {
                 this.week[0] = new Date(day.setDate(day.getDate() - (day.getDay())));
                 this.week[0].setHours(0, 0, 0, 0);
-                
-                this.week[1] = new Date(day.setDate(this.week[0].getDate() + 1));
+                var week0 = new Date(this.week[0]);
+
+                this.week[1] = new Date(week0.setDate(this.week[0].getDate() + 1));
                 this.week[1].setHours(0, 0, 0, 0);
+                var week1 = new Date(this.week[1]);
 
-                this.week[2] = new Date(day.setDate(this.week[1].getDate() + 1));
+                this.week[2] = new Date(week1.setDate(this.week[1].getDate() + 1));
                 this.week[2].setHours(0, 0, 0, 0);
+                var week2 = new Date(this.week[2]);
 
-                this.week[3] = new Date(day.setDate(this.week[2].getDate() + 1));
+                this.week[3] = new Date(week2.setDate(this.week[2].getDate() + 1));
                 this.week[3].setHours(0, 0, 0, 0);
+                var week3 = new Date(this.week[3]);
 
-                this.week[4] = new Date(day.setDate(this.week[3].getDate() + 1));
+                this.week[4] = new Date(week3.setDate(this.week[3].getDate() + 1));
                 this.week[4].setHours(0, 0, 0, 0);
+                var week4 = new Date(this.week[4]);
 
-                this.week[5] = new Date(day.setDate(this.week[4].getDate() + 1));
+                this.week[5] = new Date(week4.setDate(this.week[4].getDate() + 1));
                 this.week[5].setHours(0, 0, 0, 0);
+                var week5 = new Date(this.week[5]);
 
-                this.week[6] = new Date(day.setDate(this.week[5].getDate() + 1));
+                this.week[6] = new Date(week5.setDate(this.week[5].getDate() + 1));
                 this.week[6].setHours(0, 0, 0, 0);
             },
-            decDate: function() {
+            decWeek: function() {
                 this.getWeek(new Date(this.week[0].setDate(this.week[0].getDate() - 1)));
                 this.checkBookings();
             },
-            incDate: function() {
+            incWeek: function() {
                 this.getWeek(new Date(this.week[6].setDate(this.week[6].getDate() + 1)));
                 this.checkBookings();
             },
@@ -225,11 +231,19 @@
             checkBookings() {
                 this.bookings = [];
                 clearTimeout(this.checkBookingsTimeout);
-                this.bookingsDelay = 0;
+                this.bookingsDelay = 500;
                 this.checkBookingsLoop();
             },
 
             /* User Actions */
+            handlePageScroll() {
+                //Top Row Sticky Movment
+                var originalTop = document.getElementById('calendar').getBoundingClientRect().top + window.scrollY;
+                if (window.scrollY >= originalTop)
+                    document.getElementById('topRow').style.top = window.scrollY - originalTop + 'px';
+                else
+                    document.getElementById('topRow').style.top = '0px';
+            },
             handleInnerSectionScroll() {
                 //Make sure calender y cant be changed
                 document.getElementById('innerSection').scrollTop = 0;
@@ -248,10 +262,15 @@
             //console.log('mounted');
             //Start check booking loop
             this.checkBookingsLoop();
+            //Start page scroll listener
+            window.addEventListener('scroll', this.handlePageScroll);
         },
         beforeDestroy() {
             //console.log('beforeDestroy');
+            //End check booking loop
             clearTimeout(this.checkBookingsTimeout);
+            //End page scroll listener
+            window.removeEventListener('scroll', this.handlePageScroll);
         }
     }
 </script>
