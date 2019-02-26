@@ -30,7 +30,8 @@
                 <div class="topRow" id='topRow'>
                     <div class="dayContainer" v-for="(day, index) in week" :key="'day'+index" :id="'day'+index">
                         <div class="day">
-                            <div class="text">{{day.getMonth()+1 + ' / ' + day.getDate()}}</div>
+                            <div class="date">{{day.getMonth()+1 + ' / ' + day.getDate()}}</div>
+                            <div class="day">{{getDayOfTheWeek(day)}}</div>
                         </div>
                     </div>
                 </div>
@@ -39,7 +40,7 @@
                 <!-- Calendar Rows -->
                 <div class="calendarRow" v-for="room in rooms.slice(1, rooms.length)" :key="'room'+room.id" :id="'room'+room.id" :style='styleDeskElements(room)'>
                     <!-- Calendar Blocks -->
-                    <div class="block" v-for="(day, index) in week" :key="'block'+room.id+':'+index" :id="'block'+room.id+':'+index" data-numberBooked='0'>
+                    <div class="block" v-for="(day, index) in week" :key="'block'+room.id+':'+index" :id="'block'+room.id+':'+index" data-numberBooked='0' :style='styleCurrentDay(day)'>
                         <!-- Buttons -->
                         <button class="searchBtn"></button>
                         <button class="addBtn"></button>
@@ -193,6 +194,10 @@
                 
                 return style;
             },
+            styleCurrentDay(day) {
+                if (new Date().toJSON().slice(0, 10) == day.toJSON().slice(0, 10))
+                    return 'background-color: Gainsboro;';
+            },
             styleBooking(date, roomID, booking) {
                 var style = '';
 
@@ -205,6 +210,24 @@
             },
             styleBookingColor(booking) {
                 return 'background-color:'+booking.bookingColor+';'
+            },
+            getDayOfTheWeek(day) {
+                switch(day.getDay()) {
+                    case 0:
+                        return 'Sunday';
+                    case 1:
+                        return 'Monday';
+                    case 2:
+                        return 'Tuesday';
+                    case 3:
+                        return 'Wednesday';
+                    case 4:
+                        return 'Thursday';
+                    case 5:
+                        return 'Friday';
+                    case 6:
+                        return 'Saterday';
+                }
             },
             fillBookingStartTIme(booking) {
                 if (booking.startTime.split(':')[0] < 12)

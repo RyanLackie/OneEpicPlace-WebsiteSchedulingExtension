@@ -137,16 +137,17 @@
     border-bottom: 1px blue solid;
 }
 .WeeklyViewCalendar .calendar .innerSection .topRow .dayContainer .day {
-    display: table;
     width: 100%;
     height: 100%;
     text-align: center;
 }
-.WeeklyViewCalendar .calendar .innerSection .topRow .dayContainer .day .text {
-    display: table-cell;
-    vertical-align: middle;
-    /*font-size: 1.4vw;*/
+.WeeklyViewCalendar .calendar .innerSection .topRow .dayContainer .day .date {
     font-size: 25px;
+    font-weight: bold;
+    cursor: context-menu;
+}
+.WeeklyViewCalendar .calendar .innerSection .topRow .dayContainer .day .day {
+    font-size: 15px;
     font-weight: bold;
     cursor: context-menu;
 }
