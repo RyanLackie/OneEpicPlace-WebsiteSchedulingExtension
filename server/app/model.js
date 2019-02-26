@@ -297,30 +297,16 @@ class Model {
             else {
                 //Booking time must be between 7AM and 10PM and endTime must be larger than startTime
                 var insertStartTime = new Date();
-                insertStartTime.setHours(parseInt(startTime.split(":")[0]));
-                insertStartTime.setMinutes(parseInt(startTime.split(":")[1]));
-                insertStartTime.setSeconds(0);
-                insertStartTime.setMilliseconds(0);
+                insertStartTime.setHours(parseInt(startTime.split(":")[0]), parseInt(startTime.split(":")[1]), 0, 0);
 
                 var insertEndTime = new Date();
-                insertEndTime.setHours(parseInt(endTime.split(":")[0]));
-                insertEndTime.setMinutes(parseInt(endTime.split(":")[1]));
-                insertEndTime.setSeconds(0);
-                insertEndTime.setMilliseconds(0);
+                insertEndTime.setHours(parseInt(endTime.split(":")[0]), parseInt(endTime.split(":")[1]), 0, 0);
 
                 var minTime = new Date();
-                minTime.setHours(7);
-                minTime.setMinutes(0);
-                minTime.setMinutes(0);
-                minTime.setSeconds(0);
-                minTime.setMilliseconds(0);
+                minTime.setHours(7, 0, 0, 0);
 
                 var maxTime = new Date();
-                maxTime.setHours(22);
-                maxTime.setMinutes(0);
-                maxTime.setMinutes(0);
-                maxTime.setSeconds(0);
-                maxTime.setMilliseconds(0);
+                maxTime.setHours(22, 0, 0, 0);
 
                 //Booking time must be between 7AM and 10PM
                 if (insertStartTime < minTime || insertEndTime > maxTime)
@@ -347,16 +333,10 @@ class Model {
                                 var pass = true;
                                 for (var index2 = 0; index2 < result.length; index2++) {
                                     var checkStartTime = new Date();
-                                    checkStartTime.setHours(result[index2].startTime.split(":")[0]);
-                                    checkStartTime.setMinutes(result[index2].startTime.split(":")[1]);
-                                    checkStartTime.setSeconds(0);
-                                    checkStartTime.setMilliseconds(0);
+                                    checkStartTime.setHours(result[index2].startTime.split(":")[0], result[index2].startTime.split(":")[1], 0, 0)
                                     
                                     var checkEndTime = new Date();
-                                    checkEndTime.setHours(result[index2].endTime.split(":")[0]);
-                                    checkEndTime.setMinutes(result[index2].endTime.split(":")[1]);
-                                    checkEndTime.setSeconds(0);
-                                    checkEndTime.setMilliseconds(0);
+                                    checkEndTime.setHours(result[index2].endTime.split(":")[0], result[index2].endTime.split(":")[1], 0, 0);
                                     
                                     //getTime() is used so that there is real numarical data to compair
                                     var check1 = checkStartTime.getTime() < insertStartTime.getTime() && checkEndTime.getTime() > insertStartTime.getTime();

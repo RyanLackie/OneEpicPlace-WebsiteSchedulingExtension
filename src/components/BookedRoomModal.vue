@@ -15,7 +15,7 @@
         
         <div class="inputSmRight">
             <label class="sectionLabel">Date</label>
-            <input type="text" class="form-control" id='BookedRoomModal-Date' :placeholder='booking.date'>
+            <input type="text" class="form-control" id='BookedRoomModal-Date' :placeholder='getDate()'>
         </div>
                 
         <div class="inputLg">
@@ -92,6 +92,11 @@
             closeModal() {
                 document.getElementById("BookedRoomModal").style.opacity = "0.0";
                 document.getElementById("BookedRoomModal").style.visibility = "hidden";
+            },
+
+            getDate() {
+                var date = this.booking.date.slice(0, 10).split('-');
+                return parseInt(date[1]) + '/' + date[2] + '/' + date[0];
             }
         }
     }

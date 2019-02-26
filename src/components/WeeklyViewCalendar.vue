@@ -4,8 +4,10 @@
         <!-- Container for date selector -->
         <div class="dateSelector">
             <button id="dateSelectorPreviousBtn" class="btn backBtn" type="button" @click="decDate()"></button>
-            <input id="dateSelectorDate" class="date" :value="date.getMonth()+1+'/'+date.getDate()+'/'+date.getFullYear()" disabled>
-            <button id="dateSelectorCalendar" class="btn calendarBtn" type="button"></button>
+            <input id="dateSelectorDate" class="date" :value="week[0].getMonth()+1+'/'+week[0].getDate()+'/'+week[0].getFullYear()" disabled>
+            <div class="hyphen">-</div>
+            <input id="dateSelectorDate" class="date" :value="week[6].getMonth()+1+'/'+week[6].getDate()+'/'+week[6].getFullYear()" disabled>
+            <!--button id="dateSelectorCalendar" class="btn calendarBtn" type="button"></button-->
             <button id="dateSelectorPreviousBtn" class="btn forwardBtn" type="button" @click="incDate()"></button>
         </div>
 
@@ -28,7 +30,7 @@
                 <div class="topRow" id='topRow'>
                     <div class="dayContainer" v-for="(day, index) in week" :key="'day'+index" :id="'day'+index">
                         <div class="day">
-                            <div class="text">{{day.getDate()}}</div>
+                            <div class="text">{{day.getMonth()+1 + ' / ' + day.getDate()}}</div>
                         </div>
                     </div>
                 </div>
@@ -37,14 +39,18 @@
                 <!-- Calendar Rows -->
                 <div class="calendarRow" v-for="room in rooms.slice(1, rooms.length)" :key="'room'+room.id" :id="'room'+room.id" :style='styleDeskElements(room)'>
                     <!-- Calendar Blocks -->
-                    <div class="block" v-for="(day, index) in week" :key="'block'+index" :id="'block'+index">
+                    <div class="block" v-for="(day, index) in week" :key="'block'+room.id+':'+index" :id="'block'+room.id+':'+index" data-numberBooked='0'>
+                        <!-- Buttons -->
+                        <button class="searchBtn"></button>
+                        <button class="addBtn"></button>
                         <!-- Bookings -->
-                        <div class="booking" v-for="booking in bookings" :key="'booking'+booking.id" :id="'booking'+booking.id" :style='styleBooking(day, room.id, booking)' @click='bookingClicked(booking)'>
-                            <div class="timeBox">
-                                <div class="text">{{booking.startTime}}</div>
+                        <div class="booking" v-for="booking in bookings" :key="'booking'+booking.id" :id="'booking'+booking.id" 
+                        :style='styleBooking(day, room.id, booking)'>
+                            <div class="timeBox" :style='styleBookingColor(booking)' @click='bookingClicked(booking)'>
+                                <div class="text">{{fillBookingStartTIme(booking)}}</div>
                             </div>
                             <div class="textBox">
-                                <div class="text">{{booking.title}}</div>
+                                <div class="text" @click='bookingClicked(booking)'>{{booking.title}}</div>
                             </div>
                         </div>
                     </div>
@@ -86,8 +92,6 @@
 
         data() {
             return {
-                //Date for calender
-                date: new Date(),
                 //Week for the calendar
                 week: [],
 
@@ -133,28 +137,34 @@
 
         methods: {
             /* Date Functions */
-            getWeek() {
-                this.week[0] = new Date(new Date().setDate(new Date().getDate() - (new Date().getDay())));
+            getWeek(day) {
+                this.week[0] = new Date(day.setDate(day.getDate() - (day.getDay())));
                 this.week[0].setHours(0, 0, 0, 0);
-                this.week[1] = new Date(new Date().setDate(this.week[0].getDate() + 1));
+                
+                this.week[1] = new Date(day.setDate(this.week[0].getDate() + 1));
                 this.week[1].setHours(0, 0, 0, 0);
-                this.week[2] = new Date(new Date().setDate(this.week[0].getDate() + 2));
+
+                this.week[2] = new Date(day.setDate(this.week[1].getDate() + 1));
                 this.week[2].setHours(0, 0, 0, 0);
-                this.week[3] = new Date(new Date().setDate(this.week[0].getDate() + 3));
+
+                this.week[3] = new Date(day.setDate(this.week[2].getDate() + 1));
                 this.week[3].setHours(0, 0, 0, 0);
-                this.week[4] = new Date(new Date().setDate(this.week[0].getDate() + 4));
+
+                this.week[4] = new Date(day.setDate(this.week[3].getDate() + 1));
                 this.week[4].setHours(0, 0, 0, 0);
-                this.week[5] = new Date(new Date().setDate(this.week[0].getDate() + 5));
+
+                this.week[5] = new Date(day.setDate(this.week[4].getDate() + 1));
                 this.week[5].setHours(0, 0, 0, 0);
-                this.week[6] = new Date(new Date().setDate(this.week[0].getDate() + 6));
+
+                this.week[6] = new Date(day.setDate(this.week[5].getDate() + 1));
                 this.week[6].setHours(0, 0, 0, 0);
             },
             decDate: function() {
-                this.date = new Date(this.date.setDate(this.date.getDate() - 1));
+                this.getWeek(new Date(this.week[0].setDate(this.week[0].getDate() - 1)));
                 this.checkBookings();
             },
             incDate: function() {
-                this.date = new Date(this.date.setDate(this.date.getDate() + 1));
+                this.getWeek(new Date(this.week[6].setDate(this.week[6].getDate() + 1)));
                 this.checkBookings();
             },
 
@@ -186,6 +196,17 @@
                     style = style + 'left: 0px; width: 0px; height: 0px; display: none;';
 
                 return style;
+            },
+            styleBookingColor(booking) {
+                return 'background-color:'+booking.bookingColor+';'
+            },
+            fillBookingStartTIme(booking) {
+                if (booking.startTime.split(':')[0] < 12)
+                    return booking.startTime + ' am';
+                else if (booking.startTime.split(':')[0] == 12)
+                    return booking.startTime + ' pm';
+                else
+                    return booking.startTime.split(':')[0] - 12 + ':' + booking.startTime.split(':')[1] + ' pm';
             },
 
             /* Data Update */
@@ -221,7 +242,7 @@
         
         beforeMount() {
             //console.log('beforeMount');
-            this.getWeek();
+            this.getWeek(new Date());
         },
         mounted() {
             //console.log('mounted');
