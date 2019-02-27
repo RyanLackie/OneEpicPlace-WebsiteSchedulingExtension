@@ -47,7 +47,7 @@
                         <div
                             class="timeSlot" v-for="index in 12" :key="'timeSlot'+room.id+':'+(hour.id*12+index)" 
                             :id="'timeSlot'+room.id+':'+(hour.id*12+index)" :style='styleTimeSlot((hour.id*12+index))'
-                            @click="timeSlotClicked('timeSlot'+room.id+':'+(hour.id*12+index))"
+                            @click="timeSlotClicked(room, 'timeSlot'+room.id+':'+(hour.id*12+index))"
                             @mouseenter="timeSlotHover('timeSlot'+room.id+':'+(hour.id*12+index), true)"
                             @mouseleave="timeSlotHover('timeSlot'+room.id+':'+(hour.id*12+index), false)">
                         </div>
@@ -119,10 +119,7 @@
                     {id: 20, name: 'Hot Desk',                      type: 'desk'},
                     {id: 21, name: 'Hot Desk',                      type: 'desk'},
                     {id: 22, name: 'Hot Desk',                      type: 'desk'},
-                    {id: 23, name: 'Hot Desk',                      type: 'desk'},
-                    {id: 24, name: 'Hot Desk',                      type: 'desk'},
-                    {id: 25, name: 'Hot Desk',                      type: 'desk'},
-                    {id: 26, name: 'Hot Desk',                      type: 'desk'}
+                    {id: 23, name: 'Hot Desk',                      type: 'desk'}
                 ],
 
                 //hour include: id, time
@@ -246,11 +243,8 @@
                     */
                     var left = document.getElementById('timeSlot'+roomID+':'+startTimeSlot).getBoundingClientRect().left - document.getElementById('timeSlot'+roomID+':'+1).getBoundingClientRect().left;
                     var width = (endTimeSlot - startTimeSlot) * document.getElementById('timeSlot'+roomID+':'+startTimeSlot).getBoundingClientRect().width;
-                    var height = 60;
-                    if (this.rooms[roomID].type == 'desk')
-                        height = 30;
 
-                    style = style + 'left:'+left+'px; width:'+width+'px; height:'+height+'px; background-color:'+booking.bookingColor+';';
+                    style = style + 'left:'+left+'px; width:'+width+'px;background-color:'+booking.bookingColor+';';
                 }
                 else
                     style = style + 'left: 0px; width: 0px; height: 0px; display: none;';
@@ -300,15 +294,37 @@
                 else
                     document.getElementById(id).style.backgroundColor = this.previousTimeSlotColor;
             },
-            timeSlotClicked(id) {
-                //parse id
-                var input = id.slice(8);
-                input = input.split(':');
+            timeSlotClicked(room, id) {
+                id = id.slice(8).split(':');
+                var startTime = [
+                    parseInt(((id[1]-1) / 12), 10) + parseInt(this.hours[0].time.substring(0, this.hours[0].time.length - 2)),
+                    (id[1]-1) % 12 * 5
+                ];
+                var endTime = [
+                    startTime[0],
+                    startTime[1]
+                ];
 
-                if (this.rooms[input[0]].type == 'room')
-                    this.$refs.BookingRoomModal.openModal(this.date, input, this.rooms[input[0]].name, this.rooms[input[0]].type);
-                else if (this.rooms[input[0]].type == 'desk')
-                    this.$refs.BookingDeskModal.openModal(this.date, input, this.rooms[input[0]].name, this.rooms[input[0]].type);
+                if (startTime[1] == 55) {
+                    endTime[0] += 1;
+                    endTime[1] = 0;
+                }
+                else
+                    endTime[1] += 5;
+
+                if (startTime[0] < 10)
+                    startTime[0] = '0'+startTime[0];
+                if (startTime[1] < 10)
+                    startTime[1] = '0'+startTime[1];
+                if (endTime[0] < 10)
+                    endTime[0] = '0'+endTime[0];
+                if (endTime[1] < 10)
+                    endTime[1] = '0'+endTime[1];
+                
+                if (room.type == 'room')
+                    this.$refs.BookingRoomModal.openModal(this.date, room, startTime[0]+':'+startTime[1], endTime[0]+':'+endTime[1]);
+                else if (room.type == 'desk')
+                    this.$refs.BookingDeskModal.openModal(this.date, room, startTime[0]+':'+startTime[1], endTime[0]+':'+endTime[1]);
             },
 
             bookingClicked(booking) {

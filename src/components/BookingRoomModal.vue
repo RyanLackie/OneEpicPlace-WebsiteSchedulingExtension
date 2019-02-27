@@ -75,8 +75,8 @@
     export default {
         data() {
             return {
-                //bookingSelected include: id, name
-                bookingSelected: {date: null, id: null, name: null, locationType: null},
+                date: null,
+                room: null,
 
                 //Color options
                 selectedColor: 'blue'
@@ -85,8 +85,8 @@
 
         methods: {
             submitBooking(event) {
-                var date = this.bookingSelected.date.toJSON().slice(0, 10);
-                var locationID = this.bookingSelected.id;
+                var date = this.date.toJSON().slice(0, 10);
+                var locationID = this.room.id;
                 var title = document.getElementById('BookingRoomModal-Title').value;           
                 var description = document.getElementById('BookingRoomModal-Description').value;
                 var startTime = document.getElementById('BookingRoomModal-StartTime').value;
@@ -146,38 +146,16 @@
                     document.getElementById('BookingRoomModal-NoiseValue').innerHTML = 'Very Loud';
             },
 
-            openModal(date, input, bookingName, locationType) {
-                this.bookingSelected.date = date;
-                this.bookingSelected.id = input[0];
-                this.bookingSelected.name = bookingName;
-                this.bookingSelected.locationType = locationType;
+            openModal(date, room, startTime, endTime) {
+                this.date = date;
+                this.room = room;
 
                 //Modal Title
-                document.getElementById('BookingRoomModal-Header').innerHTML = this.bookingSelected.name;
+                document.getElementById('BookingRoomModal-Header').innerHTML = room.name;
 
                 //Time
-                var startHour = parseInt(((input[1]-1) / 12), 10) + parseInt(this.$parent.hours[0].time.substring(0, this.$parent.hours[0].time.length - 2));
-                var startMin = (input[1]-1) % 12 * 5;
-                var endHour = startHour;
-                var endMin = startMin;
-
-                if (startMin == 55) {
-                    endHour += 1;
-                    endMin = 0;
-                }
-                else
-                    endMin += 5;
-
-                if (startHour < 10)
-                    startHour = '0'+startHour;
-                if (startMin < 10)
-                    startMin = '0'+startMin;
-                if (endHour < 10)
-                    endHour = '0'+endHour;
-                if (endMin < 10)
-                    endMin = '0'+endMin;
-                document.getElementById('BookingRoomModal-StartTime').value = startHour + ":" + startMin;
-                document.getElementById('BookingRoomModal-EndTime').value = endHour + ":" + endMin;
+                document.getElementById('BookingRoomModal-StartTime').value = startTime;
+                document.getElementById('BookingRoomModal-EndTime').value = endTime;
 
                 document.getElementById("BookingRoomModal").style.opacity = "1.0";
                 document.getElementById("BookingRoomModal").style.visibility = "visible";

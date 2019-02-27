@@ -146,16 +146,18 @@
     font-weight: bold;
     cursor: context-menu;
 }
-.WeeklyViewCalendar .calendar .innerSection .topRow .dayContainer .day .day {
+.WeeklyViewCalendar .calendar .innerSection .topRow .dayContainer .day .dayOfTheWeek {
     font-size: 15px;
     font-weight: bold;
     cursor: context-menu;
 }
 
+.WeeklyViewCalendar .calendar .innerSection .firstRowPlaceHolder {
+    height: 60px;
+}
+
 .WeeklyViewCalendar .calendar .innerSection .calendarRow {
-    width: 100%;
     height: 100px;
-    background-color: white;
 }
 .WeeklyViewCalendar .calendar .innerSection .calendarRow .block {
     position: relative;
@@ -168,21 +170,37 @@
     overflow: hidden;
 }
 
-.WeeklyViewCalendar .calendar .innerSection .calendarRow .searchBtn {
+.WeeklyViewCalendar .calendar .innerSection .calendarRow .searchContainer {
     position: absolute;
     bottom: 0;
-    right: 35px;
-    width: 30px;
+    left: 0;
+    width: 100%;
     height: 30px;
+    z-index: 1;
+}
+.WeeklyViewCalendar .calendar .innerSection .calendarRow .searchContainer .icon {
+    position: absolute;
+    bottom: 0;
+    left: 10px;
+    width: 20px;
+    height: 20px;
     border: none;
     text-decoration: none;
-    background-color: green;
-    background-image: url("../../assets/search-white.png");
-    background-size: 70%;
+    background-image: url("../../assets/search-black.png");
+    background-size: 80%;
     background-repeat: no-repeat;
     background-position: center;
     z-index: 1;
-    visibility: hidden;
+    cursor: pointer;
+}
+.WeeklyViewCalendar .calendar .innerSection .calendarRow .searchContainer .text {
+    position: absolute;
+    bottom: 0;
+    left: 28px;
+    padding-left: 2px;
+    font-size: 15px;
+    color: black;
+    cursor: pointer;
 }
 .WeeklyViewCalendar .calendar .innerSection .calendarRow .addBtn {
     position: absolute;
@@ -203,9 +221,6 @@
 .WeeklyViewCalendar .calendar .innerSection .calendarRow .block:hover .addBtn{
     visibility: visible;
 }
-.WeeklyViewCalendar .calendar .innerSection .calendarRow .block:hover .searchBtn{
-    visibility: visible;
-}
 
 .WeeklyViewCalendar .calendar .innerSection .calendarRow .block .booking {
     width: 230px;
@@ -224,7 +239,8 @@
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    padding-left: 0px;
+    width: 100%;
+    text-align: center;
     color: white;
 }
 .WeeklyViewCalendar .calendar .innerSection .calendarRow .block .booking .textBox {

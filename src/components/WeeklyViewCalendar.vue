@@ -31,27 +31,32 @@
                     <div class="dayContainer" v-for="(day, index) in week" :key="'day'+index" :id="'day'+index">
                         <div class="day">
                             <div class="date">{{day.getMonth()+1 + ' / ' + day.getDate()}}</div>
-                            <div class="day">{{getDayOfTheWeek(day)}}</div>
+                            <div class="dayOfTheWeek">{{getDayOfTheWeek(day)}}</div>
                         </div>
                     </div>
                 </div>
-                <div class="calendarRow" :style="styleFirstRow(0)"></div>
 
                 <!-- Calendar Rows -->
+                <div class="firstRowPlaceHolder"></div>
                 <div class="calendarRow" v-for="room in rooms.slice(1, rooms.length)" :key="'room'+room.id" :id="'room'+room.id" :style='styleDeskElements(room)'>
                     <!-- Calendar Blocks -->
-                    <div class="block" v-for="(day, index) in week" :key="'block'+room.id+':'+index" :id="'block'+room.id+':'+index" data-numberBooked='0' :style='styleCurrentDay(day)'>
+                    <div class="block" v-for="(day, index) in week" :key="'block'+room.id+':'+index" :id="'block'+room.id+':'+index" :style='styleCurrentDay(day)'>
                         <!-- Buttons -->
-                        <button class="searchBtn"></button>
-                        <button class="addBtn"></button>
+                        <div class="searchContainer">
+                            <div class="icon" :style='styleBookingCount(day, room)' @click='viewBookings(day, room)'></div>
+                            <div class="text" :style='styleBookingCount(day, room)' @click='viewBookings(day, room)'>
+                                {{getBookingCount(day, room) + ' total'}}
+                            </div>
+                        </div>
+                        <button class="addBtn" @click="addBookingClicked(day, room)"></button>
                         <!-- Bookings -->
                         <div class="booking" v-for="booking in bookings" :key="'booking'+booking.id" :id="'booking'+booking.id" 
                         :style='styleBooking(day, room.id, booking)'>
-                            <div class="timeBox" :style='styleBookingColor(booking)' @click='bookingClicked(booking)'>
+                            <div class="timeBox" :style='styleBookingColor(booking)' @click='viewBookings(day, room)'>
                                 <div class="text">{{fillBookingStartTIme(booking)}}</div>
                             </div>
                             <div class="textBox">
-                                <div class="text" @click='bookingClicked(booking)'>{{booking.title}}</div>
+                                <div class="text" @click='viewBookings(day, room)'>{{booking.title}}</div>
                             </div>
                         </div>
                     </div>
@@ -63,7 +68,6 @@
 
         <!-- Modals -->
         <BookingRoomModal ref="BookingRoomModal"></BookingRoomModal>
-        <BookedRoomModal ref="BookedRoomModal"></BookedRoomModal>
 
         <BookingDeskModal ref="BookingDeskModal"></BookingDeskModal>
         
@@ -79,14 +83,12 @@
     import * as api from '@/services/api_access';
 
     import BookingRoomModal from '@/components/BookingRoomModal.vue';
-    import BookedRoomModal from '@/components/BookedRoomModal.vue';
 
     import BookingDeskModal from '@/components/BookingDeskModal.vue';
 
     export default {
         components: {
             BookingRoomModal,
-            BookedRoomModal,
 
             BookingDeskModal
         },
@@ -122,10 +124,7 @@
                     {id: 20, name: 'Hot Desk',                      type: 'desk'},
                     {id: 21, name: 'Hot Desk',                      type: 'desk'},
                     {id: 22, name: 'Hot Desk',                      type: 'desk'},
-                    {id: 23, name: 'Hot Desk',                      type: 'desk'},
-                    {id: 24, name: 'Hot Desk',                      type: 'desk'},
-                    {id: 25, name: 'Hot Desk',                      type: 'desk'},
-                    {id: 26, name: 'Hot Desk',                      type: 'desk'}
+                    {id: 23, name: 'Hot Desk',                      type: 'desk'}
                 ],
 
                 //List of returned bookings
@@ -231,11 +230,28 @@
             },
             fillBookingStartTIme(booking) {
                 if (booking.startTime.split(':')[0] < 12)
-                    return booking.startTime + ' am';
+                    return parseInt(booking.startTime.split(':')[0]) + ':' + booking.startTime.split(':')[1] + ' am';
                 else if (booking.startTime.split(':')[0] == 12)
                     return booking.startTime + ' pm';
                 else
                     return booking.startTime.split(':')[0] - 12 + ':' + booking.startTime.split(':')[1] + ' pm';
+            },
+            styleBookingCount(date, room) {
+                var count = 0;
+                for (var i = 0; i < this.bookings.length; i++) {
+                    if (date.toJSON().slice(0, 10) == this.bookings[i].date.slice(0, 10) && room.id == this.bookings[i].locationID)
+                        count++
+                }
+                if (count == 0)
+                    return 'visibility: hidden;';
+            },
+            getBookingCount(date, room) {
+                var count = 0;
+                for (var i = 0; i < this.bookings.length; i++) {
+                    if (date.toJSON().slice(0, 10) == this.bookings[i].date.slice(0, 10) && room.id == this.bookings[i].locationID)
+                        count++
+                }
+                return count;
             },
 
             /* Data Update */
@@ -272,8 +288,15 @@
                 document.getElementById('innerSection').scrollTop = 0;
             },
 
-            bookingClicked(booking) {
-                this.$refs.BookedRoomModal.openModal(booking);
+            addBookingClicked(date, room) {
+                if (room.type == 'room')
+                    this.$refs.BookingRoomModal.openModal(date, room, '12:00', '12:00');
+                else if (room.type == 'desk')
+                    this.$refs.BookingDeskModal.openModal(date, room, '12:00', '12:00');
+            },
+            viewBookings(day, room) {
+                //console.log('here');
+                //New Modal for viewing all bookings for a day
             }
         },
         

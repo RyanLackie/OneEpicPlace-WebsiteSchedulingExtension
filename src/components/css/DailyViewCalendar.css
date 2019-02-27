@@ -142,6 +142,7 @@
 }
 
 .DailyViewCalendar .calendar .innerSection .calendarRow {
+    position: relative;
     width: 100%;
     height: 60px;
     background-color: white;
@@ -163,8 +164,7 @@
 
 .DailyViewCalendar .calendar .innerSection .calendarRow .booking {
     position: absolute;
-    width: 100px;
-    height: 60px;
+    height: 100%;
     border-right: 1px black solid;
     border-bottom: 1px black solid;
     background-color: black;  /* Default color if error occurs */

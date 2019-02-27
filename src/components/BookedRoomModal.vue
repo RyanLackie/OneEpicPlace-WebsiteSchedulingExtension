@@ -65,26 +65,25 @@
                 document.getElementById('BookedRoomModal-Header').innerHTML = locationName;
 
                 //Time
-                var startHour = parseInt(booking.startTime.split(':')[0]);
-                var startMin = parseInt(booking.startTime.split(':')[1]);
-                if (startHour < 10)
-                    startHour = '0'+startHour;
-                if (startMin < 10)
-                    startMin = '0'+startMin;
-                //console.log('start ' + startHour + ":" + startMin);
-                document.getElementById('BookedRoomModal-StartTime').value = startHour + ":" + startMin;
+                var startTime = [
+                    parseInt(booking.startTime.split(':')[0]),
+                    parseInt(booking.startTime.split(':')[1])
+                ]
+                if (startTime[0] < 10)
+                    startTime[0] = '0'+startTime[0];
+                if (startTime[1] < 10)
+                    startTime[1] = '0'+startTime[1];
+                document.getElementById('BookedRoomModal-StartTime').value = startTime[0] + ":" + startTime[1];
 
-                var endHour = parseInt(booking.endTime.split(':')[0]);
-                var endMin = parseInt(booking.endTime.split(':')[1]);
-                if (endHour < 10)
-                    endHour = '0'+endHour;
-                if (endMin < 10)
-                    endMin = '0'+endMin;
-                //console.log('end ' + endHour + ":" + endMin);
-                document.getElementById('BookedRoomModal-EndTime').value = endHour + ":" + endMin;
-
-                //Color
-                //document.getElementById('BookedRoomModal').style.outline = '3px ' + booking.bookingColor + ' solid';
+                var endTime = [
+                    parseInt(booking.endTime.split(':')[0]),
+                    parseInt(booking.endTime.split(':')[1])
+                ]
+                if (endTime[0] < 10)
+                    endTime[0] = '0'+endTime[0];
+                if (endTime[1] < 10)
+                    endTime[1] = '0'+endTime[1];
+                document.getElementById('BookedRoomModal-EndTime').value = endTime[0] + ":" + endTime[1];
                 
                 document.getElementById("BookedRoomModal").style.opacity = "1.0";
                 document.getElementById("BookedRoomModal").style.visibility = "visible";
