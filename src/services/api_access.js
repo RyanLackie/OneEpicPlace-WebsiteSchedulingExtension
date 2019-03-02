@@ -48,7 +48,7 @@ export function updateProfile(newEmail, newPassword, firstName, lastName, occupa
 }
 
 //Booking Methods
-export function insertBooking(date, locationID, title, description, startTime, endTime, bookingColor, noiseLevel) {
+export function insertBooking(date, locationID, locationName, title, description, startTime, endTime, bookingColor, noiseLevel) {
     var email = null, password = null, firstName = null, lastName = null;
     if (user != null) {
         email = user.email;
@@ -57,7 +57,7 @@ export function insertBooking(date, locationID, title, description, startTime, e
         lastName = user.lastName
     }
     return myFetch(api_root + "/app/insertBooking", {
-        email, password, firstName, lastName, date, locationID, title, description, startTime, endTime, bookingColor, noiseLevel
+        email, password, firstName, lastName, date, locationID, locationName, title, description, startTime, endTime, bookingColor, noiseLevel
     });
 }
 export function getBookingsDay(date) {

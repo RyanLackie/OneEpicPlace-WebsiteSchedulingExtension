@@ -22,7 +22,7 @@
     padding: 0px 20px;
     opacity: 0;
     visibility: hidden;
-    z-index: 2;
+    z-index: 3;
 }
 .BookingRoomModal::-webkit-scrollbar-track {
 	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);

@@ -2,14 +2,12 @@
     Date Selector 
 */
 .WeeklyViewCalendar .dateSelector {
-    display: inline-block;
     width: 100%;
     margin: 0px auto;
     text-align: center;
     margin-bottom: 30px;
 }
 .WeeklyViewCalendar .dateSelector .backBtn {
-    display: inline-block;
     width: 70px;
     height: 40px;
     margin: -15px 0px 0px 0px;
@@ -20,7 +18,6 @@
     background-position: center;
 }
 .WeeklyViewCalendar .dateSelector .date {
-    display: inline-block;
     min-width: 200px;
     width: 10%;
     height: 40px;
@@ -72,7 +69,11 @@
 */
 .WeeklyViewCalendar .calendar .roomCol {
     position: absolute;
-    width: 15.5%;
+    width: 170px;
+}
+.WeeklyViewCalendar .calendar .roomCol .firstRoomPlaceHolder {
+    height: 60px;
+    border: 1px purple solid;
 }
 .WeeklyViewCalendar .calendar .roomCol .roomContainer {
     float: left;
@@ -89,7 +90,7 @@
 .WeeklyViewCalendar .calendar .roomCol .roomContainer .room .text {
     display: table-cell;
     vertical-align: middle;
-    font-size: 1.4vw;
+    font-size: 20px;
     font-weight: bold;
     line-height: 25px;
     cursor: context-menu;
@@ -100,8 +101,8 @@
 */
 .WeeklyViewCalendar .calendar .innerSection {
     position: absolute;
-    width: 84.5%;
-    left: 15.5%;
+    width: 88.5%;
+    left: 170px;
     overflow-x: scroll;
     overflow-y: hidden;
     white-space: nowrap;
@@ -125,7 +126,7 @@
     position: absolute;
     width: 100%;
     height: 60px;
-    z-index: 1;
+    z-index: 2;
 }
 .WeeklyViewCalendar .calendar .innerSection .topRow .dayContainer {
     display: inline-block;
@@ -175,10 +176,10 @@
     bottom: 0;
     left: 0;
     width: 100%;
-    height: 30px;
     z-index: 1;
+    outline: 1px red solid;
 }
-.WeeklyViewCalendar .calendar .innerSection .calendarRow .searchContainer .icon {
+.WeeklyViewCalendar .calendar .innerSection .calendarRow .searchIcon {
     position: absolute;
     bottom: 0;
     left: 10px;
@@ -190,10 +191,9 @@
     background-size: 80%;
     background-repeat: no-repeat;
     background-position: center;
-    z-index: 1;
     cursor: pointer;
 }
-.WeeklyViewCalendar .calendar .innerSection .calendarRow .searchContainer .text {
+.WeeklyViewCalendar .calendar .innerSection .calendarRow .searchText {
     position: absolute;
     bottom: 0;
     left: 28px;
@@ -206,8 +206,8 @@
     position: absolute;
     bottom: 0;
     right: 0;
-    width: 30px;
-    height: 30px;
+    width: 25px;
+    height: 25px;
     border: none;
     text-decoration: none;
     background-color: green;
@@ -224,18 +224,18 @@
 
 .WeeklyViewCalendar .calendar .innerSection .calendarRow .block .booking {
     width: 230px;
-    height: 25%;
+    height: 26%;
     padding: 1%;
+    cursor: pointer;
 }
 .WeeklyViewCalendar .calendar .innerSection .calendarRow .block .booking .timeBox {
     position: relative;
     float: left;
-    width: 29%;
+    width: 31%;
     height: 100%;
     background-color: black;  /* Default color if error occurs */
-    cursor: pointer;
 }
-.WeeklyViewCalendar .calendar .innerSection .calendarRow .block .booking .timeBox .text {
+.WeeklyViewCalendar .calendar .innerSection .calendarRow .block .booking .timeBox .time {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
@@ -243,21 +243,34 @@
     text-align: center;
     color: white;
 }
+.WeeklyViewCalendar .calendar .innerSection .calendarRow .block .booking .warningIcon {
+    position: relative;
+    display: none;
+    float: left;
+    width: 8%;
+    height: 100%;
+    margin-top: 1px;
+    margin-left: 3px;
+    border: none;
+    text-decoration: none;
+    background-image: url("../../assets/warning-red.png");
+    background-size: 80%;
+    background-repeat: no-repeat;
+    background-position: center;
+}
 .WeeklyViewCalendar .calendar .innerSection .calendarRow .block .booking .textBox {
     position: relative;
     float: left;
-    width: 69%;
+    width: 66%;
     height: 100%;
-    padding-left: 5px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    padding-left: 2%;
 }
 .WeeklyViewCalendar .calendar .innerSection .calendarRow .block .booking .textBox .text {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    padding-left: 2px;
+    width: 97%;
     text-transform: capitalize;
-    cursor: pointer;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }

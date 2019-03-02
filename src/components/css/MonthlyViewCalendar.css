@@ -1,0 +1,186 @@
+/*
+    Date Selector 
+*/
+.MonthlyViewCalendar .dateSelector {
+    width: 100%;
+    margin: 0px auto;
+    text-align: center;
+    margin-bottom: 30px;
+}
+.MonthlyViewCalendar .dateSelector .backBtn {
+    width: 70px;
+    height: 40px;
+    margin: -15px 3% 0px 0px;
+    background-color: black;
+    background-image: url("../../assets/backarrow-white.png");
+    background-size: 50%;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+.MonthlyViewCalendar .dateSelector .date {
+    min-width: 200px;
+    width: 10%;
+    height: 40px;
+    text-align: center;
+    background: transparent;
+    border: 0;
+    border-radius: 3px;
+    font-size: 30px;
+}
+.MonthlyViewCalendar .dateSelector .calendarBtn {
+    width: 50px;
+    height: 40px;
+    margin-top: -15px;
+    background-color: lightgray;
+    background-image: url("../../assets/calendar-white.png");
+    background-size: 60%;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+.MonthlyViewCalendar .dateSelector .forwardBtn {
+    display: inline-block;
+    width: 70px;
+    height: 40px;
+    margin: -15px 0px 0px 4%;
+    background-color: black;
+    background-image: url("../../assets/forwardarrow-white.png");
+    background-size: 50%;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+/*
+    Calendar
+*/
+.MonthlyViewCalendar .calendar {
+    position: relative;
+    width: 98%;
+    margin: 0px auto;
+}
+
+/*
+    Scrollable Calendar
+*/
+.MonthlyViewCalendar .calendar .innerSection {
+    position: absolute;
+    width: 100%;
+    overflow-x: scroll;
+    overflow-y: hidden;
+    white-space: nowrap;
+}
+.MonthlyViewCalendar .calendar .innerSection::-webkit-scrollbar-track {
+	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+	border-radius: 3px;
+    background-color: #F5F5F5;
+}
+.MonthlyViewCalendar .calendar .innerSection::-webkit-scrollbar {
+	width: 12px;
+	background-color: #F5F5F5;
+}
+.MonthlyViewCalendar .calendar .innerSection::-webkit-scrollbar-thumb {
+	border-radius: 3px;
+	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+	background-color: #555;
+}
+
+.MonthlyViewCalendar .calendar .innerSection .topRow {
+    position: absolute;
+    width: 100%;
+    height: 60px;
+    z-index: 2;
+}
+.MonthlyViewCalendar .calendar .innerSection .topRow .dayContainer {
+    display: inline-block;
+    width: 14.28%;
+    height: 100%;
+    background-color: white;
+    border-top: 1px blue solid;
+    border-right: 1px blue solid;
+    border-bottom: 1px blue solid;
+}
+.MonthlyViewCalendar .calendar .innerSection .topRow .dayContainer .day {
+    display: table;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+}
+.MonthlyViewCalendar .calendar .innerSection .topRow .dayContainer .day .dayOfTheWeek {
+    display: table-cell;
+    vertical-align: middle;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: context-menu;
+}
+
+.MonthlyViewCalendar .calendar .innerSection .firstRowPlaceHolder {
+    height: 60px;
+}
+
+.MonthlyViewCalendar .calendar .innerSection .calendarRow {
+    height: 100px;
+    outline: 1px black solid;
+}
+
+.MonthlyViewCalendar .calendar .innerSection .calendarRow .block {
+    position: relative;
+    display: inline-block;
+    width: 14.28%;
+    height: 100%;
+    border-top: 1px black solid;
+    border-bottom: 1px black solid;
+    border-right: 1px black solid;
+    overflow: hidden;
+}
+
+.MonthlyViewCalendar .calendar .innerSection .calendarRow .block .booking {
+    width: 230px;
+    height: 26%;
+    padding: 1%;
+    cursor: pointer;
+}
+.MonthlyViewCalendar .calendar .innerSection .calendarRow .block .booking .timeBox {
+    position: relative;
+    float: left;
+    width: 31%;
+    height: 100%;
+    background-color: black;  /* Default color if error occurs */
+}
+.MonthlyViewCalendar .calendar .innerSection .calendarRow .block .booking .timeBox .time {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 100%;
+    text-align: center;
+    color: white;
+}
+.MonthlyViewCalendar .calendar .innerSection .calendarRow .block .booking .warningIcon {
+    position: relative;
+    display: none;
+    float: left;
+    width: 8%;
+    height: 100%;
+    margin-top: 1px;
+    margin-left: 3px;
+    border: none;
+    text-decoration: none;
+    background-image: url("../../assets/warning-red.png");
+    background-size: 80%;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+.MonthlyViewCalendar .calendar .innerSection .calendarRow .block .booking .textBox {
+    position: relative;
+    float: left;
+    width: 66%;
+    height: 100%;
+    padding-left: 2%;
+}
+.MonthlyViewCalendar .calendar .innerSection .calendarRow .block .booking .textBox .text {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 90%;
+    text-transform: capitalize;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}

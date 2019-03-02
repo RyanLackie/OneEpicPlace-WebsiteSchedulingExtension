@@ -67,9 +67,34 @@
         },
 
         methods: {
+            openModal(date, room, startTime, endTime) {
+                this.date = date;
+                this.room = room;
+
+                //Modal Title
+                document.getElementById('BookingDeskModal-Header').innerHTML = room.name;
+
+                //Time
+                document.getElementById('BookingDeskModal-StartTime').value = startTime;
+                document.getElementById('BookingDeskModal-EndTime').value = endTime;
+
+                document.getElementById("BookingDeskModal").style.opacity = "1.0";
+                document.getElementById("BookingDeskModal").style.visibility = "visible";
+            },
+            closeModal() {
+                document.getElementById("BookingDeskModal").style.opacity = "0.0";
+                document.getElementById("BookingDeskModal").style.visibility = "hidden";
+                //colors
+                document.getElementById('BookingDeskModal-SelectedColor').style.visibility = 'visible';
+                for (var index = 0; index < 8; index++) {
+                    document.getElementById('BookingDeskModal-ColorOption'+index).style.visibility = 'hidden';
+                }
+            },
+            
             submitBooking(event) {
                 var date = this.date.toJSON().slice(0, 10);
                 var locationID = this.room.id;
+                var locationName = this.$parent.rooms[this.room.id].name;
                 var title = '';           
                 var description = '';
                 var startTime = document.getElementById('BookingDeskModal-StartTime').value;
@@ -77,7 +102,7 @@
                 var bookingColor = this.selectedColor;
                 var noiseLevel = 0;
 
-                api.insertBooking(date, locationID, title, description, startTime, endTime, bookingColor, noiseLevel).then(bookingResult => {
+                api.insertBooking(date, locationID, locationName, title, description, startTime, endTime, bookingColor, noiseLevel).then(bookingResult => {
                     //Not logged in
                     if (bookingResult == '403') 
                         alert('You are not logged in');
@@ -127,30 +152,6 @@
                     document.getElementById('BookingDeskModal-NoiseValue').innerHTML = 'Loud';
                 else if (document.getElementById('BookingDeskModal-NoiseSlider').value == 2)
                     document.getElementById('BookingDeskModal-NoiseValue').innerHTML = 'Very Loud';
-            },
-
-            openModal(date, room, startTime, endTime) {
-                this.date = date;
-                this.room = room;
-
-                //Modal Title
-                document.getElementById('BookingDeskModal-Header').innerHTML = room.name;
-
-                //Time
-                document.getElementById('BookingDeskModal-StartTime').value = startTime;
-                document.getElementById('BookingDeskModal-EndTime').value = endTime;
-
-                document.getElementById("BookingDeskModal").style.opacity = "1.0";
-                document.getElementById("BookingDeskModal").style.visibility = "visible";
-            },
-            closeModal() {
-                document.getElementById("BookingDeskModal").style.opacity = "0.0";
-                document.getElementById("BookingDeskModal").style.visibility = "hidden";
-                //colors
-                document.getElementById('BookingDeskModal-SelectedColor').style.visibility = 'visible';
-                for (var index = 0; index < 8; index++) {
-                    document.getElementById('BookingDeskModal-ColorOption'+index).style.visibility = 'hidden';
-                }
             }
         },
 

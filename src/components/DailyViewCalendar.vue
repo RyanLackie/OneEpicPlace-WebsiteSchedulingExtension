@@ -14,6 +14,7 @@
 
             <!-- Rooms -->
             <div class="roomCol">
+                <div class="firstRoomPlaceHolder"></div>
                 <div class="roomContainer" v-for="room in rooms" :key="'room'+room.id" :id="'room'+room.id" :style='styleDeskElements(room)'>
                     <div class="room">
                         <div class="text">{{room.name}}</div>
@@ -35,10 +36,11 @@
                 <div class="calendarRow"></div>
 
                 <!-- Calendar Rows -->
-                <div class="calendarRow" v-for="room in rooms.slice(1, rooms.length)" :key="'room'+room.id" :id="'room'+room.id" :style='styleDeskElements(room)'>
+                <div class="calendarRow" v-for="room in rooms" :key="'room'+room.id" :id="'room'+room.id" :style='styleDeskElements(room)'>
                     <!-- Booking Blocks -->
                     <div class="booking" v-for="booking in bookings" :key="'booking'+booking.id" :id="'booking'+booking.id" :style='styleBooking(room.id, booking)' @click='bookingClicked(booking)'>
-                        <div v-if="room.type == 'room'" class="title">{{booking.title}}</div>
+                        <div v-if="room.type == 'room'" class="warningIcon" :style='styleWarningIcon(booking)'></div>
+                        <div v-if="room.type == 'room'" class="title" :style='styleBookingTitle(booking)'>{{booking.title}}</div>
                         <div v-if="room.type == 'room'" class="name">{{booking.firstName + " " + booking.lastName}}</div>
                         <div v-if="room.type == 'desk'" class="centerText">{{booking.firstName + " " + booking.lastName}}</div>
                     </div>
@@ -95,19 +97,19 @@
 
                 //rooms include: id, name, type
                 rooms: [
-                    {id: 0, name: '',                               type: 'room'},
-                    {id: 1, name: 'DaVinci Room',                   type: 'room'},
-                    {id: 2, name: 'Green Room',                     type: 'room'},
-                    {id: 3, name: 'Sunshine Room',                  type: 'room'},
-                    {id: 4, name: 'Zen Room',                       type: 'room'},
-                    {id: 5, name: 'Studio',                         type: 'room'},
-                    {id: 6, name: 'EPIC Room',                      type: 'room'},
-                    {id: 7, name: 'Carriage House Treatment Room',  type: 'room'},
-                    {id: 8, name: 'Buissness Hub',                  type: 'room'},
-                    {id: 9, name: 'Loft',                           type: 'room'},
-                    {id: 10, name: 'Porch',                         type: 'room'},
-                    {id: 11, name: 'Lawn',                          type: 'room'},
+                    {id: 0, name: 'DaVinci Room',                   type: 'room'},
+                    {id: 1, name: 'Green Room',                     type: 'room'},
+                    {id: 2, name: 'Sunshine Room',                  type: 'room'},
+                    {id: 3, name: 'Zen Room',                       type: 'room'},
+                    {id: 4, name: 'Studio',                         type: 'room'},
+                    {id: 5, name: 'EPIC Room',                      type: 'room'},
+                    {id: 6, name: 'Carriage House Treatment Room',  type: 'room'},
+                    {id: 7, name: 'Buissness Hub',                  type: 'room'},
+                    {id: 8, name: 'Loft',                           type: 'room'},
+                    {id: 9, name: 'Porch',                          type: 'room'},
+                    {id: 10, name: 'Lawn',                          type: 'room'},
 
+                    {id: 11, name: 'Hot Desk',                      type: 'desk'},
                     {id: 12, name: 'Hot Desk',                      type: 'desk'},
                     {id: 13, name: 'Hot Desk',                      type: 'desk'},
                     {id: 14, name: 'Hot Desk',                      type: 'desk'},
@@ -118,8 +120,7 @@
                     {id: 19, name: 'Hot Desk',                      type: 'desk'},
                     {id: 20, name: 'Hot Desk',                      type: 'desk'},
                     {id: 21, name: 'Hot Desk',                      type: 'desk'},
-                    {id: 22, name: 'Hot Desk',                      type: 'desk'},
-                    {id: 23, name: 'Hot Desk',                      type: 'desk'}
+                    {id: 22, name: 'Hot Desk',                      type: 'desk'}
                 ],
 
                 //hour include: id, time
@@ -174,24 +175,14 @@
 
             /* JavaScript Styling */
             styleDeskElements(room) {
-                var style = '';
-
                 if (room.type == 'room' && this.rooms[(room.id+1)].type == 'desk')
-                    style = style + 'margin-bottom: 20px;';
+                    return 'margin-bottom: 20px;';
                 if (room.type == 'desk')
-                    style = style + 'height: 30px;';
-                
-                return style;
+                    return 'height: 30px;';
             },
             styleTimeSlot(timeSlot) {
-                var style = '';
-
-                style = style + 'background-color: white;';
-
                 if (timeSlot%3 == 0)
-                    style = style + 'border-right: 1px black solid;';
-
-                return style;
+                    return 'border-right: 1px black solid;';
             },
             styleTimeHighlighterLoop() {
                 var THIS = this;
@@ -200,7 +191,7 @@
 
                     var currentHour = parseInt(new Date().getHours());
                     var currentMin = parseInt(new Date().getMinutes());
-                    for (var row = 1; row < THIS.rooms.length; row++) {
+                    for (var row = 0; row < THIS.rooms.length; row++) {
                         for (var timeSlot = 1; timeSlot <= THIS.hours.length*12; timeSlot++) {
                             var timeSlotHour = parseInt((timeSlot-1)/12, 10) + parseInt(THIS.hours[0].time.substring(0, THIS.hours[0].time.length - 2));
                             var timeSlotMin = (timeSlot-1) % 12 * 5;
@@ -224,8 +215,6 @@
                 }, this.timeHighlighterDelay)
             },
             styleBooking(roomID, booking) {
-                var style = '';
-
                 if (roomID == booking.locationID) {
                     var startTime = booking.startTime;
                     var startTimeHour = parseInt(startTime.split(':')[0], 10);
@@ -244,12 +233,17 @@
                     var left = document.getElementById('timeSlot'+roomID+':'+startTimeSlot).getBoundingClientRect().left - document.getElementById('timeSlot'+roomID+':'+1).getBoundingClientRect().left;
                     var width = (endTimeSlot - startTimeSlot) * document.getElementById('timeSlot'+roomID+':'+startTimeSlot).getBoundingClientRect().width;
 
-                    style = style + 'left:'+left+'px; width:'+width+'px;background-color:'+booking.bookingColor+';';
+                    return 'left:'+left+'px; width:'+width+'px;background-color:'+booking.bookingColor+';';
                 }
-                else
-                    style = style + 'left: 0px; width: 0px; height: 0px; display: none;';
-
-                return style;
+                return 'left: 0px; width: 0px; height: 0px; display: none;';
+            },
+            styleWarningIcon(booking) {
+                if (booking.noiseLevel > 0)
+                    return 'display: inline;';
+            },
+            styleBookingTitle(booking) {
+                if (booking.noiseLevel > 0)
+                    return 'width: 70%;';
             },
 
             /* Data Update */
@@ -291,7 +285,7 @@
                     this.previousTimeSlotColor = document.getElementById(id).style.backgroundColor;
                     document.getElementById(id).style.backgroundColor = 'silver';
                 }
-                else
+                if (!mouseOverTimeSlot)
                     document.getElementById(id).style.backgroundColor = this.previousTimeSlotColor;
             },
             timeSlotClicked(room, id) {

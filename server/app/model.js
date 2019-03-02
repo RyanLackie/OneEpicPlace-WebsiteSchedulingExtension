@@ -108,6 +108,7 @@ class Model {
                 // eslint-disable-next-line
                 console.log("Email is taken: " + result[0].email);
                 call_back('409');
+                conn.end();
             }
             //Sign up user
             else {
@@ -122,12 +123,11 @@ class Model {
                     conn.query('SELECT * FROM users WHERE id = ' + mysql.escape(result.insertId), (err, result) => {
                         if (err) throw err;
                         call_back(result[0]);
+                        conn.end();
                     });
                 });
             }
         });
-
-        conn.end();
     }
 
     loginUser(email, password, call_back) {
@@ -286,7 +286,7 @@ class Model {
     /*////////////////////////////////////////////////////////////////////////////////////////////////////////
     /////////////////////////////////           Booking Methods          /////////////////////////////////////
     */////////////////////////////////////////////////////////////////////////////////////////////////////////
-    insertBooking(email, password, firstName, lastName, date, locationID, title, description, startTime, endTime, bookingColor, noiseLevel, call_back) {
+    insertBooking(email, password, firstName, lastName, date, locationID, locationName, title, description, startTime, endTime, bookingColor, noiseLevel, call_back) {
         // eslint-disable-next-line
         console.log("#################insertBooking()#################");
 
@@ -359,7 +359,7 @@ class Model {
                                 }
                                 else {
                                     //Insert booking
-                                    var sql = "INSERT INTO booking (email, firstName, lastName, date, locationID, title, description, startTime, endTime, bookingColor, noiseLevel) VALUES ('"+email+"' ,'"+firstName+"', '"+lastName+"', '"+date+"', '"+locationID+"', '"+title+"', '"+description+"', '"+startTime+"', '"+endTime+"', '"+bookingColor+"', '"+noiseLevel+"')";
+                                    var sql = "INSERT INTO booking (email, firstName, lastName, date, locationID, locationName, title, description, startTime, endTime, bookingColor, noiseLevel) VALUES ('"+email+"' ,'"+firstName+"', '"+lastName+"', '"+date+"', '"+locationID+"', '"+locationName+"', '"+title+"', '"+description+"', '"+startTime+"', '"+endTime+"', '"+bookingColor+"', '"+noiseLevel+"')";
                                     conn.query(sql, function(err, result) {
                                         if (err) throw err;
                                         // eslint-disable-next-line

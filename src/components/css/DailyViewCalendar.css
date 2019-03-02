@@ -10,7 +10,7 @@
 .DailyViewCalendar .dateSelector .backBtn {
     width: 70px;
     height: 40px;
-    margin: -15px 2% 0px 0px;
+    margin: -15px 3% 0px 0px;
     background-color: black;
     background-image: url("../../assets/backarrow-white.png");
     background-size: 50%;
@@ -18,8 +18,7 @@
     background-position: center;
 }
 .DailyViewCalendar .dateSelector .date {
-    min-width: 200px;
-    width: 10%;
+    width: 150px;
     height: 40px;
     text-align: center;
     background: transparent;
@@ -62,7 +61,11 @@
 */
 .DailyViewCalendar .calendar .roomCol {
     position: absolute;
-    width: 15.5%;
+    width: 170px;
+}
+.DailyViewCalendar .calendar .roomCol .firstRoomPlaceHolder {
+    height: 60px;
+    border: 1px purple solid;
 }
 .DailyViewCalendar .calendar .roomCol .roomContainer {
     float: left;
@@ -79,7 +82,7 @@
 .DailyViewCalendar .calendar .roomCol .roomContainer .room .text {
     display: table-cell;
     vertical-align: middle;
-    font-size: 1.4vw;
+    font-size: 20px;
     font-weight: bold;
     line-height: 25px;
     cursor: context-menu;
@@ -90,8 +93,8 @@
 */
 .DailyViewCalendar .calendar .innerSection {
     position: absolute;
-    width: 84.5%;
-    left: 15.5%;
+    width: 88.5%;
+    left: 170px;
     overflow-x: scroll;
     overflow-y: hidden;
     white-space: nowrap;
@@ -143,9 +146,7 @@
 
 .DailyViewCalendar .calendar .innerSection .calendarRow {
     position: relative;
-    width: 100%;
     height: 60px;
-    background-color: white;
 }
 .DailyViewCalendar .calendar .innerSection .calendarRow .timeChunk {
     display: inline-block;
@@ -168,30 +169,51 @@
     border-right: 1px black solid;
     border-bottom: 1px black solid;
     background-color: black;  /* Default color if error occurs */
-    overflow: hidden;
     cursor: pointer;
 }
+.DailyViewCalendar .calendar .innerSection .calendarRow .booking .warningIcon {
+    float: left;
+    width: 18%;
+    height: 20px;
+    margin-top: 2px;
+    margin-left: 2px;
+    border: none;
+    text-decoration: none;
+    background-image: url("../../assets/warning-red.png");
+    background-size: 80%;
+    background-repeat: no-repeat;
+    background-position: center;
+    display: none;
+}
 .DailyViewCalendar .calendar .innerSection .calendarRow .booking .title {
-    position: absolute;
-    top: 0;
-    padding-top: 2px;
-    padding-left: 5px;
-    color: white;
+    float: left;
+    width: 90%;
+    margin-left: 5px;
+    overflow: hidden;
+    text-overflow: ellipsis;
     text-transform: capitalize;
+    color: white;
 }
 .DailyViewCalendar .calendar .innerSection .calendarRow .booking .name {
     position: absolute;
-    bottom: 0;
-    padding-bottom: 2px;
-    padding-left: 5px;
-    color: white;
+    bottom: 2px;
+    left: 5px;
+    width: 90%;
+    overflow: hidden;
+    text-overflow: ellipsis;
     text-transform: capitalize;
+    color: white;
 }
 .DailyViewCalendar .calendar .innerSection .calendarRow .booking .centerText {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    padding-left: 5px;
-    color: white;
+    left: 0;
+    right: 0;
+    width: 96%;
+    margin: 0 auto;
+    overflow: hidden;
+    text-overflow: ellipsis;
     text-transform: capitalize;
+    color: white;
 }

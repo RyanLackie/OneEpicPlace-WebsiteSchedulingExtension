@@ -61,8 +61,7 @@
                 this.booking = booking;
 
                 //Modal Title
-                var locationName = this.$parent.rooms[booking.locationID].name;
-                document.getElementById('BookedRoomModal-Header').innerHTML = locationName;
+                document.getElementById('BookedRoomModal-Header').innerHTML = booking.locationName;
 
                 //Time
                 var startTime = [

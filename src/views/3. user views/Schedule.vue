@@ -11,6 +11,7 @@
         <!-- Calendars -->
         <DailyViewCalendar ref="DailyViewCalendar" v-if="viewSelected == 0"></DailyViewCalendar>
         <WeeklyViewCalendar ref="WeeklyViewCalendar" v-if="viewSelected == 1"></WeeklyViewCalendar>
+        <MonthlyViewCalendar ref="MonthlyViewCalendar" v-if="viewSelected == 2"></MonthlyViewCalendar>
 
     </div>
 </template>
@@ -25,11 +26,13 @@
 
     import DailyViewCalendar from '@/components/DailyViewCalendar.vue'
     import WeeklyViewCalendar from '@/components/WeeklyViewCalendar.vue'
+    import MonthlyViewCalendar from '@/components/MonthlyViewCalendar.vue'
 
     export default {
         components: {
             DailyViewCalendar,
-            WeeklyViewCalendar
+            WeeklyViewCalendar,
+            MonthlyViewCalendar
         },
 
         data() {

@@ -84,17 +84,42 @@
         },
 
         methods: {
+            openModal(date, room, startTime, endTime) {
+                this.date = date;
+                this.room = room;
+
+                //Modal Title
+                document.getElementById('BookingRoomModal-Header').innerHTML = room.name;
+
+                //Time
+                document.getElementById('BookingRoomModal-StartTime').value = startTime;
+                document.getElementById('BookingRoomModal-EndTime').value = endTime;
+
+                document.getElementById("BookingRoomModal").style.opacity = "1.0";
+                document.getElementById("BookingRoomModal").style.visibility = "visible";
+            },
+            closeModal() {
+                document.getElementById("BookingRoomModal").style.opacity = "0.0";
+                document.getElementById("BookingRoomModal").style.visibility = "hidden";
+                //colors
+                document.getElementById('BookingRoomModal-SelectedColor').style.visibility = 'visible';
+                for (var index = 0; index < 8; index++) {
+                    document.getElementById('BookingRoomModal-ColorOption'+index).style.visibility = 'hidden';
+                }
+            },
+            
             submitBooking(event) {
                 var date = this.date.toJSON().slice(0, 10);
                 var locationID = this.room.id;
+                var locationName = this.$parent.rooms[this.room.id].name;
                 var title = document.getElementById('BookingRoomModal-Title').value;           
                 var description = document.getElementById('BookingRoomModal-Description').value;
                 var startTime = document.getElementById('BookingRoomModal-StartTime').value;
                 var endTime = document.getElementById('BookingRoomModal-EndTime').value;
                 var bookingColor = this.selectedColor;
                 var noiseLevel = document.getElementById('BookingRoomModal-NoiseSlider').value;
-
-                api.insertBooking(date, locationID, title, description, startTime, endTime, bookingColor, noiseLevel).then(bookingResult => {
+                
+                api.insertBooking(date, locationID, locationName, title, description, startTime, endTime, bookingColor, noiseLevel).then(bookingResult => {
                     //Not logged in
                     if (bookingResult == '403') 
                         alert('You are not logged in');
@@ -144,30 +169,6 @@
                     document.getElementById('BookingRoomModal-NoiseValue').innerHTML = 'Loud';
                 else if (document.getElementById('BookingRoomModal-NoiseSlider').value == 2)
                     document.getElementById('BookingRoomModal-NoiseValue').innerHTML = 'Very Loud';
-            },
-
-            openModal(date, room, startTime, endTime) {
-                this.date = date;
-                this.room = room;
-
-                //Modal Title
-                document.getElementById('BookingRoomModal-Header').innerHTML = room.name;
-
-                //Time
-                document.getElementById('BookingRoomModal-StartTime').value = startTime;
-                document.getElementById('BookingRoomModal-EndTime').value = endTime;
-
-                document.getElementById("BookingRoomModal").style.opacity = "1.0";
-                document.getElementById("BookingRoomModal").style.visibility = "visible";
-            },
-            closeModal() {
-                document.getElementById("BookingRoomModal").style.opacity = "0.0";
-                document.getElementById("BookingRoomModal").style.visibility = "hidden";
-                //colors
-                document.getElementById('BookingRoomModal-SelectedColor').style.visibility = 'visible';
-                for (var index = 0; index < 8; index++) {
-                    document.getElementById('BookingRoomModal-ColorOption'+index).style.visibility = 'hidden';
-                }
             }
         },
 

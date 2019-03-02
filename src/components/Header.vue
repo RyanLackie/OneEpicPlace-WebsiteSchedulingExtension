@@ -41,11 +41,7 @@
             <router-link class="text" exact-active-class="active" to="/profile">
                 Your Profile
             </router-link>
-            <!--
-            <router-link class="text" exact-active-class="active" to="/reserve">
-                Make A Reservation
-            </router-link>
-            -->
+            
             <router-link class="text" exact-active-class="active" to="/schedule">
                 Schedule
             </router-link>
