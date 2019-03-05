@@ -4,7 +4,7 @@
         <!-- Container for date selector -->
         <div class="dateSelector">
             <button id="dateSelectorPreviousBtn" class="btn backBtn" type="button" @click="decMonth()"></button>
-            <input id="dateSelectorDate" class="date" :value="getMonthName(this.firstDay) + ' ' + firstDay.getFullYear()" disabled>
+            <input id="dateSelectorDate" class="date" :value="getMonthName(firstDay) + ' ' + firstDay.getFullYear()" disabled>
             <button id="dateSelectorCalendar" class="btn calendarBtn" type="button"></button>
             <button id="dateSelectorPreviousBtn" class="btn forwardBtn" type="button" @click="incMonth()"></button>
         </div>
@@ -29,6 +29,15 @@
                 <div class="calendarRow" v-for="week in 6" :key="'week'+week" :id="'week'+week">
                     <!-- Calendar Blocks -->
                     <div class="block" v-for="day in 7" :key="'block'+week+':'+day" :id="'block'+week+':'+day">
+                        <!-- Display -->
+                        <div class="date" :style="styleDate(week, day)">{{days[(7*(week-1) + day) - 1].getDate()}}</div>
+                        <div class="searchBar">
+                            <div class="searchIcon" :style='styleBookingCount(week, day)'></div>
+                            <div class="searchText" :style='styleBookingCount(week, day)'>
+                                {{getBookingCount(week, day) + ' total'}}
+                            </div>
+                        </div>
+                        <button class="addBtn" @click="addBookingClicked(week, day)"></button>
 
                         <!-- Bookings -->
                         <div class="booking" v-for="booking in sortBookingsFor(week, day)" :key="'booking'+booking.id" :id="'booking'+booking.id">
@@ -123,47 +132,33 @@
                 //Get first day of the month for date selector
                 this.firstDay = new Date(day.setDate(1));
 
-                //Get days before the month
+                //Reset days
+                this.days = [];
+                
+                //Get days before, during, and after the month
                 var preMonth = [];
                 var startOfTheMonth = new Date(day.setDate(1));
                 var startOfTheMonth_day = startOfTheMonth.getDay();
-                for (var preMonthIndex = 0; preMonthIndex < startOfTheMonth_day; preMonthIndex++) {
+                var startOfDays = new Date(day.setDate(startOfTheMonth.getDate() - startOfTheMonth_day));
+                for (var index = 0; index < 42; index++) {
                     var temp = new Date(day);
-                    temp = new Date(temp.setDate(startOfTheMonth.getDate() - (startOfTheMonth_day - preMonthIndex)));
+                    temp = new Date(temp.setDate(startOfDays.getDate() + index));
                     temp.setHours(0, 0, 0, 0);
-                    preMonth[preMonth.length] = temp;
+                    this.days[this.days.length] = temp;
                 }
-                
-                //Get days in the month
-                var month = [];
-                var endOfMonth = new Date(day.getFullYear(), day.getMonth()+1, 0);
-                for (var monthIndex = 0; monthIndex < endOfMonth.getDate(); monthIndex++) {
-                    var temp = new Date(day);
-                    temp = new Date(temp.setDate(startOfTheMonth.getDate() + monthIndex));
-                    temp.setHours(0, 0, 0, 0);
-                    month[month.length] = temp;
+                /*
+                for (var i = 0; i < this.days.length; i++) {
+                    console.log(i + ' / ' + this.days[i]);
                 }
-                
-                //Get days after the month
-                var postMonth = [];
-                var endOfTheMonth_day = endOfMonth.getDay();
-                for (var postMonthIndex = 1; postMonthIndex + endOfTheMonth_day < 7; postMonthIndex++) {
-                    var temp = new Date(day);
-                    temp = new Date(temp.setDate(endOfMonth.getDate() + postMonthIndex));
-                    temp.setHours(0, 0, 0, 0);
-                    postMonth[postMonth.length] = temp;
-                }
-
-                //Pass all days to days
-                this.days = preMonth.concat(month).concat(postMonth);
+                */
             },
             decMonth: function() {
                 this.getMonth(new Date(this.days[0].setDate(this.days[0].getDate() - 1)));
-                //this.checkBookings();
+                this.checkBookings();
             },
             incMonth: function() {
                 this.getMonth(new Date(this.days[this.days.length-1].setDate(this.days[this.days.length-1].getDate() + 1)));
-                //this.checkBookings();
+                this.checkBookings();
             },
 
             getMonthName(day) {
@@ -217,6 +212,30 @@
             styleBookingText(booking) {
                 if (booking.noiseLevel > 0)
                     return 'width: 56%;';
+            },
+            getBookingCount(week, day) {
+                var date = this.days[(7*(week-1) + day) - 1];
+                var count = 0;
+                for (var i = 0; i < this.bookings.length; i++) {
+                    if (date.toJSON().slice(0, 10) == this.bookings[i].date.slice(0, 10))
+                        count++;
+                }
+                return count;
+            },
+            styleBookingCount(week, day) {
+                var date = this.days[(7*(week-1) + day) - 1];
+                var count = 0;
+                for (var i = 0; i < this.bookings.length; i++) {
+                    if (date.toJSON().slice(0, 10) == this.bookings[i].date.slice(0, 10))
+                        count++;
+                }
+                if (count == 0)
+                    return 'visibility: hidden;';
+            },
+            styleDate(week, day) {
+                var date = this.days[(7*(week-1) + day) - 1];
+                if (date.getMonth() != this.firstDay.getMonth())
+                    return 'color:LightGray;';
             },
 
             /* Data Update */

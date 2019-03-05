@@ -184,15 +184,6 @@
                     case 6: return 'Saterday';
                 }
             },
-            styleBookingCount(date, room) {
-                var count = 0;
-                for (var i = 0; i < this.bookings.length; i++) {
-                    if (date.toJSON().slice(0, 10) == this.bookings[i].date.slice(0, 10) && room.id == this.bookings[i].locationID)
-                        count++;
-                }
-                if (count == 0)
-                    return 'visibility: hidden;';
-            },
             sortBookingsFor(date, room) {
                 var matchedBookings = [];
                 //sort though all bookings and return the first 3 that are within the right block and not a desk
@@ -217,6 +208,15 @@
                         count++;
                 }
                 return count;
+            },
+            styleBookingCount(date, room) {
+                var count = 0;
+                for (var i = 0; i < this.bookings.length; i++) {
+                    if (date.toJSON().slice(0, 10) == this.bookings[i].date.slice(0, 10) && room.id == this.bookings[i].locationID)
+                        count++;
+                }
+                if (count == 0)
+                    return 'visibility: hidden;';
             },
             fillBookingStartTime(booking) {
                 if (booking.startTime.split(':')[0] < 12)

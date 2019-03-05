@@ -94,9 +94,7 @@
     width: 14.28%;
     height: 100%;
     background-color: white;
-    border-top: 1px blue solid;
-    border-right: 1px blue solid;
-    border-bottom: 1px blue solid;
+    border: 1px blue solid;
 }
 .MonthlyViewCalendar .calendar .innerSection .topRow .dayContainer .day {
     display: table;
@@ -107,7 +105,7 @@
 .MonthlyViewCalendar .calendar .innerSection .topRow .dayContainer .day .dayOfTheWeek {
     display: table-cell;
     vertical-align: middle;
-    font-size: 15px;
+    font-size: 1.5vw;
     font-weight: bold;
     cursor: context-menu;
 }
@@ -126,10 +124,69 @@
     display: inline-block;
     width: 14.28%;
     height: 100%;
-    border-top: 1px black solid;
-    border-bottom: 1px black solid;
-    border-right: 1px black solid;
+    border: 1px black solid;
     overflow: hidden;
+}
+
+.MonthlyViewCalendar .calendar .innerSection .calendarRow .block .date {
+    position: absolute;
+    bottom: -2px;
+    left: 3px;
+    font-size: 18px;
+    cursor: context-menu;
+}
+
+.MonthlyViewCalendar .calendar .innerSection .calendarRow .block .searchBar {
+    position: absolute;
+    bottom: 2px;
+    left: 0;
+    right: 0;
+    width: 80px;
+    height: 20px;
+    margin: 0px auto;
+}
+.MonthlyViewCalendar .calendar .innerSection .calendarRow .block .searchBar .searchIcon {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 20px;
+    height: 20px;
+    border: none;
+    text-decoration: none;
+    background-image: url("../../assets/search-black.png");
+    background-size: 80%;
+    background-repeat: no-repeat;
+    background-position: center;
+    cursor: pointer;
+}
+.MonthlyViewCalendar .calendar .innerSection .calendarRow .block .searchBar .searchText {
+    position: absolute;
+    bottom: 0;
+    left: 20px;
+    font-size: 15px;
+    color: black;
+    cursor: pointer;
+}
+
+.MonthlyViewCalendar .calendar .innerSection .calendarRow .block .addBtn {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 25px;
+    height: 25px;
+    border: none;
+    text-decoration: none;
+    background-color: green;
+    background-image: url("../../assets/add-white.png");
+    background-size: 80%;
+    background-repeat: no-repeat;
+    background-position: center;
+    z-index: 1;
+    visibility: hidden;
+    cursor: pointer;
+}
+.MonthlyViewCalendar .calendar .innerSection .calendarRow .block:hover .addBtn{
+    visibility: visible;
 }
 
 .MonthlyViewCalendar .calendar .innerSection .calendarRow .block .booking {
