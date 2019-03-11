@@ -13,34 +13,34 @@
         <div class="calendar" id='calendar'>
 
             <!-- Inner Scrollable Section -->
-            <div class="innerSection" id='innerSection'>
+            <div class="innerSection" id='innerSection' @scroll='handleInnerSectionScroll()'>
 
                 <!-- Days -->
                 <div class="topRow" id='topRow'>
-                    <div class="dayContainer" v-for="(day, index) in week" :key="'day'+index" :id="'day'+index">
+                    <div class="dayContainer" v-for="index in 7" :key="'day'+index">
                         <div class="day">
-                            <div class="dayOfTheWeek">{{day}}</div>
+                            <div class="dayOfTheWeek">{{getDayOfTheWeek(index)}}</div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Calendar Rows -->
                 <div class="firstRowPlaceHolder"></div>
-                <div class="calendarRow" v-for="week in 6" :key="'week'+week" :id="'week'+week">
+                <div class="calendarRow" v-for="week in 6" :key="'week'+week">
                     <!-- Calendar Blocks -->
-                    <div class="block" v-for="day in 7" :key="'block'+week+':'+day" :id="'block'+week+':'+day">
+                    <div class="block" v-for="day in 7" :key="'block'+week+':'+day" :style='styleCurrentDay(week, day)'>
                         <!-- Display -->
                         <div class="date" :style="styleDate(week, day)">{{days[(7*(week-1) + day) - 1].getDate()}}</div>
                         <div class="searchBar">
-                            <div class="searchIcon" :style='styleBookingCount(week, day)'></div>
-                            <div class="searchText" :style='styleBookingCount(week, day)'>
+                            <div class="searchIcon" :style='styleBookingCount(week, day)' @click='viewBookings(week, day)'></div>
+                            <div class="searchText" :style='styleBookingCount(week, day)' @click='viewBookings(week, day)'>
                                 {{getBookingCount(week, day) + ' total'}}
                             </div>
                         </div>
                         <button class="addBtn" @click="addBookingClicked(week, day)"></button>
 
                         <!-- Bookings -->
-                        <div class="booking" v-for="booking in sortBookingsFor(week, day)" :key="'booking'+booking.id" :id="'booking'+booking.id">
+                        <div class="booking" v-for="booking in sortBookingsFor(week, day)" :key="'booking'+booking.id" @click='viewBookings(week, day)'>
                             <div class="timeBox" :style='"background-color:"+booking.bookingColor'>
                                 <div class="time">{{fillBookingStartTime(booking)}}</div>
                             </div>
@@ -49,74 +49,31 @@
                                 <div class="text">{{booking.title}}</div>
                             </div>
                         </div>
-
                     </div>
                 </div>
-
             </div>
-
         </div>
-    
     </div>
         
 </template>
 
 <style scoped lang="scss">
     //Personal CSS
-    @import "css/MonthlyViewCalendar.css";
+    @import "./css/MonthlyViewCalendar.css";
 </style>
 
 <script>
     import * as api from '@/services/api_access';
 
     export default {
-        components: {
-            
-        },
-
         data() {
             return {
                 //days for the calendar
                 firstDay: null,
                 days: [],
 
-                week: [
-                    'Sunday',
-                    'Monday',
-                    'Tuesday',
-                    'Wednesday',
-                    'Thursday',
-                    'Friday',
-                    'Saterday'
-                ],
-
-                //rooms include: id, name, type
-                rooms: [
-                    {id: 0, name: 'DaVinci Room',                   type: 'room'},
-                    {id: 1, name: 'Green Room',                     type: 'room'},
-                    {id: 2, name: 'Sunshine Room',                  type: 'room'},
-                    {id: 3, name: 'Zen Room',                       type: 'room'},
-                    {id: 4, name: 'Studio',                         type: 'room'},
-                    {id: 5, name: 'EPIC Room',                      type: 'room'},
-                    {id: 6, name: 'Carriage House Treatment Room',  type: 'room'},
-                    {id: 7, name: 'Buissness Hub',                  type: 'room'},
-                    {id: 8, name: 'Loft',                           type: 'room'},
-                    {id: 9, name: 'Porch',                          type: 'room'},
-                    {id: 10, name: 'Lawn',                          type: 'room'},
-
-                    {id: 11, name: 'Hot Desk',                      type: 'desk'},
-                    {id: 12, name: 'Hot Desk',                      type: 'desk'},
-                    {id: 13, name: 'Hot Desk',                      type: 'desk'},
-                    {id: 14, name: 'Hot Desk',                      type: 'desk'},
-                    {id: 15, name: 'Hot Desk',                      type: 'desk'},
-                    {id: 16, name: 'Hot Desk',                      type: 'desk'},
-                    {id: 17, name: 'Hot Desk',                      type: 'desk'},
-                    {id: 18, name: 'Hot Desk',                      type: 'desk'},
-                    {id: 19, name: 'Hot Desk',                      type: 'desk'},
-                    {id: 20, name: 'Hot Desk',                      type: 'desk'},
-                    {id: 21, name: 'Hot Desk',                      type: 'desk'},
-                    {id: 22, name: 'Hot Desk',                      type: 'desk'}
-                ],
+                //locations include: id, name, type
+                locations: this.$parent.getLocations(),
 
                 //List of returned bookings
                 bookings: [],
@@ -136,7 +93,6 @@
                 this.days = [];
                 
                 //Get days before, during, and after the month
-                var preMonth = [];
                 var startOfTheMonth = new Date(day.setDate(1));
                 var startOfTheMonth_day = startOfTheMonth.getDay();
                 var startOfDays = new Date(day.setDate(startOfTheMonth.getDate() - startOfTheMonth_day));
@@ -161,6 +117,17 @@
                 this.checkBookings();
             },
 
+            getDayOfTheWeek(index) {
+                switch(index) {
+                    case 1: return 'Sunday';
+                    case 2: return 'Monday';
+                    case 3: return 'Tuesday';
+                    case 4: return 'Wednesday';
+                    case 5: return 'Thursday';
+                    case 6: return 'Friday';
+                    case 7: return 'Saterday';
+                }
+            },
             getMonthName(day) {
                 switch(day.getMonth()) {
                     case 0: return 'January';
@@ -179,8 +146,16 @@
             },
 
             /* JavaScript Styling */
+            styleCurrentDay(week, day) {
+                var date = this.days[(7*(week-1) + day) - 1].getDate();
+                var currentDate = new Date().getDate();
+                if (currentDate == date)
+                    return 'background-color: Gainsboro;';
+                else    //Done to reset yestday on DOM lifecycle refresh
+                    return 'background-color: white;';
+            },
             sortBookingsFor(week, day) {
-                var date = this.days[(7*(week-1) + day) - 1]
+                var date = this.days[(7*(week-1) + day) - 1];
                 var matchedBookings = [];
                 //sort though all bookings and return the first 3 that are within the right block and not a desk
                 for (var i = 0; i < this.bookings.length; i++) {
@@ -235,7 +210,7 @@
             styleDate(week, day) {
                 var date = this.days[(7*(week-1) + day) - 1];
                 if (date.getMonth() != this.firstDay.getMonth())
-                    return 'color:LightGray;';
+                    return 'color: LightGray;';
             },
 
             /* Data Update */
@@ -245,7 +220,7 @@
                     THIS.bookingsDelay = 5000;
                     var startDate = THIS.days[0].toJSON().slice(0, 10);
                     var endDate = THIS.days[THIS.days.length-1].toJSON().slice(0, 10);
-                    api.getBookingsRange(startDate, endDate).then(bookingsResult => {
+                    api.getBookingsDate(startDate, endDate).then(bookingsResult => {
                         THIS.bookings = bookingsResult;
                         THIS.checkBookingsLoop();
                     });
@@ -257,6 +232,41 @@
                 this.bookingsDelay = 500;
                 this.checkBookingsLoop();
             },
+
+            /* User Actions */
+            handlePageScroll() {
+                //Top Row Sticky Movment
+                var originalTop = document.getElementById('calendar').getBoundingClientRect().top + window.scrollY;
+                if (window.scrollY >= originalTop)
+                    document.getElementById('topRow').style.top = window.scrollY - originalTop + 'px';
+                else
+                    document.getElementById('topRow').style.top = '0px';
+            },
+            handleInnerSectionScroll() {
+                //Make sure calender y cant be changed
+                document.getElementById('innerSection').scrollTop = 0;
+            },
+
+            addBookingClicked(week, day) {
+                this.$parent.$refs.BookingModal.openModal(this.days[(7*(week-1) + day) - 1], this.locations[0], '12:00', '12:00');
+            },
+
+            viewBookings(week, day) {
+                var date = this.days[(7*(week-1) + day) - 1];
+                var matchedBookings = [];
+                //sort though all bookings and open a modal with the bookings for the right day sorted by time
+                for (var i = 0; i < this.bookings.length; i++) {
+                    if (date.toJSON().slice(0, 10) == this.bookings[i].date.slice(0, 10))
+                        matchedBookings[matchedBookings.length] = this.bookings[i];
+                }
+                matchedBookings.sort(function(booking1, booking2) {
+                    booking1 = booking1.startTime.split(':')[0] + booking1.startTime.split(':')[1];
+                    booking2 = booking2.startTime.split(':')[0] + booking2.startTime.split(':')[1];
+                    //console.log(booking1 + '  ' + booking2);
+                    return booking1 - booking2;
+                });
+                this.$parent.$refs.BookedDayModal.openModal(matchedBookings);
+            }
         },
         
         beforeMount() {
@@ -268,14 +278,14 @@
             //Start check booking loop
             this.checkBookingsLoop();
             //Start page scroll listener
-            //window.addEventListener('scroll', this.handlePageScroll);
+            window.addEventListener('scroll', this.handlePageScroll);
         },
         beforeDestroy() {
             //console.log('beforeDestroy');
             //End check booking loop
             clearTimeout(this.checkBookingsTimeout);
             //End page scroll listener
-            //window.removeEventListener('scroll', this.handlePageScroll);
+            window.removeEventListener('scroll', this.handlePageScroll);
         }
     }
 </script>

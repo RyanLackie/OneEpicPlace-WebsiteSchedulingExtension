@@ -3,48 +3,111 @@
 
         <!-- Calendar Navbar -->
         <div class="viewSelector">
-            <a class="viewText" href="JavaScript:void(0)" @click="changeView(0)">Daily View</a>
-            <a class="viewText" href="JavaScript:void(0)" @click="changeView(1)">Weekly View</a>
-            <a class="viewText" href="JavaScript:void(0)" @click="changeView(2)">Monthly View</a>
+            <a class="viewText" href="JavaScript:void(0)" @click="viewSelected = 0">Daily View</a>
+            <a class="viewText" href="JavaScript:void(0)" @click="viewSelected = 1">Weekly View</a>
+            <a class="viewText" href="JavaScript:void(0)" @click="viewSelected = 2">Monthly View</a>
         </div>
 
         <!-- Calendars -->
-        <DailyViewCalendar ref="DailyViewCalendar" v-if="viewSelected == 0"></DailyViewCalendar>
-        <WeeklyViewCalendar ref="WeeklyViewCalendar" v-if="viewSelected == 1"></WeeklyViewCalendar>
-        <MonthlyViewCalendar ref="MonthlyViewCalendar" v-if="viewSelected == 2"></MonthlyViewCalendar>
+        <DailyViewCalendar ref="DailyViewCalendar" v-if="viewSelected == 0 && load"></DailyViewCalendar>
+        <WeeklyViewCalendar ref="WeeklyViewCalendar" v-if="viewSelected == 1 && load"></WeeklyViewCalendar>
+        <MonthlyViewCalendar ref="MonthlyViewCalendar" v-if="viewSelected == 2 && load"></MonthlyViewCalendar>
+
+        <!-- Modals -->
+        <BookingModal ref="BookingModal"></BookingModal>
+        <BookedModal ref="BookedModal"></BookedModal>
+        <BookedDayModal ref="BookedDayModal"></BookedDayModal>
 
     </div>
 </template>
 
 <style scoped lang="scss">
     //Personal CSS
-    @import "css/Schedule.css";
+    @import "./css/Schedule.css";
 </style>
 
 <script>
-    //import * as api from '@/services/api_access';
+    import * as api from '@/services/api_access';
 
-    import DailyViewCalendar from '@/components/DailyViewCalendar.vue'
-    import WeeklyViewCalendar from '@/components/WeeklyViewCalendar.vue'
-    import MonthlyViewCalendar from '@/components/MonthlyViewCalendar.vue'
+    //Calendars
+    import DailyViewCalendar from './components/calendars/DailyViewCalendar.vue';
+    import WeeklyViewCalendar from './components/calendars/WeeklyViewCalendar.vue';
+    import MonthlyViewCalendar from './components/calendars/MonthlyViewCalendar.vue';
+
+    //Modals
+    import BookingModal from './components/modals/BookingModal.vue';
+    import BookedModal from './components/modals/BookedModal.vue';
+    import BookedDayModal from './components/modals/BookedDayModal.vue';
+    
 
     export default {
         components: {
+            //Calendars
             DailyViewCalendar,
             WeeklyViewCalendar,
-            MonthlyViewCalendar
+            MonthlyViewCalendar,
+
+            //Modals
+            BookingModal,
+            BookedModal,
+            BookedDayModal
         },
 
         data() {
             return {
-                viewSelected: 0
+                viewSelected: 0,
+
+                locations: [],
+                hours: [
+                    {id: 0, time: '7AM'},
+                    {id: 1, time: '8AM'},
+                    {id: 2, time: '9AM'},
+                    {id: 3, time: '10AM'},
+                    {id: 4, time: '11AM'},
+                    {id: 5, time: '12PM'},
+                    {id: 6, time: '1PM'},
+                    {id: 7, time: '2PM'},
+                    {id: 8, time: '3PM'},
+                    {id: 9, time: '4PM'},
+                    {id: 10, time: '5PM'},
+                    {id: 11, time: '6PM'},
+                    {id: 12, time: '7PM'},
+                    {id: 13, time: '8PM'},
+                    {id: 14, time: '9PM'}
+                ],
+
+                load: false
             }
         },
 
         methods: {
-            changeView(input) {
-                this.viewSelected = input;
+            getLocations() {
+                return this.locations;
+            },
+            getHours() {
+                return this.hours;
+            },
+
+            checkBookings() {
+                switch(this.viewSelected) {
+                    case 0:
+                        this.$refs.DailyViewCalendar.checkBookings();
+                        break;
+                    case 1:
+                        this.$refs.WeeklyViewCalendar.checkBookings();
+                        break;
+                    case 2:
+                        this.$refs.MonthlyViewCalendar.checkBookings();
+                        break;
+                }
             }
+        },
+
+        mounted() {
+            api.getLocations().then(locations => {
+                this.locations = locations;
+                this.load = true;
+            });
         }
     }
 

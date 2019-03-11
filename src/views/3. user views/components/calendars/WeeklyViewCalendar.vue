@@ -14,12 +14,12 @@
         <!-- Calendar -->
         <div class="calendar" id='calendar'>
 
-            <!-- Rooms -->
-            <div class="roomCol">
-                <div class="firstRoomPlaceHolder"></div>
-                <div class="roomContainer" v-for="room in rooms" :key="'room'+room.id" :id="'room'+room.id" :style='styleDeskElements(room)'>
-                    <div class="room">
-                        <div class="text">{{room.name}}</div>
+            <!-- Locations -->
+            <div class="locationCol">
+                <div class="firstLocationPlaceHolder"></div>
+                <div class="locationContainer" v-for="location in locations" :key="'location'+location.id" :id="'location'+location.id" :style='styleDeskElements(location)'>
+                    <div class="location">
+                        <div class="text">{{location.name}}</div>
                     </div>
                 </div>
             </div>
@@ -29,7 +29,7 @@
                 
                 <!-- Days -->
                 <div class="topRow" id='topRow'>
-                    <div class="dayContainer" v-for="(day, index) in week" :key="'day'+index" :id="'day'+index">
+                    <div class="dayContainer" v-for="(day, index) in week" :key="'day'+index">
                         <div class="day">
                             <div class="date">{{day.getMonth()+1 + ' / ' + day.getDate()}}</div>
                             <div class="dayOfTheWeek">{{getDayOfTheWeek(day)}}</div>
@@ -39,17 +39,19 @@
 
                 <!-- Calendar Rows -->
                 <div class="firstRowPlaceHolder"></div>
-                <div class="calendarRow" v-for="room in rooms" :key="'room'+room.id" :id="'room'+room.id" :style='styleDeskElements(room)'>
+                <div class="calendarRow" v-for="location in locations" :key="'loc'+location.id" :style='styleDeskElements(location)'>
                     <!-- Calendar Blocks -->
-                    <div class="block" v-for="(day, index) in week" :key="'block'+room.id+':'+index" :id="'block'+room.id+':'+index" :style='styleCurrentDay(day)'>
+                    <div class="block" v-for="(day, index) in week" :key="'block'+location.id+':'+index" :style='styleCurrentDay(day)'>
+                        
                         <!-- Buttons -->
-                        <div class="searchIcon" :style='styleBookingCount(day, room)' @click='viewBookings(day, room)'></div>
-                        <div class="searchText" :style='styleBookingCount(day, room)' @click='viewBookings(day, room)'>
-                            {{getBookingCount(day, room) + ' total'}}
+                        <div class="searchIcon" :style='styleBookingCount(day, location)' @click='viewBookings(day, location)'></div>
+                        <div class="searchText" :style='styleBookingCount(day, location)' @click='viewBookings(day, location)'>
+                            {{getBookingCount(day, location) + ' total'}}
                         </div>
-                        <button class="addBtn" @click="addBookingClicked(day, room)"></button>
+                        <button class="addBtn" @click="addBookingClicked(day, location)"></button>
+                        
                         <!-- Bookings -->
-                        <div class="booking" v-for="booking in sortBookingsFor(day, room)" :key="'booking'+booking.id" :id="'booking'+booking.id" @click='viewBookings(day, room)'>
+                        <div class="booking" v-for="booking in sortBookingsFor(day, location)" :key="'booking'+booking.id" @click='viewBookings(day, location)'>
                             <div class="timeBox" :style='"background-color:"+booking.bookingColor'>
                                 <div class="time">{{fillBookingStartTime(booking)}}</div>
                             </div>
@@ -60,76 +62,27 @@
                         </div>
                     </div>
                 </div>
-
             </div>
-
         </div>
-
-        <!-- Modals -->
-        <BookingRoomModal ref="BookingRoomModal"></BookingRoomModal>
-
-        <BookingDeskModal ref="BookingDeskModal"></BookingDeskModal>
-
-        <BookedDayModal ref="BookedDayModal"></BookedDayModal>
-        
     </div>
 </template>
 
 <style scoped lang="scss">
     //Personal CSS
-    @import "css/WeeklyViewCalendar.css";
+    @import "./css/WeeklyViewCalendar.css";
 </style>
 
 <script>
     import * as api from '@/services/api_access';
 
-    import BookingRoomModal from '@/components/BookingRoomModal.vue';
-
-    import BookingDeskModal from '@/components/BookingDeskModal.vue';
-
-    import BookedDayModal from '@/components/BookedDayModal.vue';
-
     export default {
-        components: {
-            BookingRoomModal,
-
-            BookingDeskModal,
-
-            BookedDayModal
-        },
-
         data() {
             return {
                 //Week for the calendar
                 week: [],
 
-                //rooms include: id, name, type
-                rooms: [
-                    {id: 0, name: 'DaVinci Room',                   type: 'room'},
-                    {id: 1, name: 'Green Room',                     type: 'room'},
-                    {id: 2, name: 'Sunshine Room',                  type: 'room'},
-                    {id: 3, name: 'Zen Room',                       type: 'room'},
-                    {id: 4, name: 'Studio',                         type: 'room'},
-                    {id: 5, name: 'EPIC Room',                      type: 'room'},
-                    {id: 6, name: 'Carriage House Treatment Room',  type: 'room'},
-                    {id: 7, name: 'Buissness Hub',                  type: 'room'},
-                    {id: 8, name: 'Loft',                           type: 'room'},
-                    {id: 9, name: 'Porch',                          type: 'room'},
-                    {id: 10, name: 'Lawn',                          type: 'room'},
-
-                    {id: 11, name: 'Hot Desk',                      type: 'desk'},
-                    {id: 12, name: 'Hot Desk',                      type: 'desk'},
-                    {id: 13, name: 'Hot Desk',                      type: 'desk'},
-                    {id: 14, name: 'Hot Desk',                      type: 'desk'},
-                    {id: 15, name: 'Hot Desk',                      type: 'desk'},
-                    {id: 16, name: 'Hot Desk',                      type: 'desk'},
-                    {id: 17, name: 'Hot Desk',                      type: 'desk'},
-                    {id: 18, name: 'Hot Desk',                      type: 'desk'},
-                    {id: 19, name: 'Hot Desk',                      type: 'desk'},
-                    {id: 20, name: 'Hot Desk',                      type: 'desk'},
-                    {id: 21, name: 'Hot Desk',                      type: 'desk'},
-                    {id: 22, name: 'Hot Desk',                      type: 'desk'}
-                ],
+                //locations include: id, name, type
+                locations: this.$parent.getLocations(),
 
                 //List of returned bookings
                 bookings: [],
@@ -161,16 +114,20 @@
             },
 
             /* JavaScript Styling */
-            styleDeskElements(room) {
-                if (room.type == 'room' && this.rooms[(room.id+1)].type == 'desk')
-                    return 'margin-bottom: 20px;';
-                if (room.type == 'desk')
+            styleDeskElements(location) {
+                if (location.type == 'room') {
+                    for (var i = 0; i < this.locations.length; i++) {
+                        if (this.locations[i] == location && i+1 < this.locations.length && this.locations[i+1].type == 'desk')
+                            return 'margin-bottom: 20px;';
+                    }
+                }
+                else if (location.type == 'desk')
                     return 'height: 26px;';
             },
             styleCurrentDay(day) {
                 if (new Date().toJSON().slice(0, 10) == day.toJSON().slice(0, 10))
                     return 'background-color: Gainsboro;';
-                else
+                else    //Done to reset yestday on DOM lifecycle refresh
                     return 'background-color: white;';
             },
             getDayOfTheWeek(day) {
@@ -184,11 +141,11 @@
                     case 6: return 'Saterday';
                 }
             },
-            sortBookingsFor(date, room) {
+            sortBookingsFor(date, location) {
                 var matchedBookings = [];
                 //sort though all bookings and return the first 3 that are within the right block and not a desk
                 for (var i = 0; i < this.bookings.length; i++) {
-                    if (date.toJSON().slice(0, 10) == this.bookings[i].date.slice(0, 10) && room.id == this.bookings[i].locationID && room.type == 'room')
+                    if (date.toJSON().slice(0, 10) == this.bookings[i].date.slice(0, 10) && location.id == this.bookings[i].locationID && location.type == 'room')
                         matchedBookings[matchedBookings.length] = this.bookings[i];
                 }
                 matchedBookings.sort(function(booking1, booking2) {
@@ -201,18 +158,18 @@
                     matchedBookings = [matchedBookings[0], matchedBookings[1], matchedBookings[2]];
                 return matchedBookings;
             },
-            getBookingCount(date, room) {
+            getBookingCount(date, location) {
                 var count = 0;
                 for (var i = 0; i < this.bookings.length; i++) {
-                    if (date.toJSON().slice(0, 10) == this.bookings[i].date.slice(0, 10) && room.id == this.bookings[i].locationID)
+                    if (date.toJSON().slice(0, 10) == this.bookings[i].date.slice(0, 10) && location.id == this.bookings[i].locationID)
                         count++;
                 }
                 return count;
             },
-            styleBookingCount(date, room) {
+            styleBookingCount(date, location) {
                 var count = 0;
                 for (var i = 0; i < this.bookings.length; i++) {
-                    if (date.toJSON().slice(0, 10) == this.bookings[i].date.slice(0, 10) && room.id == this.bookings[i].locationID)
+                    if (date.toJSON().slice(0, 10) == this.bookings[i].date.slice(0, 10) && location.id == this.bookings[i].locationID)
                         count++;
                 }
                 if (count == 0)
@@ -242,7 +199,7 @@
                     THIS.bookingsDelay = 5000;
                     var startDate = THIS.week[0].toJSON().slice(0, 10);
                     var endDate = THIS.week[THIS.week.length-1].toJSON().slice(0, 10);
-                    api.getBookingsRange(startDate, endDate).then(bookingsResult => {
+                    api.getBookingsDate(startDate, endDate).then(bookingsResult => {
                         THIS.bookings = bookingsResult;
                         THIS.checkBookingsLoop();
                     });
@@ -269,18 +226,15 @@
                 document.getElementById('innerSection').scrollTop = 0;
             },
 
-            addBookingClicked(date, room) {
-                if (room.type == 'room')
-                    this.$refs.BookingRoomModal.openModal(date, room, '12:00', '12:00');
-                else if (room.type == 'desk')
-                    this.$refs.BookingDeskModal.openModal(date, room, '12:00', '12:00');
+            addBookingClicked(date, location) {
+                this.$parent.$refs.BookingModal.openModal(date, location, '12:00', '12:00');
             },
 
-            viewBookings(date, room) {
+            viewBookings(date, location) {
                 var matchedBookings = [];
                 //sort though all bookings and return the first 3 that are within the right day
                 for (var i = 0; i < this.bookings.length; i++) {
-                    if (date.toJSON().slice(0, 10) == this.bookings[i].date.slice(0, 10))
+                    if (date.toJSON().slice(0, 10) == this.bookings[i].date.slice(0, 10) && location.id == this.bookings[i].locationID)
                         matchedBookings[matchedBookings.length] = this.bookings[i];
                 }
                 matchedBookings.sort(function(booking1, booking2) {
@@ -289,7 +243,7 @@
                     //console.log(booking1 + '  ' + booking2);
                     return booking1 - booking2;
                 });
-                this.$refs.BookedDayModal.openModal(matchedBookings);
+                this.$parent.$refs.BookedDayModal.openModal(matchedBookings);
             }
         },
         

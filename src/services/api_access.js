@@ -4,67 +4,47 @@ const api_root = "http://localhost:81";
 //Server Deployment
 //const api_root = "http://206.189.167.65:81";
 
-let user = null;
+var user = null;
 
-//User Methods
-export function signUpUser(email, password, firstName, lastName, occupation, description) {
-    return myFetch(api_root + "/app/signUpUser", {
-        email, password, firstName, lastName, occupation, description
-    }).then(fetchedUser => user = fetchedUser);
-}
-export function loginUser(email, password) {
-    return myFetch(api_root + "/app/loginUser", {
-        email, password
-    }).then(fetchedUser => user = fetchedUser);
-}
-export function checkUser() {
-    var email = null, password = null;
-    if (user != null) {
-        email = user.email;
-        password = user.password;
-    }
-    return myFetch(api_root + "/app/checkUser", {
-        email, password
-    });
-}
-
-export function getUser() {
+export function getLocalUser() {
     return user;
 }
-export function setUser(newUser) {
-    console.log("user set: " + newUser);
-    user = newUser;
+export function logoutUser() {
+    user = null;
 }
 
-export function updateProfile(newEmail, newPassword, firstName, lastName, occupation, description) {
-    var oldEmail = null, oldPassword = null;
-    if (user != null) {
-        oldEmail = user.email;
-        oldPassword = user.password;
-    }
+//User Methods
+export function createAccount(email, username, password, firstName, lastName, occupation, description) {
+    return myFetch(api_root + "/app/createAccount", {
+        email, username, password, firstName, lastName, occupation, description
+    }).then(fetchedUser => user = fetchedUser);
+}
+export function getAccount(identity, password) {
+    return myFetch(api_root + "/app/getAccount", {
+        identity, password
+    }).then(fetchedUser => user = fetchedUser);
+}
+export function updateProfile(email, username, password, firstName, lastName, occupation, description) {
+    var user_username = user.username, user_password = user.password;
     return myFetch(api_root + "/app/updateProfile", {
-        oldEmail, oldPassword, newEmail, newPassword, firstName, lastName, occupation, description
-    });
+        user_username, user_password, email, username, password, firstName, lastName, occupation, description
+    }).then(fetchedUser => user = fetchedUser);
 }
 
 //Booking Methods
+export function getLocations() {
+    return myFetch(api_root + "/app/getLocations", {});
+}
 export function insertBooking(date, locationID, locationName, title, description, startTime, endTime, bookingColor, noiseLevel) {
-    var email = null, password = null, firstName = null, lastName = null;
-    if (user != null) {
-        email = user.email;
-        password = user.password;
-        firstName = user.firstName;
-        lastName = user.lastName
-    }
+    var userID = user.id, username = user.username, password = user.password;
     return myFetch(api_root + "/app/insertBooking", {
-        email, password, firstName, lastName, date, locationID, locationName, title, description, startTime, endTime, bookingColor, noiseLevel
+        date, userID, username, password, locationID, locationName, title, description, startTime, endTime, bookingColor, noiseLevel
     });
 }
-export function getBookingsDay(date) {
-    return myFetch(api_root + "/app/getBookingsDay", {date});
-}
-export function getBookingsRange(startDate, endDate) {
-    return myFetch(api_root + "/app/getBookingsRange", {startDate, endDate});
+export function getBookingsDate(startDate, endDate) {
+    return myFetch(api_root + "/app/getBookingsDate", {
+        startDate, endDate
+    });
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////

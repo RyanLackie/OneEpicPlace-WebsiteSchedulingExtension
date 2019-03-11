@@ -2,7 +2,9 @@
     <div class="BookedDayModal" id="BookedDayModal" aria-hidden="true">
                 
         <div class="modal-header">
-            <div class="text" id="BookedDayModal-Header">{{date}}</div>
+            <div class="text">Bookings</div>
+            <div class="date" id='BookedDayModal-HeaderDate'></div>
+            
             <button type="button" class="close" aria-label="Close" @click="closeModal()">
                 <span aria-hidden="true">&times;</span>
             </button>
@@ -18,7 +20,7 @@
                 <div class="title">{{booking.title}}</div>
             </div>
             <div class="line">
-                <div class="name">{{booking.firstName + ' ' + booking.lastName}}</div>
+                <div class="name">{{booking.username}}</div>
             </div>
             
         </div>
@@ -43,11 +45,12 @@
         },
         methods: {
             openModal(bookings) {
-                this.date = bookings[0].date.slice(0, 10).split('-');
-                this.date = parseInt(this.date[1]) + '/' + this.date[2] + '/' + this.date[0];
-
+                this.date = new Date(bookings[0].date);
                 this.bookings = bookings;
-                
+
+                //Modal Header
+                document.getElementById('BookedDayModal-HeaderDate').innerHTML = this.getDayOfTheWeek(this.date)+', '+this.getMonthName(this.date)+' '+this.date.getDate()+' '+this.date.getFullYear();
+
                 document.getElementById("BookedDayModal").style.opacity = "1.0";
                 document.getElementById("BookedDayModal").style.visibility = "visible";
             },
@@ -56,8 +59,36 @@
                 document.getElementById("BookedDayModal").style.visibility = "hidden";
             },
 
+            getDayOfTheWeek(date) {
+                switch(date.getDay()) {
+                    case 0: return 'Sunday';
+                    case 1: return 'Monday';
+                    case 2: return 'Tuesday';
+                    case 3: return 'Wednesday';
+                    case 4: return 'Thursday';
+                    case 5: return 'Friday';
+                    case 6: return 'Saterday';
+                }
+            },
+            getMonthName(date) {
+                switch(date.getMonth()) {
+                    case 0: return 'January';
+                    case 1: return 'February';
+                    case 2: return 'March';
+                    case 3: return 'April';
+                    case 4: return 'May';
+                    case 5: return 'June';
+                    case 6: return 'July';
+                    case 7: return 'August';
+                    case 8: return 'September';
+                    case 9: return 'October';
+                    case 10: return 'November';
+                    case 11: return 'December';
+                }
+            },
+
             getTime(time) {
-                var time = [
+                time = [
                     parseInt(time.split(':')[0]),
                     parseInt(time.split(':')[1])
                 ]

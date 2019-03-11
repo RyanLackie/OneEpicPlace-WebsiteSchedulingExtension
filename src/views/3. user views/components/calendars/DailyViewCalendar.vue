@@ -12,12 +12,12 @@
         <!-- Calendar -->
         <div class="calendar" id='calendar'>
 
-            <!-- Rooms -->
-            <div class="roomCol">
-                <div class="firstRoomPlaceHolder"></div>
-                <div class="roomContainer" v-for="room in rooms" :key="'room'+room.id" :id="'room'+room.id" :style='styleDeskElements(room)'>
-                    <div class="room">
-                        <div class="text">{{room.name}}</div>
+            <!-- locations -->
+            <div class="locationCol">
+                <div class="firstLocationPlaceHolder"></div>
+                <div class="locationContainer" v-for="location in locations" :key="'locCon'+location.id" :style='styleDeskElements(location)'>
+                    <div class="location">
+                        <div class="text">{{location.name}}</div>
                     </div>
                 </div>
             </div>
@@ -27,7 +27,7 @@
                 
                 <!-- Hours -->
                 <div class="topRow" id='topRow'>
-                    <div class="hourContainer" v-for="hour in hours" :key="'hour'+hour.id" :id="'hour'+hour.id">
+                    <div class="hourContainer" v-for="(hour, index) in hours" :key="'hour'+index">
                         <div class="hour">
                             <div class="text">{{hour.time}}</div>
                         </div>
@@ -36,111 +36,49 @@
                 <div class="calendarRow"></div>
 
                 <!-- Calendar Rows -->
-                <div class="calendarRow" v-for="room in rooms" :key="'room'+room.id" :id="'room'+room.id" :style='styleDeskElements(room)'>
+                <div class="calendarRow" v-for="(location, row) in locations" :key="'loc'+row" :style='styleDeskElements(location)'>
                     <!-- Booking Blocks -->
-                    <div class="booking" v-for="booking in bookings" :key="'booking'+booking.id" :id="'booking'+booking.id" :style='styleBooking(room.id, booking)' @click='bookingClicked(booking)'>
-                        <div v-if="room.type == 'room'" class="warningIcon" :style='styleWarningIcon(booking)'></div>
-                        <div v-if="room.type == 'room'" class="title" :style='styleBookingTitle(booking)'>{{booking.title}}</div>
-                        <div v-if="room.type == 'room'" class="name">{{booking.firstName + " " + booking.lastName}}</div>
-                        <div v-if="room.type == 'desk'" class="centerText">{{booking.firstName + " " + booking.lastName}}</div>
+                    <div class="booking" v-for="booking in bookings" :key="'booking'+booking.id" :style='styleBooking(location.id, booking)' @click='bookingClicked(booking)'>
+                        <div v-if="location.type == 'room'" class="warningIcon" :style='styleWarningIcon(booking)'></div>
+                        <div v-if="location.type == 'room'" class="title">{{booking.title}}</div>
+                        <div v-if="location.type == 'room'" class="name">{{booking.username}}</div>
+                        <div v-if="location.type == 'desk'" class="centerText">{{booking.username}}</div>
                     </div>
+
                     <!-- Time Slots -->
-                    <div class="timeChunk" v-for="hour in hours" :key="'timeChunk'+hour.id" :id="'timeChunk'+hour.id">
+                    <div class="timeChunk" v-for="(hour, col) in hours" :key="'tc'+col">
                         <div
-                            class="timeSlot" v-for="index in 12" :key="'timeSlot'+room.id+':'+(hour.id*12+index)" 
-                            :id="'timeSlot'+room.id+':'+(hour.id*12+index)" :style='styleTimeSlot((hour.id*12+index))'
-                            @click="timeSlotClicked(room, 'timeSlot'+room.id+':'+(hour.id*12+index))"
-                            @mouseenter="timeSlotHover('timeSlot'+room.id+':'+(hour.id*12+index), true)"
-                            @mouseleave="timeSlotHover('timeSlot'+room.id+':'+(hour.id*12+index), false)">
+                            v-for="slot in 12" :key="'ts'+row+':'+(col*12+slot)" :id="'timeSlot'+row+':'+(col*12+slot)" 
+                            class="timeSlot" :style='styleTimeSlot((col*12+slot))'
+                            @click="timeSlotClicked(location, 'timeSlot'+row+':'+(col*12+slot))"
+                            @mouseenter="timeSlotHover('timeSlot'+row+':'+(col*12+slot), true)"
+                            @mouseleave="timeSlotHover('timeSlot'+row+':'+(col*12+slot), false)">
                         </div>
                     </div>
                 </div>
-
             </div>
-
         </div>
-
-        <!-- Modals -->
-        <BookingRoomModal ref="BookingRoomModal"></BookingRoomModal>
-        <BookedRoomModal ref="BookedRoomModal"></BookedRoomModal>
-
-        <BookingDeskModal ref="BookingDeskModal"></BookingDeskModal>
-        
     </div>
 </template>
 
 <style scoped lang="scss">
     //Personal CSS
-    @import "css/DailyViewCalendar.css";
+    @import "./css/DailyViewCalendar.css";
 </style>
 
 <script>
     import * as api from '@/services/api_access';
 
-    import BookingRoomModal from '@/components/BookingRoomModal.vue';
-    import BookedRoomModal from '@/components/BookedRoomModal.vue';
-
-    import BookingDeskModal from '@/components/BookingDeskModal.vue';
-
     export default {
-        components: {
-            BookingRoomModal,
-            BookedRoomModal,
-
-            BookingDeskModal
-        },
-
         data() {
             return {
                 //Date for calender
                 date: null,
 
-                //rooms include: id, name, type
-                rooms: [
-                    {id: 0, name: 'DaVinci Room',                   type: 'room'},
-                    {id: 1, name: 'Green Room',                     type: 'room'},
-                    {id: 2, name: 'Sunshine Room',                  type: 'room'},
-                    {id: 3, name: 'Zen Room',                       type: 'room'},
-                    {id: 4, name: 'Studio',                         type: 'room'},
-                    {id: 5, name: 'EPIC Room',                      type: 'room'},
-                    {id: 6, name: 'Carriage House Treatment Room',  type: 'room'},
-                    {id: 7, name: 'Buissness Hub',                  type: 'room'},
-                    {id: 8, name: 'Loft',                           type: 'room'},
-                    {id: 9, name: 'Porch',                          type: 'room'},
-                    {id: 10, name: 'Lawn',                          type: 'room'},
-
-                    {id: 11, name: 'Hot Desk',                      type: 'desk'},
-                    {id: 12, name: 'Hot Desk',                      type: 'desk'},
-                    {id: 13, name: 'Hot Desk',                      type: 'desk'},
-                    {id: 14, name: 'Hot Desk',                      type: 'desk'},
-                    {id: 15, name: 'Hot Desk',                      type: 'desk'},
-                    {id: 16, name: 'Hot Desk',                      type: 'desk'},
-                    {id: 17, name: 'Hot Desk',                      type: 'desk'},
-                    {id: 18, name: 'Hot Desk',                      type: 'desk'},
-                    {id: 19, name: 'Hot Desk',                      type: 'desk'},
-                    {id: 20, name: 'Hot Desk',                      type: 'desk'},
-                    {id: 21, name: 'Hot Desk',                      type: 'desk'},
-                    {id: 22, name: 'Hot Desk',                      type: 'desk'}
-                ],
-
-                //hour include: id, time
-                hours: [
-                    {id: 0, time: '7AM'},
-                    {id: 1, time: '8AM'},
-                    {id: 2, time: '9AM'},
-                    {id: 3, time: '10AM'},
-                    {id: 4, time: '11AM'},
-                    {id: 5, time: '12PM'},
-                    {id: 6, time: '1PM'},
-                    {id: 7, time: '2PM'},
-                    {id: 8, time: '3PM'},
-                    {id: 9, time: '4PM'},
-                    {id: 10, time: '5PM'},
-                    {id: 11, time: '6PM'},
-                    {id: 12, time: '7PM'},
-                    {id: 13, time: '8PM'},
-                    {id: 14, time: '9PM'}
-                ],
+                //locations include: id, name, type
+                locations: this.$parent.getLocations(),
+                //hours include: id, time
+                hours: this.$parent.getHours(),
 
                 //List of returned bookings
                 bookings: [],
@@ -174,10 +112,14 @@
             },
 
             /* JavaScript Styling */
-            styleDeskElements(room) {
-                if (room.type == 'room' && this.rooms[(room.id+1)].type == 'desk')
-                    return 'margin-bottom: 20px;';
-                if (room.type == 'desk')
+            styleDeskElements(location) {
+                if (location.type == 'room') {
+                    for (var i = 0; i < this.locations.length; i++) {
+                        if (this.locations[i] == location && i+1 < this.locations.length && this.locations[i+1].type == 'desk')
+                            return 'margin-bottom: 20px;';
+                    }
+                }
+                else if (location.type == 'desk')
                     return 'height: 30px;';
             },
             styleTimeSlot(timeSlot) {
@@ -188,14 +130,14 @@
                 var THIS = this;
                 this.timeHighlighterTimeout = setTimeout(function() {
                     THIS.timeHighlighterDelay = (60 - new Date().getSeconds()) * 1000;
-
+                    
                     var currentHour = parseInt(new Date().getHours());
                     var currentMin = parseInt(new Date().getMinutes());
-                    for (var row = 0; row < THIS.rooms.length; row++) {
+                    for (var row = 0; row < THIS.locations.length; row++) {
                         for (var timeSlot = 1; timeSlot <= THIS.hours.length*12; timeSlot++) {
                             var timeSlotHour = parseInt((timeSlot-1)/12, 10) + parseInt(THIS.hours[0].time.substring(0, THIS.hours[0].time.length - 2));
                             var timeSlotMin = (timeSlot-1) % 12 * 5;
-
+                            
                             document.getElementById('timeSlot'+row+':'+timeSlot).style.backgroundColor = 'white';
                             
                             if (timeSlotHour == currentHour) {
@@ -210,12 +152,12 @@
                             }
                         }
                     }
-
+                    
                     THIS.styleTimeHighlighterLoop();
                 }, this.timeHighlighterDelay)
             },
-            styleBooking(roomID, booking) {
-                if (roomID == booking.locationID) {
+            styleBooking(locationID, booking) {
+                if (locationID == booking.locationID) {
                     var startTime = booking.startTime;
                     var startTimeHour = parseInt(startTime.split(':')[0], 10);
                     var startTimeMin = parseInt(startTime.split(':')[1], 10);
@@ -230,8 +172,8 @@
                     Left is tricky because getting the bounds is not relative to inside the row getting the left value of the 
                     first slot and subtractiing it from the used slot solves this problem
                     */
-                    var left = document.getElementById('timeSlot'+roomID+':'+startTimeSlot).getBoundingClientRect().left - document.getElementById('timeSlot'+roomID+':'+1).getBoundingClientRect().left;
-                    var width = (endTimeSlot - startTimeSlot) * document.getElementById('timeSlot'+roomID+':'+startTimeSlot).getBoundingClientRect().width;
+                    var left = document.getElementById('timeSlot'+locationID+':'+startTimeSlot).getBoundingClientRect().left - document.getElementById('timeSlot'+locationID+':'+1).getBoundingClientRect().left;
+                    var width = (endTimeSlot - startTimeSlot) * document.getElementById('timeSlot'+locationID+':'+startTimeSlot).getBoundingClientRect().width;
 
                     return 'left:'+left+'px; width:'+width+'px;background-color:'+booking.bookingColor+';';
                 }
@@ -241,19 +183,14 @@
                 if (booking.noiseLevel > 0)
                     return 'display: inline;';
             },
-            styleBookingTitle(booking) {
-                if (booking.noiseLevel > 0)
-                    return 'width: 70%;';
-            },
 
             /* Data Update */
             checkBookingsLoop() {
                 var THIS = this;
                 this.checkBookingsTimeout = setTimeout(function() {
-                    //console.log(new Date().getTime());
                     THIS.bookingsDelay = 5000;
                     var date = THIS.date.toJSON().slice(0, 10);
-                    api.getBookingsDay(date).then(bookingsResult => {
+                    api.getBookingsDate(date, date).then(bookingsResult => {
                         THIS.bookings = bookingsResult;
                         THIS.checkBookingsLoop();
                     });
@@ -288,7 +225,7 @@
                 if (!mouseOverTimeSlot)
                     document.getElementById(id).style.backgroundColor = this.previousTimeSlotColor;
             },
-            timeSlotClicked(room, id) {
+            timeSlotClicked(location, id) {
                 id = id.slice(8).split(':');
                 var startTime = [
                     parseInt(((id[1]-1) / 12), 10) + parseInt(this.hours[0].time.substring(0, this.hours[0].time.length - 2)),
@@ -315,14 +252,11 @@
                 if (endTime[1] < 10)
                     endTime[1] = '0'+endTime[1];
                 
-                if (room.type == 'room')
-                    this.$refs.BookingRoomModal.openModal(this.date, room, startTime[0]+':'+startTime[1], endTime[0]+':'+endTime[1]);
-                else if (room.type == 'desk')
-                    this.$refs.BookingDeskModal.openModal(this.date, room, startTime[0]+':'+startTime[1], endTime[0]+':'+endTime[1]);
+                this.$parent.$refs.BookingModal.openModal(this.date, location, startTime[0]+':'+startTime[1], endTime[0]+':'+endTime[1]);
             },
 
             bookingClicked(booking) {
-                this.$refs.BookedRoomModal.openModal(booking);
+                this.$parent.$refs.BookedModal.openModal(booking);
             }
         },
         

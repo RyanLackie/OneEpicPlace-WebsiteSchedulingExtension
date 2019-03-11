@@ -12,7 +12,7 @@
     height: 40px;
     margin: -15px 3% 0px 0px;
     background-color: black;
-    background-image: url("../../assets/backarrow-white.png");
+    background-image: url("../../../../../assets/backarrow-white.png");
     background-size: 50%;
     background-repeat: no-repeat;
     background-position: center;
@@ -32,7 +32,7 @@
     height: 40px;
     margin-top: -15px;
     background-color: lightgray;
-    background-image: url("../../assets/calendar-white.png");
+    background-image: url("../../../../../assets/calendar-white.png");
     background-size: 60%;
     background-repeat: no-repeat;
     background-position: center;
@@ -43,7 +43,7 @@
     height: 40px;
     margin: -15px 0px 0px 4%;
     background-color: black;
-    background-image: url("../../assets/forwardarrow-white.png");
+    background-image: url("../../../../../assets/forwardarrow-white.png");
     background-size: 50%;
     background-repeat: no-repeat;
     background-position: center;
@@ -92,6 +92,7 @@
 .MonthlyViewCalendar .calendar .innerSection .topRow .dayContainer {
     display: inline-block;
     width: 14.28%;
+    min-width: 150px;
     height: 100%;
     background-color: white;
     border: 1px blue solid;
@@ -105,7 +106,7 @@
 .MonthlyViewCalendar .calendar .innerSection .topRow .dayContainer .day .dayOfTheWeek {
     display: table-cell;
     vertical-align: middle;
-    font-size: 1.5vw;
+    font-size: calc(15px + 0.9vw);
     font-weight: bold;
     cursor: context-menu;
 }
@@ -116,13 +117,13 @@
 
 .MonthlyViewCalendar .calendar .innerSection .calendarRow {
     height: 100px;
-    outline: 1px black solid;
 }
 
 .MonthlyViewCalendar .calendar .innerSection .calendarRow .block {
     position: relative;
     display: inline-block;
     width: 14.28%;
+    min-width: 150px;
     height: 100%;
     border: 1px black solid;
     overflow: hidden;
@@ -153,7 +154,7 @@
     height: 20px;
     border: none;
     text-decoration: none;
-    background-image: url("../../assets/search-black.png");
+    background-image: url("../../../../../assets/search-black.png");
     background-size: 80%;
     background-repeat: no-repeat;
     background-position: center;
@@ -161,7 +162,7 @@
 }
 .MonthlyViewCalendar .calendar .innerSection .calendarRow .block .searchBar .searchText {
     position: absolute;
-    bottom: 0;
+    bottom: -1px;
     left: 20px;
     font-size: 15px;
     color: black;
@@ -177,7 +178,7 @@
     border: none;
     text-decoration: none;
     background-color: green;
-    background-image: url("../../assets/add-white.png");
+    background-image: url("../../../../../assets/add-white.png");
     background-size: 80%;
     background-repeat: no-repeat;
     background-position: center;
@@ -220,7 +221,7 @@
     margin-left: 3px;
     border: none;
     text-decoration: none;
-    background-image: url("../../assets/warning-red.png");
+    background-image: url("../../../../../assets/warning-red.png");
     background-size: 80%;
     background-repeat: no-repeat;
     background-position: center;

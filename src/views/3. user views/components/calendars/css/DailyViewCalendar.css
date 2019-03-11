@@ -12,7 +12,7 @@
     height: 40px;
     margin: -15px 3% 0px 0px;
     background-color: black;
-    background-image: url("../../assets/backarrow-white.png");
+    background-image: url("../../../../../assets/backarrow-white.png");
     background-size: 50%;
     background-repeat: no-repeat;
     background-position: center;
@@ -31,7 +31,7 @@
     height: 40px;
     margin-top: -15px;
     background-color: lightgray;
-    background-image: url("../../assets/calendar-white.png");
+    background-image: url("../../../../../assets/calendar-white.png");
     background-size: 60%;
     background-repeat: no-repeat;
     background-position: center;
@@ -41,7 +41,7 @@
     height: 40px;
     margin: -15px 0px 0px 4%;
     background-color: black;
-    background-image: url("../../assets/forwardarrow-white.png");
+    background-image: url("../../../../../assets/forwardarrow-white.png");
     background-size: 50%;
     background-repeat: no-repeat;
     background-position: center;
@@ -57,29 +57,29 @@
 }
 
 /*
-    Left Side Room Col
+    Left Side Location Col
 */
-.DailyViewCalendar .calendar .roomCol {
+.DailyViewCalendar .calendar .locationCol {
     position: absolute;
     width: 170px;
 }
-.DailyViewCalendar .calendar .roomCol .firstRoomPlaceHolder {
+.DailyViewCalendar .calendar .locationCol .firstLocationPlaceHolder {
     height: 60px;
     border: 1px purple solid;
 }
-.DailyViewCalendar .calendar .roomCol .roomContainer {
+.DailyViewCalendar .calendar .locationCol .locationContainer {
     float: left;
     width: 100%;
     height: 60px;
     border: 1px purple solid;
 }
-.DailyViewCalendar .calendar .roomCol .roomContainer .room {
+.DailyViewCalendar .calendar .locationCol .locationContainer .location {
     display: table;
     width: 100%;
     height: 100%;
     text-align: center;
 }
-.DailyViewCalendar .calendar .roomCol .roomContainer .room .text {
+.DailyViewCalendar .calendar .locationCol .locationContainer .location .text {
     display: table-cell;
     vertical-align: middle;
     font-size: 20px;
@@ -173,21 +173,20 @@
 }
 .DailyViewCalendar .calendar .innerSection .calendarRow .booking .warningIcon {
     float: left;
-    width: 18%;
+    width: 20px;
     height: 20px;
     margin-top: 2px;
     margin-left: 2px;
     border: none;
     text-decoration: none;
-    background-image: url("../../assets/warning-red.png");
-    background-size: 80%;
+    background-image: url("../../../../../assets/warning-red.png");
+    background-size: 70%;
     background-repeat: no-repeat;
     background-position: center;
     display: none;
 }
 .DailyViewCalendar .calendar .innerSection .calendarRow .booking .title {
-    float: left;
-    width: 90%;
+    width: calc(100% - 27px);
     margin-left: 5px;
     overflow: hidden;
     text-overflow: ellipsis;

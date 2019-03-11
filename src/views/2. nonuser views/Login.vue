@@ -4,16 +4,16 @@
         <form id="loginForm">
 
             <div class="formGroup">
-                <label for="email" class="register-section-label">Email</label>
-                <input type="email" id="email" class="form-control" placeholder="Enter Your Email" required autofocus>
+                <label class="register-section-label">Username or Email</label>
+                <input type="text" id="usernameOrEmail" class="form-control" placeholder='Enter Your Username Or Email' required autofocus>
             </div>
             
             <div class="formGroup">
-                <label for="password" class="register-section-label">Password</label>
-                <input type="password" id="password" class="form-control" placeholder="Enter Your Password" required>
+                <label class="register-section-label">Password</label>
+                <input type='password' id='password' class="form-control" placeholder='Enter Your Password' required>
             </div>
 
-            <button class="btn btn-outline-primary formButton" type="submit">Login</button>
+            <button class="btn btn-outline-primary formButton" type='submit'>Login</button>
 
         </form>
 
@@ -32,19 +32,20 @@
          methods: {
             loginUser(event) {
                 //Handle Login Submit
-                var email = document.getElementById("email").value;
-                var password = document.getElementById("password").value;
+                var identity = document.getElementById('usernameOrEmail').value;
+                var password = document.getElementById('password').value;
                 
                 //Login user
-                api.loginUser(email, password).then(user => {
-                    console.log(user);
-                    if (user == "409")
-                        alert("Incorrect username or password");
-                    else {
-                        this.$parent.$refs.Header.getLoggedInStatus();
-                        this.$router.push('/');
+                api.getAccount(identity, password).then(
+                    fetchedUser => {
+                        if (fetchedUser == '409')
+                            alert('Incorrect identification');
+                        else {
+                            this.$parent.$refs.Header.privilegeLevel = fetchedUser.privilege;
+                            this.$router.push('/');
+                        }
                     }
-                });
+                );
                 
                 //Prevent form submit refresh
                 event.preventDefault();

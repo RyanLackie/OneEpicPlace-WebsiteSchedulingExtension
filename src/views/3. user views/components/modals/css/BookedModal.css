@@ -1,7 +1,7 @@
 /*
     Modal
 */
-.BookedRoomModal {
+.BookedModal {
     position: fixed;
     top: 50%;
     left: 50%;
@@ -24,32 +24,32 @@
     visibility: hidden;
     z-index: 3;
 }
-.BookedRoomModal::-webkit-scrollbar-track {
+.BookedModal::-webkit-scrollbar-track {
 	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
 	border-radius: 3px;
     background-color: #F5F5F5;
 }
-.BookedRoomModal::-webkit-scrollbar {
+.BookedModal::-webkit-scrollbar {
 	width: 12px;
 	background-color: #F5F5F5;
 }
-.BookedRoomModal::-webkit-scrollbar-thumb {
+.BookedModal::-webkit-scrollbar-thumb {
 	border-radius: 3px;
 	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
 	background-color: #555;
 }
 
-.BookedRoomModal .modal-header {
+.BookedModal .modal-header {
     margin-bottom: 10px;
 }
-.BookedRoomModal .modal-header .text {
+.BookedModal .modal-header .text {
     width: 100%;
     font-size: 30px;
     text-align: center;
     font-weight: bold;
     font-family: 'Quicksand', sans-serif;
 }
-.BookedRoomModal .modal-header .close {
+.BookedModal .modal-header .close {
     position: absolute;
     top: 10px;
     right: 30px;
@@ -57,19 +57,19 @@
     opacity: 1;
 }
 
-.BookedRoomModal .sectionLabel {
+.BookedModal .sectionLabel {
     margin-left: 3px;
 }
-.BookedRoomModal .inputLg {
+.BookedModal .inputLg {
     width: 94%;
     margin: 0px auto 10px auto;
 }
-.BookedRoomModal .inputSmLeft {
+.BookedModal .inputSmLeft {
     display: inline-block;
     width: 40%;
     margin: 0px 0px 10px 3%;
 }
-.BookedRoomModal .inputSmRight {
+.BookedModal .inputSmRight {
     float: right;
     width: 40%;
     margin: 0px 3% 10px 0px;
@@ -78,7 +78,7 @@
 /*
     Modal Footer
 */
-.BookedRoomModal .closeBtn {
+.BookedModal .closeBtn {
     width: 94%;
     height: 50px;
     margin: 20px 3% 30px 3%;

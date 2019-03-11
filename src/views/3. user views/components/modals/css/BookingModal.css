@@ -1,7 +1,7 @@
 /*
     Modal
 */
-.BookingRoomModal {
+.BookingModal {
     position: fixed;
     top: 50%;
     left: 50%;
@@ -24,32 +24,35 @@
     visibility: hidden;
     z-index: 3;
 }
-.BookingRoomModal::-webkit-scrollbar-track {
+.BookingModal::-webkit-scrollbar-track {
 	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
 	border-radius: 3px;
     background-color: #F5F5F5;
 }
-.BookingRoomModal::-webkit-scrollbar {
+.BookingModal::-webkit-scrollbar {
 	width: 12px;
 	background-color: #F5F5F5;
 }
-.BookingRoomModal::-webkit-scrollbar-thumb {
+.BookingModal::-webkit-scrollbar-thumb {
 	border-radius: 3px;
 	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
 	background-color: #555;
 }
 
-.BookingRoomModal .modal-header {
-    margin-bottom: 10px;
-}
-.BookingRoomModal .modal-header .text {
+.BookingModal .modal-header {
+    display: inline-block;
     width: 100%;
+}
+.BookingModal .modal-header .text {
     font-size: 30px;
-    text-align: center;
     font-weight: bold;
     font-family: 'Quicksand', sans-serif;
 }
-.BookingRoomModal .modal-header .close {
+.BookingModal .modal-header .date {
+    font-size: 25px;
+    font-family: 'Quicksand', sans-serif;
+}
+.BookingModal .modal-header .close {
     position: absolute;
     top: 10px;
     right: 30px;
@@ -57,19 +60,19 @@
     opacity: 1;
 }
 
-.BookingRoomModal .sectionLabel {
+.BookingModal .sectionLabel {
     margin-left: 3px;
 }
-.BookingRoomModal .inputLg {
+.BookingModal .inputLg {
     width: 94%;
     margin: 10px auto;
 }
-.BookingRoomModal .inputSmLeft {
+.BookingModal .inputSmLeft {
     display: inline-block;
     width: 40%;
     margin: 0px 0px 10px 3%;
 }
-.BookingRoomModal .inputSmRight {
+.BookingModal .inputSmRight {
     float: right;
     width: 40%;
     margin: 0px 3% 10px 0px;
@@ -78,19 +81,19 @@
 /*
     Color Selector
 */
-.BookingRoomModal .colorSelectorContainer {
+.BookingModal .colorSelectorContainer {
     position: relative;
     display: inline-block;
     width: 40%;
     height: 100px;
     margin: 10px 0px 10px 3%;
 }
-.BookingRoomModal .colorSelectorContainer .colorLabel {
+.BookingModal .colorSelectorContainer .colorLabel {
     width: 100%;
     text-align: center;
     margin-bottom: 12px;
 }
-.BookingRoomModal .colorSelectorContainer .selectedColor {
+.BookingModal .colorSelectorContainer .selectedColor {
     position: absolute;
     top: 15px;
     left: 0;
@@ -101,14 +104,14 @@
     outline: 3px silver solid;
     background: blue;
 }
-.BookingRoomModal .colorSelectorContainer .colorRow {
+.BookingModal .colorSelectorContainer .colorRow {
     display: flex;
     width: 100%;
     height: 25px;
     margin: 10px 0px;
     justify-content: space-between;
 }
-.BookingRoomModal .colorSelectorContainer .colorRow .colorOption {
+.BookingModal .colorSelectorContainer .colorRow .colorOption {
     width: 25px;
     height: 25px;
     outline: 2px silver solid;
@@ -118,22 +121,22 @@
 /*
     Noise Selector
 */
-.BookingRoomModal .sliderContainer {
+.BookingModal .sliderContainer {
     position: relative;
     float: right;
     width: 40%;
-    margin: 10px 3% 0px 0px;
+    margin: 10px 3% 0px auto;
 }
-.BookingRoomModal .sliderContainer .noiseLabel {
+.BookingModal .sliderContainer .noiseLabel {
     width: 100%;
     text-align: center;
     margin-bottom: 20px;
 }
-.BookingRoomModal .sliderContainer .value {
+.BookingModal .sliderContainer .value {
     text-align: center;
     margin-bottom: 10px;
 }
-.BookingRoomModal .sliderContainer .slider {
+.BookingModal .sliderContainer .slider {
     width: 100%;
     height: 20px;
     background: silver;
@@ -143,10 +146,10 @@
     -webkit-transition: .2s;
     transition: opacity .2s;
 }
-.BookingRoomModal .sliderContainer .slider:hover {
+.BookingModal .sliderContainer .slider:hover {
     opacity: 1;
 }
-.BookingRoomModal .sliderContainer .slider::-webkit-slider-thumb {
+.BookingModal .sliderContainer .slider::-webkit-slider-thumb {
     -webkit-appearance: none;
     appearance: none;
     width: 20px;
@@ -154,7 +157,7 @@
     background: black;
     cursor: pointer;
 }
-.BookingRoomModal .sliderContainer .slider::-moz-range-thumb {
+.BookingModal .sliderContainer .slider::-moz-range-thumb {
     width: 20px;
     height: 20px;
     background: black;
@@ -164,7 +167,7 @@
 /*
     Modal Footer
 */
-.BookingRoomModal .submitBtn {
+.BookingModal .submitBtn {
     float: left;
     width: 40%;
     height: 50px;
@@ -172,7 +175,7 @@
     font-size: 20px;
     opacity: 1;
 }
-.BookingRoomModal .cancelBtn {
+.BookingModal .cancelBtn {
     float: right;
     width: 40%;
     height: 50px;

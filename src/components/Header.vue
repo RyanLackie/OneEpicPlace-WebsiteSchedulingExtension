@@ -14,45 +14,30 @@
         </div>
 
         <!-- Non User Navbar -->
-        <div class="nonUserNavbar" v-if="!loggedInStatus">
-            <router-link class="text" exact-active-class="active" to="/">
-                Home
-            </router-link>
-
-            <router-link class="text" exact-active-class="active" to="/about">
-                About
-            </router-link>
-
-            <router-link class="text" exact-active-class="active" to="/signup">
-                Sign Up
-            </router-link>
-
-            <router-link class="text" exact-active-class="active" to="/login">
-                Login
-            </router-link>
+        <div class="nonUserNavbar" v-if="privilegeLevel == 0">
+            <router-link class="text" exact-active-class="active" to="/">Home</router-link>
+            <router-link class="text" exact-active-class="active" to="/about">About</router-link>
+            <router-link class="text" exact-active-class="active" to="/signup">Sign Up</router-link>
+            <router-link class="text" exact-active-class="active" to="/login">Login</router-link>
         </div>
 
         <!-- User Navbar -->
-        <div class="userNavbar" v-if="loggedInStatus">
-            <router-link class="text" exact-active-class="active" to="/">
-                Home
-            </router-link>
+        <div class="userNavbar" v-if="privilegeLevel == 1">
+            <router-link class="text" exact-active-class="active" to="/">Home</router-link>
+            <router-link class="text" exact-active-class="active" to="/profile">Your Profile</router-link>
+            <router-link class="text" exact-active-class="active" to="/schedule">Schedule</router-link>
+            <router-link class="text" exact-active-class="active" to="/about">About</router-link>
+            <router-link class="text" exact-active-class="active" to="/" v-on:click.native="logout()">Logout</router-link>
+        </div>
 
-            <router-link class="text" exact-active-class="active" to="/profile">
-                Your Profile
-            </router-link>
-            
-            <router-link class="text" exact-active-class="active" to="/schedule">
-                Schedule
-            </router-link>
-
-            <router-link class="text" exact-active-class="active" to="/about">
-                About
-            </router-link>
-
-            <router-link class="text" exact-active-class="active" to="/" v-on:click.native="logout()">
-                Logout
-            </router-link>
+        <!-- Admin Navbar -->
+        <div class="adminNavbar" v-if="privilegeLevel == 2">
+            <router-link class="text" exact-active-class="active" to="/">Home</router-link>
+            <router-link class="text" exact-active-class="active" to="/profile">Your Profile</router-link>
+            <router-link class="text" exact-active-class="active" to="/schedule">Schedule</router-link>
+            <router-link class="text" exact-active-class="active" to="/users">Users</router-link>
+            <router-link class="text" exact-active-class="active" to="/about">About</router-link>
+            <router-link class="text" exact-active-class="active" to="/" v-on:click.native="logout()">Logout</router-link>
         </div>
 
         <!-- Line -->
@@ -72,38 +57,70 @@
     export default {
         data() {
             return {
-                loggedInStatus: false
+                privilegeLevel: 0
             }
         },
 
         methods: {
-            getLoggedInStatus() {
-                api.checkUser().then(checkResult => {
-                    if (checkResult == true)
-                        this.loggedInStatus = true;
-                    else if (checkResult == 408) {
-                        console.log("Null user");
-                        this.loggedInStatus = false;
-                    }
-                    else if (checkResult == 409) {
-                        console.log("Error with current logged in status: email or password incorect");
-                        this.loggedInStatus = false;
-                    }
-                    else {
-                        console.log("Unnumbered error");
-                        this.loggedInStatus = false;
-                    }
-                });
+            getUserPrivilege() {
+                var user = api.getLocalUser();
+                if (user != null && user.username != undefined && user.password != undefined) {
+                    api.getAccount(user.username, user.password).then(
+                        fetchedUser => {
+                            if (fetchedUser == '409')
+                                this.logout();
+                            else {
+                                this.privilegeLevel = fetchedUser.privilege;
+                                this.checkRoutePrivilege();
+                            }
+                        }
+                    );
+                }
+                else {
+                    this.privilegeLevel = 0;
+                    this.checkRoutePrivilege();
+                }
+            },
+            checkRoutePrivilege() {
+                var route = this.$router.currentRoute.name;
+                
+                switch(route) {
+                    //All
+                    case 'home':
+                        break;
+                    case 'about':
+                        break;
+                    //Non Users
+                    case 'signup':
+                        if (this.privilegeLevel > 0)
+                            this.$router.push('/');
+                        break;
+                    case 'login':
+                        if (this.privilegeLevel > 0)
+                            this.$router.push('/');
+                        break;
+                    //Users
+                    case 'profile':
+                        if (this.privilegeLevel < 1)
+                            this.$router.push('/');
+                        break;
+                    case 'schedule':
+                        if (this.privilegeLevel < 1)
+                            this.$router.push('/');
+                        break;
+                    //Admin
+                }
             },
 
             logout() {
-                api.setUser(null);
-                this.loggedInStatus = false;
+                api.logoutUser();
+                this.privilegeLevel = 0;
+                this.$router.push('/');
             }
         },
 
         mounted() {
-            this.getLoggedInStatus();
+            this.getUserPrivilege();
         }
     }
 </script>

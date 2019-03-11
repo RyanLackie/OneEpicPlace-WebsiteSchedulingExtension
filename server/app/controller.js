@@ -6,52 +6,47 @@ var model = new Model();
 const app = express.Router();
 
 //User Methods
-app.post('/signUpUser', (req, res) => {
-    model.signUpUser(
-        req.body.email, req.body.password, req.body.firstName, 
-        req.body.lastName, req.body.occupation, req.body.description,
+app.post('/createAccount', (req, res) => {
+    model.createAccount(
+        req.body.email, req.body.username, req.body.password,
+        req.body.firstName, req.body.lastName, req.body.occupation,
+        req.body.description,
         fetchedUser => res.send(fetchedUser)
     );
 })
-app.post('/loginUser', (req, res) => {
-    model.loginUser(
-        req.body.email, req.body.password,
+app.post('/getAccount', (req, res) => {
+    model.getAccount(
+        req.body.identity, req.body.password,
         fetchedUser => res.send(fetchedUser)
-    );
-})
-app.post('/checkUser', (req, res) => {
-    model.checkUser(
-        req.body.email, req.body.password,
-        userCheck => res.send(userCheck)
     );
 })
 app.post('/updateProfile', (req, res) => {
     model.updateProfile(
-        req.body.oldEmail, req.body.oldPassword,
-        req.body.newEmail, req.body.newPassword, req.body.firstName, 
-        req.body.lastName, req.body.occupation, req.body.description,
+        req.body.user_username, req.body.user_password,
+        req.body.email, req.body.username, req.body.password,
+        req.body.firstName, req.body.lastName, req.body.occupation,
+        req.body.description,
         updateResult => res.send(updateResult)
     );
 })
 
 //Booking Methods
+app.post('/getLocations', (req, res) => {
+    model.getLocations(
+        locations => res.send(locations)
+    );
+})
 app.post('/insertBooking', (req, res) => {
     model.insertBooking(
-        req.body.email, req.body.password, req.body.firstName, req.body.lastName,
-        req.body.date, req.body.locationID, req.body.locationName, req.body.title, 
-        req.body.description, req.body.startTime, req.body.endTime, req.body.bookingColor, 
-        req.body.noiseLevel,
+        req.body.date, req.body.userID, req.body.username, req.body.password,
+        req.body.locationID, req.body.locationName, req.body.title, 
+        req.body.description, req.body.startTime, req.body.endTime,
+        req.body.bookingColor, req.body.noiseLevel,
         bookingResult => res.send(bookingResult)
     );
 })
-app.post('/getBookingsDay', (req, res) => {
-    model.getBookingsDay(
-        req.body.date, 
-        bookingsResult => res.send(bookingsResult)
-    );
-})
-app.post('/getBookingsRange', (req, res) => {
-    model.getBookingsRange(
+app.post('/getBookingsDate', (req, res) => {
+    model.getBookingsDate(
         req.body.startDate, req.body.endDate,
         bookingsResult => res.send(bookingsResult)
     );

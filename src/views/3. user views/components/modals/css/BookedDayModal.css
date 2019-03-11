@@ -40,13 +40,16 @@
 }
 
 .BookedDayModal .modal-header {
-    margin-bottom: 10px;
+    display: inline-block;
+    width: 100%;
 }
 .BookedDayModal .modal-header .text {
-    width: 100%;
     font-size: 30px;
-    text-align: center;
     font-weight: bold;
+    font-family: 'Quicksand', sans-serif;
+}
+.BookedDayModal .modal-header .date {
+    font-size: 25px;
     font-family: 'Quicksand', sans-serif;
 }
 .BookedDayModal .modal-header .close {
@@ -57,10 +60,9 @@
     opacity: 1;
 }
 
-
 .BookedDayModal .booking {
     width: 95%;
-    margin: 0px auto 20px auto;
+    margin: 0px auto 10px auto;
 }
 
 .BookedDayModal .booking .line {
@@ -87,7 +89,7 @@
     margin-left: -4px;
     border: none;
     text-decoration: none;
-    background-image: url("../../assets/warning-red.png");
+    background-image: url("../../../../../assets/warning-red.png");
     background-size: 50%;
     background-repeat: no-repeat;
     background-position: center;
@@ -100,19 +102,6 @@
     margin-left: 2px;
     font-size: 17px;
 }
-
-/*
-.BookedDayModal .inputSmLeft {
-    display: inline-block;
-    width: 40%;
-    margin: 0px 0px 10px 3%;
-}
-.BookedDayModal .inputSmRight {
-    float: right;
-    width: 40%;
-    margin: 0px 3% 10px 0px;
-}
-*/
 
 /*
     Modal Footer
