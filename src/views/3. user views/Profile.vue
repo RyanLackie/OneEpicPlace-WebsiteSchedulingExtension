@@ -1,7 +1,7 @@
 <template>
     <div class="Profile">
 
-        <div class="form-container" id="profileForm">
+        <form class="form-container" id="profileForm">
 
             <div class="label">Username</div>
             <input type="text" class="input-box form-control" id="username" placeholder="What would you like to be called?">
@@ -24,9 +24,9 @@
                 <input type="text" class="input-box-sm-right form-control" id="password" placeholder="Password">
             </div>
 
-            <button class="btn btn-outline-primary formButton" type="submit">Submit</button>
+            <button class="btn btn-outline-primary formButton" type='submit'>Submit</button>
 
-        </div>
+        </form>
         
     </div>
 </template>

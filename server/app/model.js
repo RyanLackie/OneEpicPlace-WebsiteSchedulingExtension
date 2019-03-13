@@ -1,32 +1,23 @@
 //Required Modules
 const mysql = require('mysql');
+var conn = mysql.createPool({
+    host: '206.189.167.65',
+    port: '3306',
+
+    database: 'OEP',
+    user: 'outsideConnection',
+    password: 'adminACC-EPIC-79282',
+
+    connectionLimit: 30
+});
 
 class Model {
-    constructor() {
-        
-    }
-
-    /*////////////////////////////////////////////////////////////////////////////////////////////////////////
-    /////////////////////////////////            Connection         //////////////////////////////////////////
-    */////////////////////////////////////////////////////////////////////////////////////////////////////////
-    getConnection() {
-        var conn = mysql.createConnection({
-            //Laptop Environment
-            host: '206.189.167.65',
-            port: '3306',
-            user: 'outsideConnection',
-            database: 'OEP',
-            password: 'adminACC-EPIC-79282'
-        });
-        
-        conn.connect();
-        return conn;
-    }
+    constructor() {}
 
     /*////////////////////////////////////////////////////////////////////////////////////////////////////////
     /////////////////////////////////          User Methods         //////////////////////////////////////////
     */////////////////////////////////////////////////////////////////////////////////////////////////////////
-    checkForEmail(conn, email, emailCheckResponse) {
+    checkForEmail(email, emailCheckResponse) {
         conn.query('SELECT * FROM users WHERE email = ' + mysql.escape(email), (err, result) => {
             if (err) throw err;
             if (result.length == 1)
@@ -35,7 +26,7 @@ class Model {
                 return emailCheckResponse('409');           
         });
     }
-    checkForUsername(conn, username, usernameCheckResponse) {
+    checkForUsername(username, usernameCheckResponse) {
         conn.query('SELECT * FROM users WHERE username = ' + mysql.escape(username), (err, result) => {
             if (err) throw err;
             if (result.length == 1)
@@ -44,7 +35,7 @@ class Model {
                 return usernameCheckResponse('409');
         });
     }
-    insertUser(conn, email, username, password, firstName, lastName, occupation, description, insertUserResponce) {
+    insertUser(email, username, password, firstName, lastName, occupation, description, insertUserResponce) {
         conn.query("INSERT INTO users (privilege, email, username, password, firstName, lastName, occupation, description) VALUES ('"+1+"', '"+email+"', '"+username+"', '"+password+"', '"+firstName+"', '"+lastName+"', '"+occupation+"', '"+description+"')", (err, result) => {
             if (err) throw err;
             conn.query('SELECT * FROM users WHERE id = ' + mysql.escape(result.insertId), (err, result) => {
@@ -57,28 +48,25 @@ class Model {
     createAccount(email, username, password, firstName, lastName, occupation, description, call_back) {
         console.log('#################createAccount()#################');
 
-        //Connect to database
-        var conn = this.getConnection();
-
-         //Find user by email
-         this.checkForEmail(conn, email, emailCheckResponse => {
+        //Find user by email
+         this.checkForEmail(email, emailCheckResponse => {
             if (emailCheckResponse != '409') {
                 console.log(email + ' is taken');
-                conn.end();
+                
                 return call_back('409');
             }
 
             //Find user by username
-            this.checkForUsername(conn, username, usernameCheckResponse => {
+            this.checkForUsername(username, usernameCheckResponse => {
                 if (usernameCheckResponse != '409') {
                     console.log(username + ' is taken');
-                    conn.end();
+                    
                     return call_back('410');
                 }
                 
-                this.insertUser(conn, email, username, password, firstName, lastName, occupation, description, insertUserResponce => {
+                this.insertUser(email, username, password, firstName, lastName, occupation, description, insertUserResponce => {
                     console.log(insertUserResponce.username + ' account has been created');
-                    conn.end();
+                    
                     return call_back(insertUserResponce);
                 });
             });
@@ -88,14 +76,11 @@ class Model {
     getAccount(identity, password, call_back) {
         console.log('#################getAccount()#################');
 
-        //Connect to database
-        var conn = this.getConnection();
-        
         //Find user by email
         this.checkForEmail(conn, identity, emailCheckResponse => {
             if (emailCheckResponse != '409' && password == emailCheckResponse.password) {
                 console.log(emailCheckResponse.username + ' has logged in with email');
-                conn.end();
+                
                 return call_back(emailCheckResponse);
             }
 
@@ -103,10 +88,9 @@ class Model {
             this.checkForUsername(conn, identity, usernameCheckResponse => {
                 if (usernameCheckResponse != '409' && password == usernameCheckResponse.password) {
                     console.log(usernameCheckResponse.username + ' has logged in with username');
-                    conn.end();
+                    
                     return call_back(usernameCheckResponse);
                 }
-                
                 console.log(identity + ' not found');
                 return call_back('409');
             });
@@ -121,25 +105,22 @@ class Model {
             if (fetchedUser == '409')
                 return call_back('409');
             
-            //Connect to database
-            var conn = this.getConnection();
-
             // eslint-disable-next-line
-            this.updateUserEmail(conn, fetchedUser.id, fetchedUser.email, email, emailUpdateResult => {
+            this.updateUserEmail(fetchedUser.id, fetchedUser.email, email, emailUpdateResult => {
 
                 // eslint-disable-next-line
-                this.updateUserUsername(conn, fetchedUser.id, fetchedUser.username, username, usernameUpdateResult => {
+                this.updateUserUsername(fetchedUser.id, fetchedUser.username, username, usernameUpdateResult => {
 
                     //Change other user info
-                    this.updateUserInfo(conn, fetchedUser.id, password, firstName, lastName, occupation, description, infoUpdateResult => {
-                        conn.end();
+                    this.updateUserInfo(fetchedUser.id, password, firstName, lastName, occupation, description, infoUpdateResult => {
+                        
                         return call_back(infoUpdateResult);
                     });                    
                 });
             });
         });
     }
-    updateUserEmail(conn, id, oldEmail, newEmail, emailUpdateResult) {
+    updateUserEmail(id, oldEmail, newEmail, emailUpdateResult) {
         if (oldEmail != newEmail) {
             //Check if new email is in use
             this.checkForEmail(conn, newEmail, emailCheckResponse => {
@@ -159,7 +140,7 @@ class Model {
         else
             return emailUpdateResult('100');
     }
-    updateUserUsername(conn, id, oldUsername, newUsername, usernameUpdateResult) {
+    updateUserUsername(id, oldUsername, newUsername, usernameUpdateResult) {
         if (oldUsername != newUsername) {
             //Check if new username is in use
             this.checkForUsername(conn, newUsername, usernameCheckResponse => {
@@ -179,7 +160,7 @@ class Model {
         else
             return usernameUpdateResult('100');
     }
-    updateUserInfo(conn, id, password, firstName, lastName, occupation, description, infoUpdateResult) {
+    updateUserInfo(id, password, firstName, lastName, occupation, description, infoUpdateResult) {
         //Update profile info
         conn.query('Update users SET password = ' + mysql.escape(password) +
                                             ', firstName = ' + mysql.escape(firstName) +
@@ -202,10 +183,8 @@ class Model {
     /////////////////////////////////           Booking Methods          /////////////////////////////////////
     */////////////////////////////////////////////////////////////////////////////////////////////////////////
     getLocations(call_back) {
-        //Connect to database
-        var conn = this.getConnection();
-
         conn.query('SELECT * FROM locations', (err, result) => {
+            if (err) throw err;
             call_back(result);
         });
     }
@@ -236,9 +215,6 @@ class Model {
             if (parseInt(startTime.split(":")[1]) % 5 != 0 || parseInt(endTime.split(":")[1]) % 5 != 0)
                 return call_back('406')
 
-            //Connect to database
-            var conn = this.getConnection();
-            
             //Check for booking overlaps
             conn.query('SELECT * FROM bookings WHERE date = ' + mysql.escape(date), (err, result) => {
                 if (err) throw err;
@@ -266,7 +242,7 @@ class Model {
                     var check9 = insertStartTime.getTime() == checkStartTime.getTime() && checkEndTime.getTime() == insertEndTime.getTime();
                     
                     if (check1 || check2 || check3 || check4 || check5 || check6 || check7 || check8 || check9) {
-                        conn.end();
+                        
                         return call_back('407');
                     }
                 }
@@ -276,7 +252,6 @@ class Model {
                 conn.query(sql, function(err, result) {
                     if (err) throw err;
                     console.log("Booking " + result.insertId + " inserted: " + locationName + " at " + startTime + " to " + endTime);
-                    conn.end();
                     return call_back('100');
                 });            
             });
@@ -285,17 +260,12 @@ class Model {
     getBookingsDate(startDate, endDate, call_back) {
         console.log("#################getBookingsDate()#################");
 
-        //Connect to database
-        var conn = this.getConnection();
-        
         //Get bookings
         conn.query('SELECT * FROM bookings WHERE date >= ' + mysql.escape(startDate) + ' and  date <= ' + mysql.escape(endDate), (err, result) => {
             if (err) throw err;
             console.log(result.length + " Bookings found");
             call_back(result);
         });
-
-        conn.end();
     }
 
 }

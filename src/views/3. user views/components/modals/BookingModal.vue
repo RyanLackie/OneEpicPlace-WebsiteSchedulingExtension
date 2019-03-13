@@ -14,8 +14,15 @@
 
             <div class="inputLg">
                 <label class="sectionLabel">Location</label>
-                <select type="text" id="BookingModal-Location" class="form-control" required>
-                    <option v-for="option in getOptions()" :key='option.id' :id="'option'+option.id" :value='option.id'>{{option.name}}</option>
+                <select id="BookingModal-Location" class="form-control" required>
+                    <option v-for="location in $parent.locations" :key='location.id' :id="'loc'+location.id" :value='location.id'>{{location.name}}</option>
+                </select>
+            </div>
+
+            <div class="inputLg" v-if='checkFormType() == "room"'>
+                <label class="sectionLabel">Meeting Type</label>
+                <select id="BookingModal-Type" class="form-control" required>
+                    <option v-for="type in $parent.types" :key='type.id' :value='type.id'>{{type.type}}</option>
                 </select>
             </div>
                 
@@ -62,9 +69,40 @@
             <div class="sliderContainer" v-if='checkFormType() == "room"'>
                 <div class="noiseLabel">Noise Level</div>
                 <div class="value" id="BookingModal-NoiseValue">Quite</div>
-                <input type="range" min="-1" max="1" value="0" class="slider" id="BookingModal-NoiseSlider" @change="getRangeValue()">
+                <input type="range" min="-1" max="1" value="0" class="slider" id="BookingModal-NoiseSlider" @input="getRangeValue()">
             </div>
-            
+
+            <!-- Advanced Options -->            
+            <button class="btn btn-outline-secondary advancedBtn" type="button" @click="changeOptions()">{{showMoreText}}</button>
+
+            <div class="inputLg" v-if="showMore">
+                <label class="sectionLabel">Resources</label>
+                <select id="BookingModal-Resources" class="form-control">
+                    <option v-for="resource in $parent.resources" :key='resource.id' :value='resource.id'>{{resource.name}}</option>
+                </select>
+            </div>
+
+            <div class="inputLg" v-if="showMore">
+                <label class="sectionLabel">Repeat</label>
+                <div class="weekBar">
+                    <div class="day" v-for="day in 7" :key='day' :id="'BookingModal-Day'+day" :style='styleDay(day)' @click='manageRepeatedDays(day)'>
+                        <div class="textContainer">
+                            <div class="text">{{getDayOfTheWeekShort(day)}}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="inputSmLeft" v-if="showMore">
+                <label class="sectionLabel">Times</label>
+                <input id="BookingModal-Times" type="number" min='1' value='1' class="form-control" @input="getRepeatedDates()">
+            </div>
+            <div class="inputSmRight" v-if="showMore">
+                <label class="sectionLabel">Every</label>
+                <input id="BookingModal-Every" type="number" min='1' value='1' class="form-control" @input="getRepeatedDates()">
+            </div>
+            <div class="inputLg" v-if="showMore">
+                <div v-for="(date, index) in repeatedDates" :key='index'>{{date}}</div>
+            </div>
 
             <button class="btn btn-success submitBtn" type="submit">Submit</button>
             <button class="btn btn-secondary cancelBtn" type="button" @click="closeModal()">Cancel</button>
@@ -88,7 +126,13 @@
                 location: null,
 
                 //Color options
-                selectedColor: 'blue'
+                selectedColor: 'blue',
+
+                showMoreText: 'Show More',
+                showMore: false,
+
+                repeatedDays: [false,false,false,false,false,false,false],
+                repeatedDates: []
             }
         },
 
@@ -182,6 +226,17 @@
                     case 6: return 'Saterday';
                 }
             },
+            getDayOfTheWeekShort(day) {
+                switch(day) {
+                    case 1: return 'Su';
+                    case 2: return 'M';
+                    case 3: return 'T';
+                    case 4: return 'W';
+                    case 5: return 'Th';
+                    case 6: return 'F';
+                    case 7: return 'Sa';
+                }
+            },
             getMonthName(date) {
                 switch(date.getMonth()) {
                     case 0: return 'January';
@@ -197,10 +252,6 @@
                     case 10: return 'November';
                     case 11: return 'December';
                 }
-            },
-
-            getOptions() {
-                return this.$parent.getLocations();
             },
 
             selectColor(input) {
@@ -226,6 +277,52 @@
                     document.getElementById('BookingModal-NoiseValue').innerHTML = 'Quite';
                 else if (document.getElementById('BookingModal-NoiseSlider').value == 1)
                     document.getElementById('BookingModal-NoiseValue').innerHTML = 'Loud';
+            },
+
+            changeOptions() {
+                if (!this.showMore)
+                    this.showMoreText = 'Show Less';
+                else {
+                    this.showMoreText = 'Show More';
+                    
+                }
+                this.showMore = !this.showMore;
+            },
+
+            styleDay(day) {
+                if (day != 7)
+                    return 'border-right: 1px black solid;';
+            },
+            manageRepeatedDays(day) {
+                this.repeatedDays[day-1] = !this.repeatedDays[day-1];
+                if (this.repeatedDays[day-1]) {
+                    document.getElementById('BookingModal-Day'+day).style.color = 'white';
+                    document.getElementById('BookingModal-Day'+day).style.backgroundColor = 'indigo';
+                }
+                else {
+                    document.getElementById('BookingModal-Day'+day).style.color = 'indigo';
+                    document.getElementById('BookingModal-Day'+day).style.backgroundColor = 'white';
+                }
+            },
+
+            getRepeatedDates() {
+                this.repeatedDates = [];
+                if (document.getElementById('BookingModal-Times') != null && document.getElementById('BookingModal-Every') != null) {
+                    var times = document.getElementById('BookingModal-Times').value;
+                    var every = document.getElementById('BookingModal-Every').value;
+                    for (var i = 0; i < times; i++) {
+                        for (var ii = 0; ii < 6; ii++) {
+
+                        }
+
+                        var date = new Date();
+                        if (i > 0)
+                            date = this.repeatedDates[i-1];
+                        date = new Date(date.setDate(date.getDate() + 1));
+                        
+                        this.repeatedDates[this.repeatedDates.length] = date;
+                    }
+                }
             }
         },
 

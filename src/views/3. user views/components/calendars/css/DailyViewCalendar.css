@@ -186,7 +186,7 @@
     display: none;
 }
 .DailyViewCalendar .calendar .innerSection .calendarRow .booking .title {
-    width: calc(100% - 27px);
+    width: calc(100% - 5px);
     margin-left: 5px;
     overflow: hidden;
     text-overflow: ellipsis;

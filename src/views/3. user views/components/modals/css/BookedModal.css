@@ -40,12 +40,11 @@
 }
 
 .BookedModal .modal-header {
-    margin-bottom: 10px;
+    display: inline-block;
+    width: 100%;
 }
 .BookedModal .modal-header .text {
-    width: 100%;
     font-size: 30px;
-    text-align: center;
     font-weight: bold;
     font-family: 'Quicksand', sans-serif;
 }

@@ -14,3 +14,29 @@
 .Schedule .viewText:hover {
     color: gray;
 }
+
+.Schedule .loadingAnimation {
+    width: 200px;
+    height: 200px;
+    margin: 0px auto;
+    background-image: url("../../../assets/logo.png");
+    background-size: 70%;
+    background-repeat: no-repeat;
+    background-position: center;
+
+    -webkit-animation: spin 3s infinite linear;
+    animation: spin 3s infinite linear;
+}
+@-webkit-keyframes spin {
+    100% { -webkit-transform: rotate(360deg); }
+}
+@-moz-keyframes spin {
+    100% { -moz-transform: rotate(360deg); }
+}
+@keyframes spin {
+    100% {
+        -moz-transform:rotate(360deg);
+        -o-transform:rotate(360deg);
+        transform:rotate(360deg);
+    }
+}

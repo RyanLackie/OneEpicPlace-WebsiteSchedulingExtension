@@ -73,7 +73,7 @@
                 days: [],
 
                 //locations include: id, name, type
-                locations: this.$parent.getLocations(),
+                locations: this.$parent.locations,
 
                 //List of returned bookings
                 bookings: [],
@@ -220,7 +220,10 @@
                     THIS.bookingsDelay = 5000;
                     var startDate = THIS.days[0].toJSON().slice(0, 10);
                     var endDate = THIS.days[THIS.days.length-1].toJSON().slice(0, 10);
+                    var refDate = THIS.days[0];
                     api.getBookingsDate(startDate, endDate).then(bookingsResult => {
+                        if (refDate != THIS.days[0])
+                            return;
                         THIS.bookings = bookingsResult;
                         THIS.checkBookingsLoop();
                     });
@@ -229,7 +232,7 @@
             checkBookings() {
                 this.bookings = [];
                 clearTimeout(this.checkBookingsTimeout);
-                this.bookingsDelay = 500;
+                this.bookingsDelay = 0;
                 this.checkBookingsLoop();
             },
 

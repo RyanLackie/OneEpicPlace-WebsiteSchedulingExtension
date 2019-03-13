@@ -36,11 +36,11 @@
                 <div class="calendarRow"></div>
 
                 <!-- Calendar Rows -->
-                <div class="calendarRow" v-for="(location, row) in locations" :key="'loc'+row" :style='styleDeskElements(location)'>
+                <div class="calendarRow" v-for="(location, row) in locations" :key="'row'+row" :style='styleDeskElements(location)'>
                     <!-- Booking Blocks -->
                     <div class="booking" v-for="booking in bookings" :key="'booking'+booking.id" :style='styleBooking(location.id, booking)' @click='bookingClicked(booking)'>
                         <div v-if="location.type == 'room'" class="warningIcon" :style='styleWarningIcon(booking)'></div>
-                        <div v-if="location.type == 'room'" class="title">{{booking.title}}</div>
+                        <div v-if="location.type == 'room'" class="title" :style='styleTitle(booking)'>{{booking.title}}</div>
                         <div v-if="location.type == 'room'" class="name">{{booking.username}}</div>
                         <div v-if="location.type == 'desk'" class="centerText">{{booking.username}}</div>
                     </div>
@@ -76,9 +76,9 @@
                 date: null,
 
                 //locations include: id, name, type
-                locations: this.$parent.getLocations(),
+                locations: this.$parent.locations,
                 //hours include: id, time
-                hours: this.$parent.getHours(),
+                hours: this.$parent.hours,
 
                 //List of returned bookings
                 bookings: [],
@@ -169,7 +169,7 @@
                     var endTimeSlot = ((endTimeHour - this.hours[0].time.substring(0, this.hours[0].time.length - 2)) * 12) + (endTimeMin / 5) + 1;
 
                     /*  
-                    Left is tricky because getting the bounds is not relative to inside the row getting the left value of the 
+                    Left is tricky because getting the bounds is not relative to inside the row, getting the left value of the 
                     first slot and subtractiing it from the used slot solves this problem
                     */
                     var left = document.getElementById('timeSlot'+locationID+':'+startTimeSlot).getBoundingClientRect().left - document.getElementById('timeSlot'+locationID+':'+1).getBoundingClientRect().left;
@@ -183,6 +183,10 @@
                 if (booking.noiseLevel > 0)
                     return 'display: inline;';
             },
+            styleTitle(booking) {
+                if (booking.noiseLevel > 0)
+                    return 'width: calc(100% - 27px);';
+            },
 
             /* Data Update */
             checkBookingsLoop() {
@@ -190,7 +194,10 @@
                 this.checkBookingsTimeout = setTimeout(function() {
                     THIS.bookingsDelay = 5000;
                     var date = THIS.date.toJSON().slice(0, 10);
+                    var refDate = THIS.date;
                     api.getBookingsDate(date, date).then(bookingsResult => {
+                        if (refDate != THIS.date)
+                            return;
                         THIS.bookings = bookingsResult;
                         THIS.checkBookingsLoop();
                     });
@@ -199,7 +206,7 @@
             checkBookings() {
                 this.bookings = [];
                 clearTimeout(this.checkBookingsTimeout);
-                this.bookingsDelay = 500;
+                this.bookingsDelay = 0;
                 this.checkBookingsLoop();
             },
 

@@ -101,7 +101,6 @@
     margin: 24px auto 0px auto;
     width: 60px;
     height: 60px;
-    outline: 3px silver solid;
     background: blue;
 }
 .BookingModal .colorSelectorContainer .colorRow {
@@ -114,7 +113,6 @@
 .BookingModal .colorSelectorContainer .colorRow .colorOption {
     width: 25px;
     height: 25px;
-    outline: 2px silver solid;
     visibility: hidden;
 }
 
@@ -164,6 +162,45 @@
     cursor: pointer;
 }
 
+.BookingModal .advancedBtn {
+    width: 94%;
+    height: 25px;
+    margin: 20px 3% 0px 3%;
+    font-size: 13px;
+    line-height: 0px;
+}
+
+.BookingModal .weekBar {
+    display: inline-block;
+    width: 100%;
+    height: 40px;
+}
+.BookingModal .weekBar .day {
+    display: inline-block;
+    width: 14.28%;
+    height: 100%;
+    color: indigo;
+    background-color: white;
+    transition: 0.2s;
+}
+.BookingModal .weekBar .day .textContainer {
+    display: table;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+}
+.BookingModal .weekBar .day .textContainer .text {
+    display: table-cell;
+    vertical-align: middle;
+    text-decoration: none;
+    cursor: pointer;
+    font-weight: bold;
+}
+.BookingModal .weekBar .day:hover {
+    color: white;
+    background-color: indigo; 
+}
+
 /*
     Modal Footer
 */
@@ -171,14 +208,13 @@
     float: left;
     width: 40%;
     height: 50px;
-    margin: 40px 0px 30px 3%;
+    margin: 30px 0px 30px 3%;
     font-size: 20px;
-    opacity: 1;
 }
 .BookingModal .cancelBtn {
     float: right;
     width: 40%;
     height: 50px;
-    margin: 40px 3% 30px 0px;
+    margin: 30px 3% 30px 0px;
     font-size: 20px;
 }

@@ -1,11 +1,14 @@
 <template>
     <div class="Schedule">
 
+        <!-- Loading Icon -->
+        <div class="loadingAnimation" v-if="!load"></div>
+
         <!-- Calendar Navbar -->
         <div class="viewSelector">
-            <a class="viewText" href="JavaScript:void(0)" @click="viewSelected = 0">Daily View</a>
-            <a class="viewText" href="JavaScript:void(0)" @click="viewSelected = 1">Weekly View</a>
-            <a class="viewText" href="JavaScript:void(0)" @click="viewSelected = 2">Monthly View</a>
+            <a class="viewText" href="JavaScript:void(0)" v-if="load" @click="viewSelected = 0">Daily View</a>
+            <a class="viewText" href="JavaScript:void(0)" v-if="load" @click="viewSelected = 1">Weekly View</a>
+            <a class="viewText" href="JavaScript:void(0)" v-if="load" @click="viewSelected = 2">Monthly View</a>
         </div>
 
         <!-- Calendars -->
@@ -75,19 +78,18 @@
                     {id: 13, time: '8PM'},
                     {id: 14, time: '9PM'}
                 ],
+                types: [
+                    {id: 0, type: 'one'}
+                ],
+                resources: [
+                    {id: 0, name: 'one'}
+                ],
 
                 load: false
             }
         },
 
         methods: {
-            getLocations() {
-                return this.locations;
-            },
-            getHours() {
-                return this.hours;
-            },
-
             checkBookings() {
                 switch(this.viewSelected) {
                     case 0:
