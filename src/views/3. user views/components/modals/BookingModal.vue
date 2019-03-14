@@ -81,28 +81,16 @@
                     <option v-for="resource in $parent.resources" :key='resource.id' :value='resource.id'>{{resource.name}}</option>
                 </select>
             </div>
-
-            <div class="inputLg" v-if="showMore">
+            <!--
+            <div class="calendarLabel" v-if="showMore">
                 <label class="sectionLabel">Repeat</label>
-                <div class="weekBar">
-                    <div class="day" v-for="day in 7" :key='day' :id="'BookingModal-Day'+day" :style='styleDay(day)' @click='manageRepeatedDays(day)'>
-                        <div class="textContainer">
-                            <div class="text">{{getDayOfTheWeekShort(day)}}</div>
-                        </div>
-                    </div>
-                </div>
             </div>
-            <div class="inputSmLeft" v-if="showMore">
-                <label class="sectionLabel">Times</label>
-                <input id="BookingModal-Times" type="number" min='1' value='1' class="form-control" @input="getRepeatedDates()">
+            <div class="dateSelector" v-if="showMore">
+                <button id="dateSelectorPreviousBtn" class="btn backBtn" type="button" @click="decMonth()"></button>
+                <input id="dateSelectorDate" class="date" :value="getMonthName(date)+' '+date.getFullYear()" disabled>
+                <button id="dateSelectorPreviousBtn" class="btn forwardBtn" type="button" @click="incMonth()"></button>
             </div>
-            <div class="inputSmRight" v-if="showMore">
-                <label class="sectionLabel">Every</label>
-                <input id="BookingModal-Every" type="number" min='1' value='1' class="form-control" @input="getRepeatedDates()">
-            </div>
-            <div class="inputLg" v-if="showMore">
-                <div v-for="(date, index) in repeatedDates" :key='index'>{{date}}</div>
-            </div>
+            -->
 
             <button class="btn btn-success submitBtn" type="submit">Submit</button>
             <button class="btn btn-secondary cancelBtn" type="button" @click="closeModal()">Cancel</button>
@@ -129,10 +117,7 @@
                 selectedColor: 'blue',
 
                 showMoreText: 'Show More',
-                showMore: false,
-
-                repeatedDays: [false,false,false,false,false,false,false],
-                repeatedDates: []
+                showMore: false
             }
         },
 
@@ -226,17 +211,6 @@
                     case 6: return 'Saterday';
                 }
             },
-            getDayOfTheWeekShort(day) {
-                switch(day) {
-                    case 1: return 'Su';
-                    case 2: return 'M';
-                    case 3: return 'T';
-                    case 4: return 'W';
-                    case 5: return 'Th';
-                    case 6: return 'F';
-                    case 7: return 'Sa';
-                }
-            },
             getMonthName(date) {
                 switch(date.getMonth()) {
                     case 0: return 'January';
@@ -280,49 +254,11 @@
             },
 
             changeOptions() {
-                if (!this.showMore)
-                    this.showMoreText = 'Show Less';
-                else {
-                    this.showMoreText = 'Show More';
-                    
-                }
                 this.showMore = !this.showMore;
-            },
-
-            styleDay(day) {
-                if (day != 7)
-                    return 'border-right: 1px black solid;';
-            },
-            manageRepeatedDays(day) {
-                this.repeatedDays[day-1] = !this.repeatedDays[day-1];
-                if (this.repeatedDays[day-1]) {
-                    document.getElementById('BookingModal-Day'+day).style.color = 'white';
-                    document.getElementById('BookingModal-Day'+day).style.backgroundColor = 'indigo';
-                }
-                else {
-                    document.getElementById('BookingModal-Day'+day).style.color = 'indigo';
-                    document.getElementById('BookingModal-Day'+day).style.backgroundColor = 'white';
-                }
-            },
-
-            getRepeatedDates() {
-                this.repeatedDates = [];
-                if (document.getElementById('BookingModal-Times') != null && document.getElementById('BookingModal-Every') != null) {
-                    var times = document.getElementById('BookingModal-Times').value;
-                    var every = document.getElementById('BookingModal-Every').value;
-                    for (var i = 0; i < times; i++) {
-                        for (var ii = 0; ii < 6; ii++) {
-
-                        }
-
-                        var date = new Date();
-                        if (i > 0)
-                            date = this.repeatedDates[i-1];
-                        date = new Date(date.setDate(date.getDate() + 1));
-                        
-                        this.repeatedDates[this.repeatedDates.length] = date;
-                    }
-                }
+                if (this.showMore)
+                    this.showMoreText = 'Show Less';
+                else
+                    this.showMoreText = 'Show More';
             }
         },
 

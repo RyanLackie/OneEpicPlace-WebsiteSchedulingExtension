@@ -32,8 +32,8 @@ export function updateProfile(email, username, password, firstName, lastName, oc
 }
 
 //Booking Methods
-export function getLocations() {
-    return myFetch(api_root + "/app/getLocations", {});
+export function getCalendarData() {
+    return myFetch(api_root + "/app/getCalendarData", {});
 }
 export function insertBooking(date, locationID, locationName, title, description, startTime, endTime, bookingColor, noiseLevel) {
     var userID = user.id, username = user.username, password = user.password;

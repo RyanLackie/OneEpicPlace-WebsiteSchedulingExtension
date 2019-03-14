@@ -52,7 +52,6 @@ class Model {
          this.checkForEmail(email, emailCheckResponse => {
             if (emailCheckResponse != '409') {
                 console.log(email + ' is taken');
-                
                 return call_back('409');
             }
 
@@ -60,13 +59,11 @@ class Model {
             this.checkForUsername(username, usernameCheckResponse => {
                 if (usernameCheckResponse != '409') {
                     console.log(username + ' is taken');
-                    
                     return call_back('410');
                 }
                 
                 this.insertUser(email, username, password, firstName, lastName, occupation, description, insertUserResponce => {
                     console.log(insertUserResponce.username + ' account has been created');
-                    
                     return call_back(insertUserResponce);
                 });
             });
@@ -77,7 +74,7 @@ class Model {
         console.log('#################getAccount()#################');
 
         //Find user by email
-        this.checkForEmail(conn, identity, emailCheckResponse => {
+        this.checkForEmail(identity, emailCheckResponse => {
             if (emailCheckResponse != '409' && password == emailCheckResponse.password) {
                 console.log(emailCheckResponse.username + ' has logged in with email');
                 
@@ -85,7 +82,7 @@ class Model {
             }
 
             //Find user by username
-            this.checkForUsername(conn, identity, usernameCheckResponse => {
+            this.checkForUsername(identity, usernameCheckResponse => {
                 if (usernameCheckResponse != '409' && password == usernameCheckResponse.password) {
                     console.log(usernameCheckResponse.username + ' has logged in with username');
                     
@@ -182,12 +179,26 @@ class Model {
     /*////////////////////////////////////////////////////////////////////////////////////////////////////////
     /////////////////////////////////           Booking Methods          /////////////////////////////////////
     */////////////////////////////////////////////////////////////////////////////////////////////////////////
-    getLocations(call_back) {
+    getLocations(fetchedLocations) {
         conn.query('SELECT * FROM locations', (err, result) => {
             if (err) throw err;
-            call_back(result);
+            fetchedLocations(result);
         });
     }
+    getResources(fetchedResources) {
+        conn.query('SELECT * FROM resources', (err, result) => {
+            if (err) throw err;
+            fetchedResources(result);
+        });
+    }
+    getCalendarData(call_back) {
+        this.getLocations(fetchedLocations => {
+            this.getResources(fetchedResources => {
+                call_back([fetchedLocations, fetchedResources]);
+            });
+        });
+    }
+
     insertBooking(date, userID, username, password, locationID, locationName, title, description, startTime, endTime, bookingColor, noiseLevel, call_back) {
         console.log("#################insertBooking()#################");
 
@@ -230,7 +241,7 @@ class Model {
                     var checkEndTime = new Date();
                     checkEndTime.setHours(result[index2].endTime.split(":")[0], result[index2].endTime.split(":")[1], 0, 0);
                     
-                    //getTime() is used so that there is real numarical data to compair
+                    //getTime() is used so that there is numarical data to compair
                     var check1 = checkStartTime.getTime() < insertStartTime.getTime() && checkEndTime.getTime() > insertStartTime.getTime();
                     var check2 = insertStartTime.getTime() < checkEndTime.getTime() && insertEndTime.getTime() > checkEndTime.getTime();
                     var check3 = insertStartTime.getTime() < checkStartTime.getTime() && insertEndTime.getTime() > checkStartTime.getTime();
@@ -241,10 +252,8 @@ class Model {
                     var check8 = insertStartTime.getTime() < checkStartTime.getTime() && checkEndTime.getTime() == insertEndTime.getTime();
                     var check9 = insertStartTime.getTime() == checkStartTime.getTime() && checkEndTime.getTime() == insertEndTime.getTime();
                     
-                    if (check1 || check2 || check3 || check4 || check5 || check6 || check7 || check8 || check9) {
-                        
+                    if (check1 || check2 || check3 || check4 || check5 || check6 || check7 || check8 || check9)
                         return call_back('407');
-                    }
                 }
 
                 //Insert booking

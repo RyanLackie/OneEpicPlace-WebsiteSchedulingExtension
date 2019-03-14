@@ -31,9 +31,9 @@ app.post('/updateProfile', (req, res) => {
 })
 
 //Booking Methods
-app.post('/getLocations', (req, res) => {
-    model.getLocations(
-        locations => res.send(locations)
+app.post('/getCalendarData', (req, res) => {
+    model.getCalendarData(
+        fetchedCalendarData => res.send(fetchedCalendarData)
     );
 })
 app.post('/insertBooking', (req, res) => {

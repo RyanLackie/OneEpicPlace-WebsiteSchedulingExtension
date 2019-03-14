@@ -79,11 +79,12 @@
                     {id: 14, time: '9PM'}
                 ],
                 types: [
-                    {id: 0, type: 'one'}
+                    {id: 0, type: 'One on One'},
+                    {id: 1, type: 'Performing Arts'},
+                    {id: 2, type: 'Workshop (3-9)'},
+                    {id: 3, type: 'Event (10+)'}
                 ],
-                resources: [
-                    {id: 0, name: 'one'}
-                ],
+                resources: [],
 
                 load: false
             }
@@ -106,8 +107,9 @@
         },
 
         mounted() {
-            api.getLocations().then(locations => {
-                this.locations = locations;
+            api.getCalendarData().then(fetchedCalendarData => {
+                this.locations = fetchedCalendarData[0];
+                this.resources = fetchedCalendarData[1];
                 this.load = true;
             });
         }

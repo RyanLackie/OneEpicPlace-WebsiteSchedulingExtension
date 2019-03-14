@@ -5,7 +5,7 @@
         <div class="dateSelector">
             <button id="dateSelectorPreviousBtn" class="btn backBtn" type="button" @click="decDate()"></button>
             <input id="dateSelectorDate" class="date" :value="date.getMonth()+1+'/'+date.getDate()+'/'+date.getFullYear()" disabled>
-            <button id="dateSelectorCalendar" class="btn calendarBtn" type="button"></button>
+            <button id="dateSelectorCalendar" class="btn calendarBtn" type="button" @click="$parent.$refs.CalendarModal.openModal()"></button>
             <button id="dateSelectorPreviousBtn" class="btn forwardBtn" type="button" @click="incDate()"></button>
         </div>
 
