@@ -171,7 +171,7 @@
     background-color: black;  /* Default color if error occurs */
     cursor: pointer;
 }
-.DailyViewCalendar .calendar .innerSection .calendarRow .booking .warningIcon {
+.DailyViewCalendar .calendar .innerSection .calendarRow .booking .icon {
     float: left;
     width: 20px;
     height: 20px;
@@ -179,11 +179,9 @@
     margin-left: 2px;
     border: none;
     text-decoration: none;
-    background-image: url("../../../../../assets/warning-red.png");
     background-size: 70%;
     background-repeat: no-repeat;
     background-position: center;
-    display: none;
 }
 .DailyViewCalendar .calendar .innerSection .calendarRow .booking .title {
     width: calc(100% - 5px);

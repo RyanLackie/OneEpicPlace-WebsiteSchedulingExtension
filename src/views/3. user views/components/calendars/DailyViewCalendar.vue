@@ -39,7 +39,7 @@
                 <div class="calendarRow" v-for="(location, row) in locations" :key="'row'+row" :style='styleDeskElements(location)'>
                     <!-- Booking Blocks -->
                     <div class="booking" v-for="booking in bookings" :key="'booking'+booking.id" :style='styleBooking(location.id, booking)' @click='bookingClicked(booking)'>
-                        <div v-if="location.type == 'room'" class="warningIcon" :style='styleWarningIcon(booking)'></div>
+                        <div v-if="location.type == 'room' && booking.noiseLevel != 0" class="icon" :style='styleIcon(booking)'></div>
                         <div v-if="location.type == 'room'" class="title" :style='styleTitle(booking)'>{{booking.title}}</div>
                         <div v-if="location.type == 'room'" class="name">{{booking.username}}</div>
                         <div v-if="location.type == 'desk'" class="centerText">{{booking.username}}</div>
@@ -179,12 +179,16 @@
                 }
                 return 'left: 0px; width: 0px; height: 0px; display: none;';
             },
-            styleWarningIcon(booking) {
+            styleIcon(booking) {
+                var volumeOn = require('../../../../assets/volumeOn-white.png');
+                var volumeOff = require('../../../../assets/volumeOff-white.png');
                 if (booking.noiseLevel > 0)
-                    return 'display: inline;';
+                    return 'background-image: url('+volumeOn+');';
+                else if (booking.noiseLevel < 0)
+                    return 'background-image: url('+volumeOff+');';
             },
             styleTitle(booking) {
-                if (booking.noiseLevel > 0)
+                if (booking.noiseLevel != 0)
                     return 'width: calc(100% - 27px);';
             },
 

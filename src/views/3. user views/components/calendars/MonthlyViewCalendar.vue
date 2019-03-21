@@ -44,7 +44,7 @@
                             <div class="timeBox" :style='"background-color:"+booking.bookingColor'>
                                 <div class="time">{{fillBookingStartTime(booking)}}</div>
                             </div>
-                            <div class="warningIcon" :style='styleWarningIcon(booking)'></div>
+                            <div v-if="booking.noiseLevel != 0" class="icon" :style='styleIcon(booking)'></div>
                             <div class="textBox" :style='styleBookingText(booking)'>
                                 <div class="text">{{booking.title}}</div>
                             </div>
@@ -125,7 +125,7 @@
                     case 4: return 'Wednesday';
                     case 5: return 'Thursday';
                     case 6: return 'Friday';
-                    case 7: return 'Saterday';
+                    case 7: return 'Saturday';
                 }
             },
             getMonthName(day) {
@@ -180,12 +180,16 @@
                 else
                     return booking.startTime.split(':')[0] - 12 + ':' + booking.startTime.split(':')[1] + ' pm';
             },
-            styleWarningIcon(booking) {
+            styleIcon(booking) {
+                var volumeOn = require('../../../../assets/volumeOn-black.png');
+                var volumeOff = require('../../../../assets/volumeOff-black.png');
                 if (booking.noiseLevel > 0)
-                    return 'display: inline;';
+                    return 'background-image: url('+volumeOn+');';
+                else if (booking.noiseLevel < 0)
+                    return 'background-image: url('+volumeOff+');';
             },
             styleBookingText(booking) {
-                if (booking.noiseLevel > 0)
+                if (booking.noiseLevel != 0)
                     return 'width: 56%;';
             },
             getBookingCount(week, day) {

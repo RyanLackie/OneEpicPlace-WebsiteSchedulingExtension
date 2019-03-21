@@ -55,7 +55,7 @@
                             <div class="timeBox" :style='"background-color:"+booking.bookingColor'>
                                 <div class="time">{{fillBookingStartTime(booking)}}</div>
                             </div>
-                            <div class="warningIcon" :style='styleWarningIcon(booking)'></div>
+                            <div v-if="booking.noiseLevel != 0" class="icon" :style='styleIcon(booking)'></div>
                             <div class="textBox" :style='styleBookingText(booking)'>
                                 <div class="text">{{booking.title}}</div>
                             </div>
@@ -138,7 +138,7 @@
                     case 3: return 'Wednesday';
                     case 4: return 'Thursday';
                     case 5: return 'Friday';
-                    case 6: return 'Saterday';
+                    case 6: return 'Saturday';
                 }
             },
             sortBookingsFor(date, location) {
@@ -183,13 +183,17 @@
                 else
                     return booking.startTime.split(':')[0] - 12 + ':' + booking.startTime.split(':')[1] + ' pm';
             },
-            styleWarningIcon(booking) {
+            styleIcon(booking) {
+                var volumeOn = require('../../../../assets/volumeOn-black.png');
+                var volumeOff = require('../../../../assets/volumeOff-black.png');
                 if (booking.noiseLevel > 0)
-                    return 'display: inline;';
+                    return 'background-image: url('+volumeOn+');';
+                else if (booking.noiseLevel < 0)
+                    return 'background-image: url('+volumeOff+');';
             },
             styleBookingText(booking) {
-                if (booking.noiseLevel > 0)
-                    return 'width: 56%;';
+                if (booking.noiseLevel != 0)
+                    return 'width: calc(98% - 90px);';
             },
 
             /* Data Update */

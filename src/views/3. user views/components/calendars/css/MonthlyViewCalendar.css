@@ -211,9 +211,8 @@
     text-align: center;
     color: white;
 }
-.MonthlyViewCalendar .calendar .innerSection .calendarRow .block .booking .warningIcon {
+.MonthlyViewCalendar .calendar .innerSection .calendarRow .block .booking .icon {
     position: relative;
-    display: none;
     float: left;
     width: 8%;
     height: 100%;
@@ -221,7 +220,6 @@
     margin-left: 3px;
     border: none;
     text-decoration: none;
-    background-image: url("../../../../../assets/warning-red.png");
     background-size: 80%;
     background-repeat: no-repeat;
     background-position: center;

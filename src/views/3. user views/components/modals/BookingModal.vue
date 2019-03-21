@@ -208,7 +208,7 @@
                     case 3: return 'Wednesday';
                     case 4: return 'Thursday';
                     case 5: return 'Friday';
-                    case 6: return 'Saterday';
+                    case 6: return 'Saturday';
                 }
             },
             getMonthName(date) {
@@ -246,9 +246,9 @@
 
             getRangeValue() {
                 if (document.getElementById('BookingModal-NoiseSlider').value == -1)
-                    document.getElementById('BookingModal-NoiseValue').innerHTML = 'Requires Quite';
+                    document.getElementById('BookingModal-NoiseValue').innerHTML = 'Requires Quiet';
                 else if (document.getElementById('BookingModal-NoiseSlider').value == 0)
-                    document.getElementById('BookingModal-NoiseValue').innerHTML = 'Quite';
+                    document.getElementById('BookingModal-NoiseValue').innerHTML = 'Quiet';
                 else if (document.getElementById('BookingModal-NoiseSlider').value == 1)
                     document.getElementById('BookingModal-NoiseValue').innerHTML = 'Loud';
             },
