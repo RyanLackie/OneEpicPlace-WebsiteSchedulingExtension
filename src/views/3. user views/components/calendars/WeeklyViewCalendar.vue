@@ -55,7 +55,7 @@
                             <div class="timeBox" :style='"background-color:"+booking.bookingColor'>
                                 <div class="time">{{fillBookingStartTime(booking)}}</div>
                             </div>
-                            <div v-if="booking.noiseLevel != 0" class="icon" :style='styleIcon(booking)'></div>
+                            <div v-if='booking.noiseLevel != 0' class="icon" :style='styleIcon(booking)'></div>
                             <div class="textBox" :style='styleBookingText(booking)'>
                                 <div class="text">{{booking.title}}</div>
                             </div>

@@ -194,7 +194,7 @@ class Model {
     getCalendarData(call_back) {
         this.getLocations(fetchedLocations => {
             this.getResources(fetchedResources => {
-                call_back([fetchedLocations, fetchedResources]);
+                return call_back([fetchedLocations, fetchedResources]);
             });
         });
     }
@@ -230,10 +230,6 @@ class Model {
             conn.query('SELECT * FROM bookings WHERE date = ' + mysql.escape(date), (err, result) => {
                 if (err) throw err;
                 
-                result = result.filter(function(value) {
-                    return value.locationID == locationID;
-                });
-                
                 for (var index2 = 0; index2 < result.length; index2++) {
                     var checkStartTime = new Date();
                     checkStartTime.setHours(result[index2].startTime.split(":")[0], result[index2].startTime.split(":")[1], 0, 0)
@@ -241,7 +237,7 @@ class Model {
                     var checkEndTime = new Date();
                     checkEndTime.setHours(result[index2].endTime.split(":")[0], result[index2].endTime.split(":")[1], 0, 0);
                     
-                    //getTime() is used so that there is numarical data to compair
+                    //.getTime() is used so that there is numarical data to compair
                     var check1 = checkStartTime.getTime() < insertStartTime.getTime() && checkEndTime.getTime() > insertStartTime.getTime();
                     var check2 = insertStartTime.getTime() < checkEndTime.getTime() && insertEndTime.getTime() > checkEndTime.getTime();
                     var check3 = insertStartTime.getTime() < checkStartTime.getTime() && insertEndTime.getTime() > checkStartTime.getTime();
@@ -252,8 +248,14 @@ class Model {
                     var check8 = insertStartTime.getTime() < checkStartTime.getTime() && checkEndTime.getTime() == insertEndTime.getTime();
                     var check9 = insertStartTime.getTime() == checkStartTime.getTime() && checkEndTime.getTime() == insertEndTime.getTime();
                     
-                    if (check1 || check2 || check3 || check4 || check5 || check6 || check7 || check8 || check9)
-                        return call_back('407');
+                    if (check1 || check2 || check3 || check4 || check5 || check6 || check7 || check8 || check9) {
+                        if (result.locationID == locationID)
+                            return call_back('407');
+                        else if (result.noiseLevel == -1 && noiseLevel == 1)
+                            return call_back('408');
+                        else if (result.noiseLevel == 1 && noiseLevel == -1)
+                            return call_back('409');
+                    }
                 }
 
                 //Insert booking
@@ -273,7 +275,7 @@ class Model {
         conn.query('SELECT * FROM bookings WHERE date >= ' + mysql.escape(startDate) + ' and  date <= ' + mysql.escape(endDate), (err, result) => {
             if (err) throw err;
             console.log(result.length + " Bookings found");
-            call_back(result);
+            return call_back(result);
         });
     }
 

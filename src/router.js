@@ -14,6 +14,10 @@ import Profile from './views/3. user views/Profile.vue'
 import Reserve from './views/3. user views/Reserve.vue'
 import Schedule from './views/3. user views/Schedule.vue'
 
+//3. edit views
+import Edit from './views/4. admin views/Edit.vue'
+import Analysis from './views/4. admin views/Analysis.vue'
+
 Vue.use(Router)
 
 export default new Router({
@@ -45,6 +49,14 @@ export default new Router({
         },
         {
             path: '/schedule', name: 'schedule', component: Schedule
-        }
+        },
+
+        //4. admin views
+        {
+            path: '/edit', name: 'edit', component: Edit
+        },
+        {
+            path: '/analysis', name: 'analysis', component: Analysis
+        },
     ]
 })

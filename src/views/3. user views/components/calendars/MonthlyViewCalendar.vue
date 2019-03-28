@@ -147,9 +147,8 @@
 
             /* JavaScript Styling */
             styleCurrentDay(week, day) {
-                var date = this.days[(7*(week-1) + day) - 1].getDate();
-                var currentDate = new Date().getDate();
-                if (currentDate == date)
+                var date = this.days[(7*(week-1) + day) - 1];
+                if (date.getDate() == new Date().getDate() && date.getMonth() == new Date().getMonth())
                     return 'background-color: Gainsboro;';
                 else    //Done to reset yestday on DOM lifecycle refresh
                     return 'background-color: white;';

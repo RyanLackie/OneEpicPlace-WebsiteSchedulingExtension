@@ -5,7 +5,7 @@
         <div class="dateSelector">
             <button id="dateSelectorPreviousBtn" class="btn backBtn" type="button" @click="decDate()"></button>
             <input id="dateSelectorDate" class="date" :value="date.getMonth()+1+'/'+date.getDate()+'/'+date.getFullYear()" disabled>
-            <button id="dateSelectorCalendar" class="btn calendarBtn" type="button" @click="$parent.$refs.CalendarModal.openModal()"></button>
+            <button id="dateSelectorCalendar" class="btn calendarBtn" type="button"></button>
             <button id="dateSelectorPreviousBtn" class="btn forwardBtn" type="button" @click="incDate()"></button>
         </div>
 
@@ -263,10 +263,12 @@
                 if (endTime[1] < 10)
                     endTime[1] = '0'+endTime[1];
                 
+                this.$parent.closeModals();
                 this.$parent.$refs.BookingModal.openModal(this.date, location, startTime[0]+':'+startTime[1], endTime[0]+':'+endTime[1]);
             },
 
             bookingClicked(booking) {
+                this.$parent.closeModals();
                 this.$parent.$refs.BookedModal.openModal(booking);
             }
         },

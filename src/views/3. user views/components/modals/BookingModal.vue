@@ -144,22 +144,15 @@
                 document.getElementById("BookingModal").style.visibility = "hidden";
                 //colors
                 document.getElementById('BookingModal-SelectedColor').style.visibility = 'visible';
-                for (var index = 0; index < 8; index++) {
+                for (var index = 0; index < 8; index++)
                     document.getElementById('BookingModal-ColorOption'+index).style.visibility = 'hidden';
-                }
-            },
-
-            checkFormType() {
-                var type = 'room';
-                if (this.location != null && this.location.type != undefined)
-                    type = this.location.type;
-                return type;
-            },
-            styleColorSelector() {
-                if (this.location != null && this.location.type != undefined) {
-                    if (this.location.type == 'desk')
-                        return 'width: 40%; margin: 10px 30%;';
-                }
+                //inputs
+                this.date = null;
+                this.location = null;
+                document.getElementById('BookingModal-Title').value = '';          
+                document.getElementById('BookingModal-Description').value = '';
+                document.getElementById('BookingModal-NoiseSlider').value = 0;
+                document.getElementById('BookingModal-NoiseValue').innerHTML = 'Quiet';
             },
             
             submitBooking(event) {
@@ -174,30 +167,43 @@
                 var noiseLevel = document.getElementById('BookingModal-NoiseSlider').value;
                 
                 api.insertBooking(date, locationID, locationName, title, description, startTime, endTime, bookingColor, noiseLevel).then(bookingResult => {
-                    //Not logged in
-                    if (bookingResult == '403') 
-                        alert('You dont have permission to make a booking');
-                    //Booking time not in a multiple of 5
-                    else if (bookingResult == '404') 
-                        alert('Booking time must be within the time range (watch out for AM PM)');
-                    //Not logged in
-                    else if (bookingResult == '405') 
-                        alert('Start Time must be before End Time');
-                    //Booking time not in a multiple of 5
-                    else if (bookingResult == '406') 
-                        alert('Time is not within a 5 min interval');
-                    //Booking overlap
-                    else if (bookingResult == '407') 
-                        alert('Time Overlap');
-                    //Successful booking
-                    else if (bookingResult == '100') {
+                    if (bookingResult == '100') {
                         this.closeModal();
                         this.$parent.checkBookings();
                     }
+                    
+                    else if (bookingResult == '403') 
+                        alert('You dont have permission to make a booking');
+                    else if (bookingResult == '404') 
+                        alert('Booking time must be within the time range (watch out for AM PM)');
+                    else if (bookingResult == '405') 
+                        alert('Start Time must be before End Time');
+                    else if (bookingResult == '406') 
+                        alert('Time is not within a 5 min interval');
+                    else if (bookingResult == '407') 
+                        alert('Time Overlap');
+                    else if (bookingResult == '408') 
+                        alert('A Silent Reservation Has Already Been Made During This Time');
+                    else if (bookingResult == '409') 
+                        alert('A Loud Reservation Has Already Been Made During This Time');
                 });
                 
                 //Prevent submit refresh
                 event.preventDefault();
+            },
+
+            checkFormType() {
+                var type = 'room';
+                if (this.location != null && this.location.type != undefined)
+                    type = this.location.type;
+                return type;
+            },
+            
+            styleColorSelector() {
+                if (this.location != null && this.location.type != undefined) {
+                    if (this.location.type == 'desk')
+                        return 'width: 40%; margin: 10px 30%;';
+                }
             },
 
             getDayOfTheWeek(date) {

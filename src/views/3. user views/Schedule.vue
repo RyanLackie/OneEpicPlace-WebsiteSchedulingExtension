@@ -103,6 +103,12 @@
                         this.$refs.MonthlyViewCalendar.checkBookings();
                         break;
                 }
+            },
+
+            closeModals() {
+                this.BookingModal.closeModal();
+                this.BookedModal.closeModal();
+                this.BookedDayModal.closeModal();
             }
         },
 

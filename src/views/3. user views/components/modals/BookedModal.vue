@@ -11,42 +11,42 @@
 
         <div class="inputSmLeft">
             <label class="sectionLabel">Booked By</label>
-            <input type="text" class="form-control" id='BookedModal-Name' :placeholder="booking.username" :disabled='disableInput()'>
+            <input type="text" class="form-control" id='BookedModal-Name' :placeholder="booking.username" :disabled='inputDisabled()'>
         </div>
         
         <div class="inputSmRight">
             <label class="sectionLabel">Date</label>
-            <input type="date" class="form-control" id='BookedModal-Date' :value='booking.date.slice(0, 10)' :disabled='disableInput()'>
+            <input type="date" class="form-control" id='BookedModal-Date' :value='booking.date.slice(0, 10)' :disabled='inputDisabled()'>
         </div>
 
         <div class="inputLg">
             <label class="sectionLabel">Location</label>
-            <select type="text" id="BookedModal-Location" class="form-control" :disabled='disableInput()'>
+            <select type="text" id="BookedModal-Location" class="form-control" :disabled='inputDisabled()'>
                 <option v-for="option in $parent.locations" :key='option.id' :id="'option'+option.id" :value='option.id'>{{option.name}}</option>
             </select>
         </div>
                 
         <div class="inputLg">
             <label class="sectionLabel">Title</label>
-            <input type="text" id="BookedModal-Title" class="form-control" :placeholder='booking.title' :disabled='disableInput()'>
+            <input type="text" id="BookedModal-Title" class="form-control" :placeholder='booking.title' :disabled='inputDisabled()'>
         </div>
 
         <div class="inputLg">
             <label class="sectionLabel">Description</label>
-            <textarea type="text" id="BookedModal-Description" class="form-control" :placeholder='booking.description' :disabled='disableInput()'></textarea>
+            <textarea type="text" id="BookedModal-Description" class="form-control" :placeholder='booking.description' :disabled='inputDisabled()'></textarea>
         </div>
 
         <div class="inputSmLeft">
             <label class="sectionLabel">Start Time</label>
-            <input type="time" min="7:00" max="22:00" step="300" id="BookedModal-StartTime" class="form-control" :disabled='disableInput()'>
+            <input type="time" min="7:00" max="22:00" step="300" id="BookedModal-StartTime" class="form-control" :disabled='inputDisabled()'>
         </div>
         
         <div class="inputSmRight">
             <label class="sectionLabel">End Time</label>
-            <input type="time" min="7:00" max="22:00" step="300" id="BookedModal-EndTime" class="form-control" :disabled='disableInput()'>
+            <input type="time" min="7:00" max="22:00" step="300" id="BookedModal-EndTime" class="form-control" :disabled='inputDisabled()'>
         </div>
 
-        <button class="btn btn-secondary closeBtn" type="button" @click="closeModal()">Close</button>
+        <button v-if='inputDisabled()' class="btn btn-secondary closeBtn" type="button" @click="closeModal()">Close</button>
 
     </div>
 </template>
@@ -77,7 +77,7 @@
                 var startTime = [
                     parseInt(booking.startTime.split(':')[0]),
                     parseInt(booking.startTime.split(':')[1])
-                ]
+                ];
                 if (startTime[0] < 10)
                     startTime[0] = '0'+startTime[0];
                 if (startTime[1] < 10)
@@ -87,7 +87,7 @@
                 var endTime = [
                     parseInt(booking.endTime.split(':')[0]),
                     parseInt(booking.endTime.split(':')[1])
-                ]
+                ];
                 if (endTime[0] < 10)
                     endTime[0] = '0'+endTime[0];
                 if (endTime[1] < 10)
@@ -102,7 +102,7 @@
                 document.getElementById("BookedModal").style.visibility = "hidden";
             },
 
-            disableInput() {
+            inputDisabled() {
                 if (this.booking.date != '') {
                     var bookingDate = new Date(this.booking.date);
                     bookingDate.setHours(this.booking.startTime.split(':')[0], this.booking.startTime.split(':')[1]);

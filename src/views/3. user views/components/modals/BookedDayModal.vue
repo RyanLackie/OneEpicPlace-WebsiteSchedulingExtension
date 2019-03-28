@@ -16,7 +16,7 @@
             </div>
             <div class="line">
                 <div class="color" :style='"background-color:"+booking.bookingColor+";"'></div>
-                <div class="warningIcon" :style='styleWarningIcon(booking)'></div>
+                <div v-if='booking.noiseLevel != 0' class="icon" :style='styleIcon(booking)'></div>
                 <div class="title">{{booking.title}}</div>
             </div>
             <div class="line">
@@ -106,9 +106,13 @@
                 return time[0] + ':' + time[1] + AMPM;
             },
 
-            styleWarningIcon(booking) {
+            styleIcon(booking) {
+                var volumeOn = require('../../../../assets/volumeOn-black.png');
+                var volumeOff = require('../../../../assets/volumeOff-black.png');
                 if (booking.noiseLevel > 0)
-                    return 'display: inline;';
+                    return 'background-image: url('+volumeOn+');';
+                else if (booking.noiseLevel < 0)
+                    return 'background-image: url('+volumeOff+');';
             },
         }
     }
