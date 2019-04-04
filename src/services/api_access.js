@@ -14,12 +14,13 @@ export function logoutUser() {
 }
 
 //User Methods
-export function createAccount(email, username, password, firstName, lastName, occupation, description) {
-    return myFetch(api_root + "/app/createAccount", {
-        email, username, password, firstName, lastName, occupation, description
+export function getAccount(identity, password) {
+    return myFetch(api_root + "/app/getAccount", {
+        identity, password
     }).then(fetchedUser => user = fetchedUser);
 }
-export function getAccount(identity, password) {
+export function getThisAccount() {
+    var identity = user.username, password = user.password;
     return myFetch(api_root + "/app/getAccount", {
         identity, password
     }).then(fetchedUser => user = fetchedUser);
@@ -48,18 +49,50 @@ export function getBookingsDate(startDate, endDate) {
 }
 
 //Admin Methods
+export function admin_GetData() {
+    var user_username = user.username, user_password = user.password;
+    return myFetch(api_root + "/app/admin_GetData", {
+        user_username, user_password
+    });
+}
 export function admin_GetUsers() {
     var user_username = user.username, user_password = user.password;
     return myFetch(api_root + "/app/admin_GetUsers", {
         user_username, user_password
     });
 }
-export function admin_UpdateProfile(id, privilege, email, username, password, firstName, lastName, occupation, description) {
+export function admin_GetLocations() {
     var user_username = user.username, user_password = user.password;
-    return myFetch(api_root + "/app/admin_UpdateProfile", {
+    return myFetch(api_root + "/app/admin_GetLocations", {
+        user_username, user_password
+    });
+}
+export function admin_GetResources() {
+    var user_username = user.username, user_password = user.password;
+    return myFetch(api_root + "/app/admin_GetResources", {
+        user_username, user_password
+    });
+}
+
+export function admin_CreateAccount(privilege, email, username, password, firstName, lastName, occupation, description) {
+    var user_username = user.username, user_password = user.password;
+    return myFetch(api_root + "/app/admin_CreateAccount", {
+        user_username, user_password, privilege, email, username, password, firstName, lastName, occupation, description
+    });
+}
+export function admin_UpdateAccount(id, privilege, email, username, password, firstName, lastName, occupation, description) {
+    var user_username = user.username, user_password = user.password;
+    return myFetch(api_root + "/app/admin_UpdateAccount", {
         user_username, user_password, id, privilege, email, username, password, firstName, lastName, occupation, description
     });
 }
+export function admin_RemoveAccount(id) {
+    var user_username = user.username, user_password = user.password;
+    return myFetch(api_root + "/app/admin_RemoveAccount", {
+        user_username, user_password, id
+    });
+}
+
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 function myFetch(url = ``, data = null) {

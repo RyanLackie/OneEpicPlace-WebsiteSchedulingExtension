@@ -21,6 +21,8 @@ var conn = mysql.createPool({
     connectionLimit: 30
 });
 
+const ADMIN_PRIVILEGE = 2, MEMBER_PRIVILEGE = 1;
+
 class Model {
     constructor() {}
 
@@ -43,40 +45,6 @@ class Model {
                 return usernameCheckResponse(result[0]);
             else
                 return usernameCheckResponse('409');
-        });
-    }
-    insertUser(email, username, password, firstName, lastName, occupation, description, insertUserResponce) {
-        conn.query("INSERT INTO users (privilege, email, username, password, firstName, lastName, occupation, description) VALUES ('"+1+"', '"+email+"', '"+username+"', '"+password+"', '"+firstName+"', '"+lastName+"', '"+occupation+"', '"+description+"')", (err, result) => {
-            if (err) throw err;
-            conn.query('SELECT * FROM users WHERE id = ' + mysql.escape(result.insertId), (err, result) => {
-                if (err) throw err;
-                return insertUserResponce(result[0]);
-            });
-        });
-    }
-
-    createAccount(email, username, password, firstName, lastName, occupation, description, call_back) {
-        console.log('#################createAccount()#################');
-
-        //Find user by email
-         this.checkForEmail(email, emailCheckResponse => {
-            if (emailCheckResponse != '409') {
-                console.log(email + ' is taken');
-                return call_back('409');
-            }
-
-            //Find user by username
-            this.checkForUsername(username, usernameCheckResponse => {
-                if (usernameCheckResponse != '409') {
-                    console.log(username + ' is taken');
-                    return call_back('410');
-                }
-                
-                this.insertUser(email, username, password, firstName, lastName, occupation, description, insertUserResponce => {
-                    console.log(insertUserResponce.username + ' account has been created');
-                    return call_back(insertUserResponce);
-                });
-            });
         });
     }
 
@@ -206,10 +174,7 @@ class Model {
 
         //Check if user is valid
         this.getAccount(username, password, fetchedUser => {
-            if (fetchedUser == '409')
-                return call_back('403');
-
-            if (fetchedUser.privilege < 1)
+            if (fetchedUser == '409' || fetchedUser.privilege < MEMBER_PRIVILEGE)
                 return call_back('403');
 
             //Booking time must be between 7AM and 10PM and endTime must be larger than startTime
@@ -283,11 +248,26 @@ class Model {
     /*////////////////////////////////////////////////////////////////////////////////////////////////////////
     //////////////////////////////////           Admin Methods          //////////////////////////////////////
     */////////////////////////////////////////////////////////////////////////////////////////////////////////
+    admin_GetData(user_username, user_password, call_back) {
+        this.getAccount(user_username, user_password, fetchedUser => {
+            if (fetchedUser == '409' || fetchedUser.privilege != ADMIN_PRIVILEGE)
+                return call_back('409');
+
+            conn.query('SELECT * FROM users', (err, users) => {
+                if (err) throw err;
+                conn.query('SELECT * FROM locations', (err, locations) => {
+                    if (err) throw err;
+                    conn.query('SELECT * FROM locations', (err, resources) => {
+                        if (err) throw err;
+                        return call_back([users, locations, resources]);
+                    });
+                });
+            });
+        });
+    }
     admin_GetUsers(user_username, user_password, call_back) {
         this.getAccount(user_username, user_password, fetchedUser => {
-            if (fetchedUser == '409')
-                return call_back('409');
-            else if (fetchedUser.privilege != 2)
+            if (fetchedUser == '409' || fetchedUser.privilege != ADMIN_PRIVILEGE)
                 return call_back('409');
 
             conn.query('SELECT * FROM users', (err, result) => {
@@ -296,16 +276,64 @@ class Model {
             });
         });
     }
-    admin_UpdateProfile(user_username, user_password, id, privilege, email, username, password, firstName, lastName, occupation, description, call_back) {
-        //Get user's current information
+    admin_GetLocations(user_username, user_password, call_back) {
         this.getAccount(user_username, user_password, fetchedUser => {
-            if (fetchedUser == '409' || fetchedUser.privilege != 2)
+            if (fetchedUser == '409' || fetchedUser.privilege != ADMIN_PRIVILEGE)
+                return call_back('409');
+
+            conn.query('SELECT * FROM locations', (err, result) => {
+                if (err) throw err;
+                return call_back(result);
+            });
+        });
+    }
+    admin_GetResources(user_username, user_password, call_back) {
+        this.getAccount(user_username, user_password, fetchedUser => {
+            if (fetchedUser == '409' || fetchedUser.privilege != ADMIN_PRIVILEGE)
+                return call_back('409');
+
+            conn.query('SELECT * FROM resources', (err, result) => {
+                if (err) throw err;
+                return call_back(result);
+            });
+        });
+    }
+
+    admin_CreateAccount(user_username, user_password, privilege, email, username, password, firstName, lastName, occupation, description, call_back) {
+        console.log('#################admin_CreateAccount()#################');
+
+        this.getAccount(user_username, user_password, fetchedUser => {
+            if (fetchedUser == '409' || fetchedUser.privilege != ADMIN_PRIVILEGE)
+                return call_back('408');
+            //Find user by email
+            this.checkForEmail(email, emailCheckResponse => {
+                if (emailCheckResponse != '409') {
+                    return call_back('409');
+                }
+                //Find user by username
+                this.checkForUsername(username, usernameCheckResponse => {
+                    if (usernameCheckResponse != '409') {
+                        return call_back('410');
+                    }
+                    //Create User
+                    conn.query("INSERT INTO users (privilege, email, username, password, firstName, lastName, occupation, description) VALUES ('"+privilege+"', '"+email+"', '"+username+"', '"+password+"', '"+firstName+"', '"+lastName+"', '"+occupation+"', '"+description+"')", (err) => {
+                        if (err) throw err;
+                        return call_back('100');
+                    });
+                });
+            });
+        });
+    }
+
+    admin_UpdateAccount(user_username, user_password, id, privilege, email, username, password, firstName, lastName, occupation, description, call_back) {
+        this.getAccount(user_username, user_password, fetchedUser => {
+            if (fetchedUser == '409' || fetchedUser.privilege != ADMIN_PRIVILEGE)
                 return call_back('409');
             // eslint-disable-next-line
             this.updateUserEmail(id, email, email, emailUpdateResult => {
                 // eslint-disable-next-line
                 this.updateUserUsername(id, username, username, usernameUpdateResult => {
-                    //Change other user info
+                    // eslint-disable-next-line
                     this.admin_UpdateUserInfo(id, privilege, password, firstName, lastName, occupation, description, infoUpdateResult => {
                         return call_back(infoUpdateResult);
                     });                    
@@ -324,7 +352,6 @@ class Model {
                                 ' WHERE id = ' + mysql.escape(id), (err) => {
             if (err) throw err;
             console.log('Info changed at id: ' + id);
-            //Get new profile info
             conn.query('SELECT * FROM users WHERE id = ' + mysql.escape(id), (err, result) => {
                 if (err) throw err;
                 infoUpdateResult(result[0]);
@@ -332,7 +359,17 @@ class Model {
         });
     }
 
+    admin_RemoveAccount(user_username, user_password, id, call_back) {
+        this.getAccount(user_username, user_password, fetchedUser => {
+            if (fetchedUser == '409' || fetchedUser.privilege != ADMIN_PRIVILEGE)
+                return call_back('409');
 
+            conn.query('DELETE FROM users WHERE id = ' + mysql.escape(id), (err) => {
+                if (err) throw err;
+                return call_back('100');
+            });
+        });
+    }
 }
 
 module.exports = Model;

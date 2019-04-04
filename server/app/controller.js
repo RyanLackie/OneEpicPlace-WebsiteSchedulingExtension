@@ -6,14 +6,6 @@ var model = new Model();
 const app = express.Router();
 
 //User Methods
-app.post('/createAccount', (req, res) => {
-    model.createAccount(
-        req.body.email, req.body.username, req.body.password,
-        req.body.firstName, req.body.lastName, req.body.occupation,
-        req.body.description,
-        fetchedUser => res.send(fetchedUser)
-    );
-})
 app.post('/getAccount', (req, res) => {
     model.getAccount(
         req.body.identity, req.body.password,
@@ -53,19 +45,53 @@ app.post('/getBookingsDate', (req, res) => {
 })
 
 //Admin Methods
+app.post('/admin_GetData', (req, res) => {
+    model.admin_GetData(
+        req.body.user_username, req.body.user_password,
+        fetchedData => res.send(fetchedData)
+    );
+})
 app.post('/admin_GetUsers', (req, res) => {
     model.admin_GetUsers(
         req.body.user_username, req.body.user_password,
         fetchedUsers => res.send(fetchedUsers)
     );
 })
-app.post('/admin_UpdateProfile', (req, res) => {
-    model.admin_UpdateProfile(
+app.post('/admin_GetLocations', (req, res) => {
+    model.admin_GetLocations(
+        req.body.user_username, req.body.user_password,
+        fetchedLocations => res.send(fetchedLocations)
+    );
+})
+app.post('/admin_GetResources', (req, res) => {
+    model.admin_GetResources(
+        req.body.user_username, req.body.user_password,
+        fetchedResources => res.send(fetchedResources)
+    );
+})
+
+app.post('/admin_CreateAccount', (req, res) => {
+    model.admin_CreateAccount(
+        req.body.user_username, req.body.user_password,
+        req.body.privilege, req.body.email, req.body.username,
+        req.body.password, req.body.firstName, req.body.lastName,
+        req.body.occupation, req.body.description,
+        createResult => res.send(createResult)
+    );
+})
+app.post('/admin_UpdateAccount', (req, res) => {
+    model.admin_UpdateAccount(
         req.body.user_username, req.body.user_password,
         req.body.id, req.body.privilege, req.body.email,
         req.body.username, req.body.password, req.body.firstName,
         req.body.lastName, req.body.occupation, req.body.description,
         updateResult => res.send(updateResult)
+    );
+})
+app.post('/admin_RemoveAccount', (req, res) => {
+    model.admin_RemoveAccount(
+        req.body.user_username, req.body.user_password, req.body.id,
+        removeResult => res.send(removeResult)
     );
 })
 

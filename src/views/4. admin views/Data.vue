@@ -13,6 +13,7 @@
         
         <!-- Views -->
         <Users ref="Users" v-if="viewSelected == 0 && load"></Users>
+        <Locations ref="Locations" v-if="viewSelected == 1 && load"></Locations>
 
     </div>
 </template>
@@ -27,11 +28,13 @@
 
     //Views
     import Users from './components/views/Users.vue';
+    import Locations from './components/views/Locations.vue';
 
     export default {
         components: {
             //Views
-            Users
+            Users,
+            Locations
         },
         
         data() {
@@ -39,13 +42,51 @@
                 viewSelected: 0,
 
                 users: [],
+                locations: [],
+                resources: [],
 
                 load: false
             }
         },
 
         methods: {
+            getData() {
+                this.load = false;
+                api.admin_GetData().then(
+                    data => {
+                        //Users
+                        var users = data[0];
+                        var adminUsers = [];
+                        var normalUsers = [];
+                        for (var i = 0; i < users.length; i++) {
+                            if (users[i].privilege == 2)
+                                adminUsers.push(users[i]);
+                            else if (users[i].privilege == 1)
+                                normalUsers.push(users[i]);
+                        }
+                        this.users[0] = adminUsers;
+                        this.users[1] = normalUsers;
+
+                        //Locations
+                        var locations = data[1];
+                        locations.sort(function(location1, location2) {
+                            return location1.orderID - location2.orderID;
+                        });
+                        this.locations = locations;
+
+                        //Resources
+                        var resources = data[2];
+                        resources.sort(function(Resource1, Resource2) {
+                            return Resource1.orderID - Resource2.orderID;
+                        });
+                        this.resources = resources;
+
+                        //Complete
+                        this.load = true;
+                    });
+            },
             getUsers() {
+                this.load = false;
                 api.admin_GetUsers().then(
                     users => {
                         var adminUsers = [];
@@ -61,11 +102,35 @@
                         this.load = true;
                     }
                 )
+            },
+            getLocations() {
+                this.load = false;
+                api.admin_GetLocations().then(
+                    locations => {
+                        locations.sort(function(location1, location2) {
+                            return location1.orderID - location2.orderID;
+                        });
+                        this.locations = locations;
+                        this.load = true;
+                    }
+                )
+            },
+            getResources() {
+                this.load = false;
+                api.admin_GetResources().then(
+                    resources => {
+                        resources.sort(function(resource1, resource2) {
+                            return resource1.orderID - resource2.orderID;
+                        });
+                        this.resources = resources;
+                        this.load = true;
+                    }
+                )
             }
         },
 
         mounted() {
-            this.getUsers();
+            this.getData();
         }
     }
 </script>

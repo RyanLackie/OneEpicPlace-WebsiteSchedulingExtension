@@ -1,25 +1,19 @@
 <template>
     <div class="Users">
 
-        <div class="user-container" v-for='(array, index) in this.users' :key="'array:'+index">
-            <div v-if='index === 0'      class="label">Admin Users</div>
-            <div v-else-if='index === 1' class="label">Users</div>
+        <div class="users-container" v-for='(array, index) in this.users' :key="'array:'+index">
+            <div v-if='index === 0'      class="label">Admins</div>
+            <div v-else-if='index === 1' class="label">Members</div>
 
             <div class="usersTopRow">
-                <div class="usersColBtn">Actions</div>
                 <div class="usersCol">Email</div>
                 <div class="usersCol">Username</div>
-                <div class="usersCol">Password</div>
                 <div class="usersCol">First Name</div>
                 <div class="usersCol">Last Name</div>
+                <div class="usersColBtn">Actions</div>
             </div>
 
             <div class="usersRow" v-for='user in array' :key="'user:'+user.id">
-                <div class="usersColBtn">
-                    <button class="btn btn-primary usersBtn editBtn" v-on:click="$refs.UsersModal.openModal(user)"></button>
-                    <button class="btn btn-dark usersBtn deleteBtn"></button>
-                </div>
-
                 <div class="usersCol">
                     <div class="colText">{{user.email}}</div>
                 </div>
@@ -27,19 +21,23 @@
                     <div class="colText">{{user.username}}</div>
                 </div>
                 <div class="usersCol">
-                    <div class="colText">{{user.password}}</div>
-                </div>
-                <div class="usersCol">
                     <div class="colText">{{user.firstName}}</div>
                 </div>
                 <div class="usersCol">
                     <div class="colText">{{user.lastName}}</div>
                 </div>
+                <div class="usersColBtn">
+                    <button class="btn btn-primary usersBtn editBtn" v-on:click="$refs.ViewUserModal.openModal(user)"></button>
+                    <button class="btn btn-dark usersBtn deleteBtn" v-on:click="removeUser(user.id)"></button>
+                </div>
             </div>
         </div>
 
+        <button class="btn btn-success usersBtn createBtn" v-on:click="$refs.CreateUserModal.openModal()"></button>
+
         <!-- Modals -->
-        <UsersModal ref="UsersModal"></UsersModal>
+        <ViewUserModal ref="ViewUserModal"></ViewUserModal>
+        <CreateUserModal ref="CreateUserModal"></CreateUserModal>
 
     </div>
 </template>
@@ -53,11 +51,13 @@
     import * as api from '@/services/api_access';
 
     //Modals
-    import UsersModal from '../modals/UsersModal.vue';
+    import ViewUserModal from '../modals/ViewUserModal.vue';
+    import CreateUserModal from '../modals/CreateUserModal.vue';
 
     export default {
         components: {
-            UsersModal
+            ViewUserModal,
+            CreateUserModal
         },
 
         data() {
@@ -69,6 +69,18 @@
         methods: {
             updateUsers() {
                 this.$parent.getUsers();
+            },
+
+            removeUser(id) {
+                api.admin_RemoveAccount(id).then(
+                    removeResponce => {
+                        if (removeResponce == '100') {
+                            this.$parent.getUsers();
+                        }
+                        else if (removeResponce == '409') 
+                            this.$parent.$refs.Header.logout();
+                    }
+                );
             }
         }
     }

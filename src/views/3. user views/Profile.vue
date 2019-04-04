@@ -42,16 +42,18 @@
     export default {
         methods: {
             fillProfile() {
-                var user = api.getLocalUser();
-                if (user != null) {
-                    document.getElementById('username').value = user.username;
-                    document.getElementById('firstName').value = user.firstName;
-                    document.getElementById('lastName').value = user.lastName;
-                    document.getElementById("occupation").value = user.occupation;
-                    document.getElementById('description').value = user.description;
-                    document.getElementById('email').value = user.email;
-                    document.getElementById('password').value = user.password;
-                }
+                api.getThisAccount().then(user => {
+                    if (user == '409')
+                        this.$parent.$refs.Header.logout();
+                    else
+                        document.getElementById('username').value = user.username;
+                        document.getElementById('firstName').value = user.firstName;
+                        document.getElementById('lastName').value = user.lastName;
+                        document.getElementById("occupation").value = user.occupation;
+                        document.getElementById('description').value = user.description;
+                        document.getElementById('email').value = user.email;
+                        document.getElementById('password').value = user.password;
+                });
             },
 
             updateProfile(event) {
