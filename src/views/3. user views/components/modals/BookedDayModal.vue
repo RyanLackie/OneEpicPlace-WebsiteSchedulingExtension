@@ -51,6 +51,9 @@
                 //Modal Header
                 document.getElementById('BookedDayModal-HeaderDate').innerHTML = this.getDayOfTheWeek(this.date)+', '+this.getMonthName(this.date)+' '+this.date.getDate()+' '+this.date.getFullYear();
 
+                //Scroll
+                document.getElementById('BookedDayModal').scrollTo(0, 0);
+
                 document.getElementById("BookedDayModal").style.opacity = "1.0";
                 document.getElementById("BookedDayModal").style.visibility = "visible";
             },

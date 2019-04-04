@@ -1,12 +1,22 @@
 //Required Modules
 const mysql = require('mysql');
 var conn = mysql.createPool({
-    host: '206.189.167.65',
+    /*
+    host: '206.189.167.65', //ip of server
     port: '3306',
 
     database: 'OEP',
     user: 'outsideConnection',
     password: 'adminACC-EPIC-79282',
+
+    connectionLimit: 30
+    */
+    host: 'localhost',
+    port: '3306',
+
+    database: 'oep',
+    user: 'root',
+    password: '',
 
     connectionLimit: 30
 });
@@ -72,12 +82,11 @@ class Model {
 
     getAccount(identity, password, call_back) {
         console.log('#################getAccount()#################');
-
+        
         //Find user by email
         this.checkForEmail(identity, emailCheckResponse => {
             if (emailCheckResponse != '409' && password == emailCheckResponse.password) {
                 console.log(emailCheckResponse.username + ' has logged in with email');
-                
                 return call_back(emailCheckResponse);
             }
 
@@ -85,7 +94,6 @@ class Model {
             this.checkForUsername(identity, usernameCheckResponse => {
                 if (usernameCheckResponse != '409' && password == usernameCheckResponse.password) {
                     console.log(usernameCheckResponse.username + ' has logged in with username');
-                    
                     return call_back(usernameCheckResponse);
                 }
                 console.log(identity + ' not found');
@@ -104,13 +112,10 @@ class Model {
             
             // eslint-disable-next-line
             this.updateUserEmail(fetchedUser.id, fetchedUser.email, email, emailUpdateResult => {
-
                 // eslint-disable-next-line
                 this.updateUserUsername(fetchedUser.id, fetchedUser.username, username, usernameUpdateResult => {
-
                     //Change other user info
                     this.updateUserInfo(fetchedUser.id, password, firstName, lastName, occupation, description, infoUpdateResult => {
-                        
                         return call_back(infoUpdateResult);
                     });                    
                 });
@@ -125,7 +130,6 @@ class Model {
                     console.log('email ' + newEmail + ' is taken');
                     return emailUpdateResult('409');
                 }
-
                 //Update email
                 conn.query('Update users SET email = ' + mysql.escape(newEmail) + ' WHERE id = ' + mysql.escape(id), (err) => {
                     if (err) throw err;
@@ -145,7 +149,6 @@ class Model {
                     console.log('Username ' + newUsername + ' is taken');
                     return usernameUpdateResult(usernameCheckResponse);
                 }
-                
                 //Update username
                 conn.query('Update users SET username = ' + mysql.escape(newUsername) + ' WHERE id = ' + mysql.escape(id), (err) => {
                     if (err) throw err;
@@ -160,14 +163,13 @@ class Model {
     updateUserInfo(id, password, firstName, lastName, occupation, description, infoUpdateResult) {
         //Update profile info
         conn.query('Update users SET password = ' + mysql.escape(password) +
-                                            ', firstName = ' + mysql.escape(firstName) +
-                                            ', lastName = ' + mysql.escape(lastName) +
-                                            ', occupation = ' + mysql.escape(occupation) +
-                                            ', description = ' + mysql.escape(description) +
-                                            ' WHERE id = ' + mysql.escape(id), (err) => {
+                                ', firstName = ' + mysql.escape(firstName) +
+                                ', lastName = ' + mysql.escape(lastName) +
+                                ', occupation = ' + mysql.escape(occupation) +
+                                ', description = ' + mysql.escape(description) +
+                                ' WHERE id = ' + mysql.escape(id), (err) => {
             if (err) throw err;
             console.log('Info changed at id: ' + id);
-
             //Get new profile info
             conn.query('SELECT * FROM users WHERE id = ' + mysql.escape(id), (err, result) => {
                 if (err) throw err;
@@ -271,13 +273,65 @@ class Model {
     getBookingsDate(startDate, endDate, call_back) {
         console.log("#################getBookingsDate()#################");
 
-        //Get bookings
         conn.query('SELECT * FROM bookings WHERE date >= ' + mysql.escape(startDate) + ' and  date <= ' + mysql.escape(endDate), (err, result) => {
             if (err) throw err;
             console.log(result.length + " Bookings found");
             return call_back(result);
         });
     }
+
+    /*////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////           Admin Methods          //////////////////////////////////////
+    */////////////////////////////////////////////////////////////////////////////////////////////////////////
+    admin_GetUsers(user_username, user_password, call_back) {
+        this.getAccount(user_username, user_password, fetchedUser => {
+            if (fetchedUser == '409')
+                return call_back('409');
+            else if (fetchedUser.privilege != 2)
+                return call_back('409');
+
+            conn.query('SELECT * FROM users', (err, result) => {
+                if (err) throw err;
+                return call_back(result);
+            });
+        });
+    }
+    admin_UpdateProfile(user_username, user_password, id, privilege, email, username, password, firstName, lastName, occupation, description, call_back) {
+        //Get user's current information
+        this.getAccount(user_username, user_password, fetchedUser => {
+            if (fetchedUser == '409' || fetchedUser.privilege != 2)
+                return call_back('409');
+            // eslint-disable-next-line
+            this.updateUserEmail(id, email, email, emailUpdateResult => {
+                // eslint-disable-next-line
+                this.updateUserUsername(id, username, username, usernameUpdateResult => {
+                    //Change other user info
+                    this.admin_UpdateUserInfo(id, privilege, password, firstName, lastName, occupation, description, infoUpdateResult => {
+                        return call_back(infoUpdateResult);
+                    });                    
+                });
+            });
+        });
+    }
+    admin_UpdateUserInfo(id, privilege, password, firstName, lastName, occupation, description, infoUpdateResult) {
+        //Update profile info
+        conn.query('Update users SET privilege = ' + mysql.escape(privilege) +
+                                ', password = ' + mysql.escape(password) +
+                                ', firstName = ' + mysql.escape(firstName) +
+                                ', lastName = ' + mysql.escape(lastName) +
+                                ', occupation = ' + mysql.escape(occupation) +
+                                ', description = ' + mysql.escape(description) +
+                                ' WHERE id = ' + mysql.escape(id), (err) => {
+            if (err) throw err;
+            console.log('Info changed at id: ' + id);
+            //Get new profile info
+            conn.query('SELECT * FROM users WHERE id = ' + mysql.escape(id), (err, result) => {
+                if (err) throw err;
+                infoUpdateResult(result[0]);
+            });
+        });
+    }
+
 
 }
 

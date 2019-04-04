@@ -1,0 +1,10 @@
+.Analysis .form-container {
+    width: 60%;
+    margin: 0px auto;
+}
+
+.Analysis .label {
+    font-size: 20px;
+    font-family: 'Quicksand', sans-serif;
+    text-transform: uppercase;
+}

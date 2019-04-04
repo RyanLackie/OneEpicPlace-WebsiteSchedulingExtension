@@ -35,7 +35,7 @@
             <router-link class="text" exact-active-class="active" to="/">Home</router-link>
             <router-link class="text" exact-active-class="active" to="/profile">Profile</router-link>
             <router-link class="text" exact-active-class="active" to="/schedule">Schedule</router-link>
-            <router-link class="text" exact-active-class="active" to="/edit">Edit</router-link>
+            <router-link class="text" exact-active-class="active" to="/data">Data</router-link>
             <router-link class="text" exact-active-class="active" to="/analysis">Analysis</router-link>
             <router-link class="text" exact-active-class="active" to="/about">About</router-link>
             <router-link class="text" exact-active-class="active" to="/" v-on:click.native="logout()">Logout</router-link>
@@ -113,7 +113,7 @@
                         break;
 
                     //Admin
-                    case 'edit':
+                    case 'data':
                         if (this.privilegeLevel < 2)
                             this.$router.push('/');
                         break;

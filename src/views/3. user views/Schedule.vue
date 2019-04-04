@@ -6,9 +6,9 @@
 
         <!-- Calendar Navbar -->
         <div class="viewSelector">
-            <a class="viewText" href="JavaScript:void(0)" v-if="load" @click="viewSelected = 0">Daily View</a>
-            <a class="viewText" href="JavaScript:void(0)" v-if="load" @click="viewSelected = 1">Weekly View</a>
-            <a class="viewText" href="JavaScript:void(0)" v-if="load" @click="viewSelected = 2">Monthly View</a>
+            <a class="viewText" href="JavaScript:void(0)" v-if="load" @click="viewSelected = 0, closeModals()">Daily View</a>
+            <a class="viewText" href="JavaScript:void(0)" v-if="load" @click="viewSelected = 1, closeModals()">Weekly View</a>
+            <a class="viewText" href="JavaScript:void(0)" v-if="load" @click="viewSelected = 2, closeModals()">Monthly View</a>
         </div>
 
         <!-- Calendars -->
@@ -106,9 +106,9 @@
             },
 
             closeModals() {
-                this.BookingModal.closeModal();
-                this.BookedModal.closeModal();
-                this.BookedDayModal.closeModal();
+                this.$refs.BookingModal.closeModal();
+                this.$refs.BookedModal.closeModal();
+                this.$refs.BookedDayModal.closeModal();
             }
         },
 

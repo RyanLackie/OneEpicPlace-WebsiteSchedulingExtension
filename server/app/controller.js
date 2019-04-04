@@ -52,5 +52,22 @@ app.post('/getBookingsDate', (req, res) => {
     );
 })
 
+//Admin Methods
+app.post('/admin_GetUsers', (req, res) => {
+    model.admin_GetUsers(
+        req.body.user_username, req.body.user_password,
+        fetchedUsers => res.send(fetchedUsers)
+    );
+})
+app.post('/admin_UpdateProfile', (req, res) => {
+    model.admin_UpdateProfile(
+        req.body.user_username, req.body.user_password,
+        req.body.id, req.body.privilege, req.body.email,
+        req.body.username, req.body.password, req.body.firstName,
+        req.body.lastName, req.body.occupation, req.body.description,
+        updateResult => res.send(updateResult)
+    );
+})
+
 
 module.exports = app;

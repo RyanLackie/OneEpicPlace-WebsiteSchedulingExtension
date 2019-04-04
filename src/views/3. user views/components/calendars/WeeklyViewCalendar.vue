@@ -234,6 +234,7 @@
             },
 
             addBookingClicked(date, location) {
+                this.$parent.closeModals();
                 this.$parent.$refs.BookingModal.openModal(date, location, '12:00', '12:00');
             },
 
@@ -250,6 +251,7 @@
                     //console.log(booking1 + '  ' + booking2);
                     return booking1 - booking2;
                 });
+                this.$parent.closeModals();
                 this.$parent.$refs.BookedDayModal.openModal(matchedBookings);
             }
         },

@@ -136,6 +136,9 @@
                 document.getElementById('BookingModal-StartTime').value = startTime;
                 document.getElementById('BookingModal-EndTime').value = endTime;
 
+                //Scroll
+                document.getElementById('BookingModal').scrollTo(0, 0);
+
                 document.getElementById("BookingModal").style.opacity = "1.0";
                 document.getElementById("BookingModal").style.visibility = "visible";
             },

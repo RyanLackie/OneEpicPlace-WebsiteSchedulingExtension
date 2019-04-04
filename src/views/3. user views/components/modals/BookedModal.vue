@@ -93,6 +93,9 @@
                 if (endTime[1] < 10)
                     endTime[1] = '0'+endTime[1];
                 document.getElementById('BookedModal-EndTime').value = endTime[0] + ":" + endTime[1];
+
+                //Scroll
+                document.getElementById('BookedModal').scrollTo(0, 0);
                 
                 document.getElementById("BookedModal").style.opacity = "1.0";
                 document.getElementById("BookedModal").style.visibility = "visible";

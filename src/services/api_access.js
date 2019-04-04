@@ -47,6 +47,20 @@ export function getBookingsDate(startDate, endDate) {
     });
 }
 
+//Admin Methods
+export function admin_GetUsers() {
+    var user_username = user.username, user_password = user.password;
+    return myFetch(api_root + "/app/admin_GetUsers", {
+        user_username, user_password
+    });
+}
+export function admin_UpdateProfile(id, privilege, email, username, password, firstName, lastName, occupation, description) {
+    var user_username = user.username, user_password = user.password;
+    return myFetch(api_root + "/app/admin_UpdateProfile", {
+        user_username, user_password, id, privilege, email, username, password, firstName, lastName, occupation, description
+    });
+}
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 function myFetch(url = ``, data = null) {
     let options = {
