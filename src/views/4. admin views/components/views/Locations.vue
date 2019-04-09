@@ -1,8 +1,9 @@
 <template>
     <div class="Locations">
 
-        <div class="locsContainer">
-            <div class="label">Locations</div>
+        <div class="locsContainer" v-for='(array, index) in this.locations' :key="'array:'+index">
+            <div v-if='index === 0'      class="label">Rooms</div>
+            <div v-else-if='index === 1' class="label">Desks</div>
 
             <div class="locsTopRow">
                 <div class="locsCol">Name</div>
@@ -11,7 +12,7 @@
                 <div class="locsColBtn">Actions</div>
             </div>
 
-            <div class="locsRow" v-for='location in this.locations' :key="'loc:'+location.id">
+            <div class="locsRow" v-for='location in array' :key="'loc:'+location.id">
                 <div class="locsCol">
                     <div class="colText">{{location.name}}</div>
                 </div>
@@ -29,7 +30,7 @@
         </div>
 
         <!-- Modals -->
-        <!-- <UsersModal ref="UsersModal"></UsersModal> -->
+        <!-- <ViewLocationModal ref="ViewLocationModal"></ViewLocationModal> -->
 
     </div>
 </template>
@@ -43,11 +44,11 @@
     import * as api from '@/services/api_access';
 
     //Modals
-    //import UsersModal from '../modals/UsersModal.vue';
+    //import ViewLocationModal from '../modals/ViewLocationModal.vue';
 
     export default {
         components: {
-            //UsersModal
+            //ViewLocationModal
         },
 
         data() {

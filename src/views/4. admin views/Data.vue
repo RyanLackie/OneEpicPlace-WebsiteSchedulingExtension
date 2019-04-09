@@ -55,77 +55,98 @@
                 api.admin_GetData().then(
                     data => {
                         //Users
-                        var users = data[0];
-                        var adminUsers = [];
-                        var normalUsers = [];
-                        for (var i = 0; i < users.length; i++) {
-                            if (users[i].privilege == 2)
-                                adminUsers.push(users[i]);
-                            else if (users[i].privilege == 1)
-                                normalUsers.push(users[i]);
-                        }
-                        this.users[0] = adminUsers;
-                        this.users[1] = normalUsers;
+                        this.users = this.sortUsers(data[0]);
 
                         //Locations
-                        var locations = data[1];
-                        locations.sort(function(location1, location2) {
-                            return location1.orderID - location2.orderID;
-                        });
-                        this.locations = locations;
+                        this.locations = this.sortLocations(data[1]);
 
                         //Resources
-                        var resources = data[2];
-                        resources.sort(function(Resource1, Resource2) {
-                            return Resource1.orderID - Resource2.orderID;
-                        });
-                        this.resources = resources;
+                        this.resources = this.sortResources(data[2]);
 
                         //Complete
                         this.load = true;
                     });
             },
+
             getUsers() {
                 this.load = false;
                 api.admin_GetUsers().then(
                     users => {
-                        var adminUsers = [];
-                        var normalUsers = [];
-                        for (var i = 0; i < users.length; i++) {
-                            if (users[i].privilege == 2)
-                                adminUsers.push(users[i]);
-                            else if (users[i].privilege == 1)
-                                normalUsers.push(users[i]);
-                        }
-                        this.users[0] = adminUsers;
-                        this.users[1] = normalUsers;
+                        this.users = this.sortUsers(users);
                         this.load = true;
                     }
                 )
             },
+            sortUsers(users) {
+                var admin = [];
+                var tier5Member = [];
+                var tier4Member = [];
+                var tier3Member = [];
+                var tier2Member = [];
+                var tier1Member = [];
+                var nonMember = [];
+                for (var i = 0; i < users.length; i++) {
+                    if (users[i].privilege == 6)
+                        admin.push(users[i]);
+                    else if (users[i].privilege == 5)
+                        tier5Member.push(users[i]);
+                    else if (users[i].privilege == 4)
+                        tier4Member.push(users[i]);
+                    else if (users[i].privilege == 3)
+                        tier3Member.push(users[i]);
+                    else if (users[i].privilege == 2)
+                        tier2Member.push(users[i]);
+                    else if (users[i].privilege == 1)
+                        tier1Member.push(users[i]);
+                    else if (users[i].privilege == 0)
+                        nonMember.push(users[i]);
+                }
+                users = [
+                    admin, tier5Member, tier4Member,
+                    tier3Member, tier2Member, tier1Member,
+                    nonMember
+                ];
+                return users;
+            },
+
             getLocations() {
                 this.load = false;
                 api.admin_GetLocations().then(
                     locations => {
-                        locations.sort(function(location1, location2) {
-                            return location1.orderID - location2.orderID;
-                        });
-                        this.locations = locations;
+                        this.locations = this.sortLocations(locations);
                         this.load = true;
                     }
                 )
             },
+            sortLocations(locations) {
+                var room = [];
+                var desk = [];
+                for (var i = 0; i < locations.length; i++) {
+                    if (locations[i].type == 'room')
+                        room.push(locations[i]);
+                    else if (locations[i].type == 'desk')
+                        desk.push(locations[i]);
+                }
+                locations = [
+                    room, desk
+                ];
+                return locations;
+            },
+
             getResources() {
                 this.load = false;
                 api.admin_GetResources().then(
                     resources => {
-                        resources.sort(function(resource1, resource2) {
-                            return resource1.orderID - resource2.orderID;
-                        });
-                        this.resources = resources;
+                        this.resources = this.sortResources(resources);
                         this.load = true;
                     }
                 )
+            },
+            sortResources(resources) {
+                resources.sort(function(resource1, resource2) {
+                    return resource1.orderID - resource2.orderID;
+                });
+                this.resources = resources;
             }
         },
 

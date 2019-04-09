@@ -14,15 +14,14 @@
         </div>
 
         <!-- Non User Navbar -->
-        <div class="nonUserNavbar" v-if="privilegeLevel == 0">
+        <div class="nonUserNavbar" v-if="privilegeLevel < MIN_MEMBER_PRIVILEGE">
             <router-link class="text" exact-active-class="active" to="/">Home</router-link>
             <router-link class="text" exact-active-class="active" to="/about">About</router-link>
-            <router-link class="text" exact-active-class="active" to="/signup">Sign Up</router-link>
             <router-link class="text" exact-active-class="active" to="/login">Login</router-link>
         </div>
 
         <!-- User Navbar -->
-        <div class="userNavbar" v-if="privilegeLevel == 1">
+        <div class="userNavbar" v-if="privilegeLevel > MIN_MEMBER_PRIVILEGE && privilegeLevel < ADMIN_PRIVILEGE">
             <router-link class="text" exact-active-class="active" to="/">Home</router-link>
             <router-link class="text" exact-active-class="active" to="/profile">Profile</router-link>
             <router-link class="text" exact-active-class="active" to="/schedule">Schedule</router-link>
@@ -31,7 +30,7 @@
         </div>
 
         <!-- Admin Navbar -->
-        <div class="adminNavbar" v-if="privilegeLevel == 2">
+        <div class="adminNavbar" v-if="privilegeLevel == ADMIN_PRIVILEGE">
             <router-link class="text" exact-active-class="active" to="/">Home</router-link>
             <router-link class="text" exact-active-class="active" to="/profile">Profile</router-link>
             <router-link class="text" exact-active-class="active" to="/schedule">Schedule</router-link>
@@ -58,6 +57,9 @@
     export default {
         data() {
             return {
+                ADMIN_PRIVILEGE: 6,
+                MIN_MEMBER_PRIVILEGE: 1,
+
                 privilegeLevel: 0
             }
         },
@@ -93,32 +95,22 @@
                         break;
 
                     //Non Users
-                    case 'signup':
-                        if (this.privilegeLevel > 0)
-                            this.$router.push('/');
-                        break;
                     case 'login':
-                        if (this.privilegeLevel > 0)
+                        if (this.privilegeLevel > this.MIN_MEMBER_PRIVILEGE)
                             this.$router.push('/');
                         break;
 
                     //Users
                     case 'profile':
-                        if (this.privilegeLevel < 1)
-                            this.$router.push('/');
-                        break;
                     case 'schedule':
-                        if (this.privilegeLevel < 1)
+                        if (this.privilegeLevel < this.MIN_MEMBER_PRIVILEGE)
                             this.$router.push('/');
                         break;
 
                     //Admin
                     case 'data':
-                        if (this.privilegeLevel < 2)
-                            this.$router.push('/');
-                        break;
                     case 'analysis':
-                        if (this.privilegeLevel < 2)
+                        if (this.privilegeLevel < this.ADMIN_PRIVILEGE)
                             this.$router.push('/');
                         break;
                 }

@@ -14,8 +14,13 @@
             <div class="inputLg">
                 <label class="sectionLabel">Account Type</label>
                 <select id="ViewUserModal-Privilege" class="form-control" required>
-                    <option value=2>Admin User</option>
-                    <option value=1>User</option>
+                    <option value=6>Admin</option>
+                    <option value=5>Tier 5 Member</option>
+                    <option value=4>Tier 4 Member</option>
+                    <option value=3>Tier 3 Member</option>
+                    <option value=2>Tier 2 Member</option>
+                    <option value=1>Tier 1 Member</option>
+                    <option value=0>Non-Member</option>
                 </select>
             </div>
             <div class="inputLg">
@@ -101,7 +106,9 @@
             updateAccount(event) {
                 var id = this.user.id;
                 var privilege = document.getElementById("ViewUserModal-Privilege").value;
+                var previousEmail = this.user.email;
                 var email = document.getElementById("ViewUserModal-Email").value;
+                var previousUsername = this.user.username;
                 var username = document.getElementById("ViewUserModal-Username").value;
                 var password = document.getElementById("ViewUserModal-Password").value;
                 var firstName = document.getElementById("ViewUserModal-FirstName").value;
@@ -109,7 +116,7 @@
                 var occupation = document.getElementById("ViewUserModal-Occupation").value;
                 var description = document.getElementById("ViewUserModal-Description").value;
                 
-                api.admin_UpdateAccount(id, privilege, email, username, password, firstName, lastName, occupation, description).then(updateResult => {
+                api.admin_UpdateAccount(id, privilege, previousEmail, email, previousUsername, username, password, firstName, lastName, occupation, description).then(updateResult => {
                     if (updateResult == '409') 
                         this.$parent.$refs.Header.logout();
                     else {

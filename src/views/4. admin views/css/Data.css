@@ -5,13 +5,15 @@
     text-align: center;
     margin-bottom: 20px;
 }
-.Data .text {
-    margin: 0px 4%;
+.Data .viewSelector .text {
+    display: inline-block;
+    width: 10%;
+    min-width: 100px;
     font-size: 20px;
     color: black;
     text-decoration: none;
 }
-.Data .text:hover {
+.Data .viewSelector .text:hover {
     color: gray;
 }
 

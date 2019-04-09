@@ -14,8 +14,13 @@
             <div class="inputLg">
                 <label class="sectionLabel">Account Type</label>
                 <select id="CreateUserModal-Privilege" class="form-control" required>
-                    <option value=2>Admin User</option>
-                    <option value=1 selected="selected">Member</option>
+                    <option value=6>Admin</option>
+                    <option value=5>Tier 5 Member</option>
+                    <option value=4>Tier 4 Member</option>
+                    <option value=3>Tier 3 Member</option>
+                    <option value=2>Tier 2 Member</option>
+                    <option value=1>Tier 1 Member</option>
+                    <option value=0>Non-Member</option>
                 </select>
             </div>
             <div class="inputLg">
@@ -71,13 +76,23 @@
 
         methods: {
             openModal() {
+                //Fields
+                document.getElementById("CreateUserModal-Privilege").value = 0;
+                document.getElementById("CreateUserModal-Email").value = '';
+                document.getElementById("CreateUserModal-Username").value = '';
+                document.getElementById("CreateUserModal-Password").value = '';
+                document.getElementById("CreateUserModal-FirstName").value = '';
+                document.getElementById("CreateUserModal-LastName").value = '';
+                document.getElementById("CreateUserModal-Occupation").value = '';
+                document.getElementById("CreateUserModal-Description").value = '';
+
                 //Scroll
                 document.getElementById('CreateUserModal').scrollTo(0, 0);
 
                 document.getElementById("CreateUserModal").style.opacity = "1.0";
                 document.getElementById("CreateUserModal").style.visibility = "visible";
             },
-            closeModal() {
+            closeModal() {                
                 document.getElementById("CreateUserModal").style.opacity = "0.0";
                 document.getElementById("CreateUserModal").style.visibility = "hidden";
             },

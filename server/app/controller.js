@@ -82,9 +82,10 @@ app.post('/admin_CreateAccount', (req, res) => {
 app.post('/admin_UpdateAccount', (req, res) => {
     model.admin_UpdateAccount(
         req.body.user_username, req.body.user_password,
-        req.body.id, req.body.privilege, req.body.email,
-        req.body.username, req.body.password, req.body.firstName,
-        req.body.lastName, req.body.occupation, req.body.description,
+        req.body.id, req.body.privilege, req.body.previousEmail,
+        req.body.email, req.body.previousUsername, req.body.username,
+        req.body.password, req.body.firstName, req.body.lastName,
+        req.body.occupation, req.body.description,
         updateResult => res.send(updateResult)
     );
 })

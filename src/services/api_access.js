@@ -80,10 +80,10 @@ export function admin_CreateAccount(privilege, email, username, password, firstN
         user_username, user_password, privilege, email, username, password, firstName, lastName, occupation, description
     });
 }
-export function admin_UpdateAccount(id, privilege, email, username, password, firstName, lastName, occupation, description) {
+export function admin_UpdateAccount(id, privilege, previousEmail, email, previousUsername, username, password, firstName, lastName, occupation, description) {
     var user_username = user.username, user_password = user.password;
     return myFetch(api_root + "/app/admin_UpdateAccount", {
-        user_username, user_password, id, privilege, email, username, password, firstName, lastName, occupation, description
+        user_username, user_password, id, privilege, previousEmail, email, previousUsername, username, password, firstName, lastName, occupation, description
     });
 }
 export function admin_RemoveAccount(id) {
