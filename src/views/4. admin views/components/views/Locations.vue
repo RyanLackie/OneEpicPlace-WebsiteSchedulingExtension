@@ -7,7 +7,6 @@
 
             <div class="locsTopRow">
                 <div class="locsCol">Name</div>
-                <div class="locsCol">Type</div>
                 <div class="locsCol">Point Cost</div>
                 <div class="locsColBtn">Actions</div>
             </div>
@@ -17,20 +16,20 @@
                     <div class="colText">{{location.name}}</div>
                 </div>
                 <div class="locsCol">
-                    <div class="colText">{{location.type}}</div>
-                </div>
-                <div class="locsCol">
-                    <div class="colText"></div>
+                    <div class="colText">{{location.pointCost}}</div>
                 </div>
                 <div class="locsColBtn">
-                    <button class="btn btn-primary locsBtn editBtn"></button>
-                    <button class="btn btn-dark locsBtn deleteBtn"></button>
+                    <button class="btn btn-primary locsBtn editBtn" v-on:click="openViewLocationModal(location)"></button>
+                    <button class="btn btn-dark locsBtn deleteBtn" v-on:click="removeLocation(location)"></button>
                 </div>
             </div>
         </div>
 
+        <button class="btn btn-success usersBtn createBtn" v-on:click="openCreateLocationModal()"></button>
+
         <!-- Modals -->
-        <!-- <ViewLocationModal ref="ViewLocationModal"></ViewLocationModal> -->
+        <ViewLocationModal ref="ViewLocationModal"></ViewLocationModal>
+        <CreateLocationModal ref="CreateLocationModal"></CreateLocationModal>
 
     </div>
 </template>
@@ -44,11 +43,13 @@
     import * as api from '@/services/api_access';
 
     //Modals
-    //import ViewLocationModal from '../modals/ViewLocationModal.vue';
+    import ViewLocationModal from '../modals/locations/ViewLocationModal.vue';
+    import CreateLocationModal from '../modals/locations/CreateLocationModal.vue';
 
     export default {
         components: {
-            //ViewLocationModal
+            ViewLocationModal,
+            CreateLocationModal
         },
 
         data() {
@@ -60,6 +61,34 @@
         methods: {
             updateLocations() {
                 this.$parent.getLocations();
+            },
+
+            removeLocation(location) {
+                var responce = confirm("Are you sure you want to delete location - " + location.name);
+                if (responce) {
+                    api.admin_RemoveLocation(location.id).then(
+                        removeResponce => {
+                            if (removeResponce == '100') {
+                                this.$parent.getLocations();
+                            }
+                            else if (removeResponce == '409') 
+                                this.$parent.$refs.Header.logout();
+                        }
+                    );
+                }
+            },
+
+            openViewLocationModal(location) {
+                this.closeModals();
+                this.$refs.ViewLocationModal.openModal(location);
+            },
+            openCreateLocationModal() {
+                this.closeModals();
+                this.$refs.CreateLocationModal.openModal();
+            },
+            closeModals() {
+                this.$refs.ViewLocationModal.closeModal()
+                this.$refs.CreateLocationModal.closeModal();
             }
         }
     }

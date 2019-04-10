@@ -60,7 +60,7 @@
 }
 
 .Locations .locsColBtn {
-    display: inline-block;
+    float: right;
     width: 10%;
     min-width: 100px;
     height: 100%;
@@ -79,4 +79,18 @@
 }
 .Locations .deleteBtn {
     background-image: url("../../../../../assets/delete-white.png");
+}
+
+.Locations .createBtn {
+    position: absolute;
+    left: 0;
+    right: 0;
+    margin: 0px auto;
+    width: 30%;
+    height: 30px;
+    background-image: url("../../../../../assets/add-white.png");
+    background-size: 30px;
+    background-repeat: no-repeat;
+    background-position: center;    
+    margin-bottom: 20px;
 }

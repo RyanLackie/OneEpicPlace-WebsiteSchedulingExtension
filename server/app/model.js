@@ -255,10 +255,8 @@ class Model {
 
             conn.query('SELECT * FROM users', (err, users) => {
                 if (err) throw err;
-                conn.query('SELECT * FROM locations', (err, locations) => {
-                    if (err) throw err;
-                    conn.query('SELECT * FROM locations', (err, resources) => {
-                        if (err) throw err;
+                this.getLocations(locations => {
+                    this.getResources(resources => {
                         return call_back([users, locations, resources]);
                     });
                 });
@@ -271,28 +269,6 @@ class Model {
                 return call_back('409');
 
             conn.query('SELECT * FROM users', (err, result) => {
-                if (err) throw err;
-                return call_back(result);
-            });
-        });
-    }
-    admin_GetLocations(user_username, user_password, call_back) {
-        this.getAccount(user_username, user_password, fetchedUser => {
-            if (fetchedUser == '409' || fetchedUser.privilege != ADMIN_PRIVILEGE)
-                return call_back('409');
-
-            conn.query('SELECT * FROM locations', (err, result) => {
-                if (err) throw err;
-                return call_back(result);
-            });
-        });
-    }
-    admin_GetResources(user_username, user_password, call_back) {
-        this.getAccount(user_username, user_password, fetchedUser => {
-            if (fetchedUser == '409' || fetchedUser.privilege != ADMIN_PRIVILEGE)
-                return call_back('409');
-
-            conn.query('SELECT * FROM resources', (err, result) => {
                 if (err) throw err;
                 return call_back(result);
             });
@@ -326,77 +302,65 @@ class Model {
     }
 
     admin_UpdateAccount(user_username, user_password, id, privilege, previousEmail, email, previousUsername, username, password, firstName, lastName, occupation, description, call_back) {
-        // eslint-disable-next-line
-        this.admin_UpdateUserEmail(user_username, user_password, id, previousEmail, email, emailUpdateResult => {
+        //Check for admin privilege
+        this.getAccount(user_username, user_password, fetchedUser => {
+            if (fetchedUser == '409' || fetchedUser.privilege != ADMIN_PRIVILEGE)
+                return call_back('409');
             // eslint-disable-next-line
-            this.admin_UpdateUserUsername(user_username, user_password, id, previousUsername, username, usernameUpdateResult => {
+            this.admin_UpdateUserEmail(id, previousEmail, email, emailUpdateResult => {
                 // eslint-disable-next-line
-                this.admin_UpdateUserInfo(user_username, user_password, id, privilege, password, firstName, lastName, occupation, description, infoUpdateResult => {
-                    return call_back(infoUpdateResult);
-                });                    
+                this.admin_UpdateUserUsername(id, previousUsername, username, usernameUpdateResult => {
+                    this.admin_UpdateUserInfo(id, privilege, password, firstName, lastName, occupation, description, infoUpdateResult => {
+                        return call_back(infoUpdateResult);
+                    });                    
+                });
             });
         });
     }
-    admin_UpdateUserEmail(user_username, user_password, id, previousEmail, email, emailUpdateResult) {
+    admin_UpdateUserEmail(id, previousEmail, email, emailUpdateResult) {
         if (previousEmail != email) {
-            //Check for admin privilege
-            this.getAccount(user_username, user_password, fetchedUser => {
-                if (fetchedUser == '409' || fetchedUser.privilege != ADMIN_PRIVILEGE)
-                    return emailUpdateResult('409');
-                //Check if new email is in use
-                this.checkForEmail(email, emailCheckResponse => {
-                    if (emailCheckResponse != '409')
-                        return emailUpdateResult('408');
-
-                    conn.query('Update users SET email = ' + mysql.escape(email) + ' WHERE id = ' + mysql.escape(id), (err) => {
-                        if (err) throw err;
-                        return emailUpdateResult('100');
-                    });
+            //Check if new email is in use
+            this.checkForEmail(email, emailCheckResponse => {
+                if (emailCheckResponse != '409')
+                    return emailUpdateResult('408');
+                //Update Email
+                conn.query('Update users SET email = ' + mysql.escape(email) + ' WHERE id = ' + mysql.escape(id), (err) => {
+                    if (err) throw err;
+                    return emailUpdateResult('100');
                 });
             });
         }
         else
             return emailUpdateResult('100');
     }
-    admin_UpdateUserUsername(user_username, user_password, id, previousUsername, username, usernameUpdateResult) {
+    admin_UpdateUserUsername(id, previousUsername, username, usernameUpdateResult) {
         if (previousUsername != username) {
-            //Check for admin privilege
-            this.getAccount(user_username, user_password, fetchedUser => {
-                if (fetchedUser == '409' || fetchedUser.privilege != ADMIN_PRIVILEGE)
-                    return usernameUpdateResult('409');
-                //Check if new username is in use
-                this.checkForUsername(username, usernameCheckResponse => {
-                    if (usernameCheckResponse != '409')
-                        return usernameUpdateResult('408');
-                    conn.query('Update users SET username = ' + mysql.escape(username) + ' WHERE id = ' + mysql.escape(id), (err) => {
-                        if (err) throw err;
-                        return usernameUpdateResult('100');
-                    });
+            //Check if new username is in use
+            this.checkForUsername(username, usernameCheckResponse => {
+                if (usernameCheckResponse != '409')
+                    return usernameUpdateResult('408');
+                conn.query('Update users SET username = ' + mysql.escape(username) + ' WHERE id = ' + mysql.escape(id), (err) => {
+                    if (err) throw err;
+                    return usernameUpdateResult('100');
                 });
             });
         }
         else
             return usernameUpdateResult('100');
     }
-    admin_UpdateUserInfo(user_username, user_password, id, privilege, password, firstName, lastName, occupation, description, infoUpdateResult) {
-        //Check for admin privilege
-        this.getAccount(user_username, user_password, fetchedUser => {
-            if (fetchedUser == '409' || fetchedUser.privilege != ADMIN_PRIVILEGE)
-                return infoUpdateResult('409');
-            //Update profile info
-            conn.query('Update users SET privilege = ' + mysql.escape(privilege) +
-                                    ', password = ' + mysql.escape(password) +
-                                    ', firstName = ' + mysql.escape(firstName) +
-                                    ', lastName = ' + mysql.escape(lastName) +
-                                    ', occupation = ' + mysql.escape(occupation) +
-                                    ', description = ' + mysql.escape(description) +
-                                    ' WHERE id = ' + mysql.escape(id), (err) => {
+    admin_UpdateUserInfo(id, privilege, password, firstName, lastName, occupation, description, infoUpdateResult) {
+        //Update profile info
+        conn.query('Update users SET privilege = ' + mysql.escape(privilege) +
+                                ', password = ' + mysql.escape(password) +
+                                ', firstName = ' + mysql.escape(firstName) +
+                                ', lastName = ' + mysql.escape(lastName) +
+                                ', occupation = ' + mysql.escape(occupation) +
+                                ', description = ' + mysql.escape(description) +
+                                ' WHERE id = ' + mysql.escape(id), (err) => {
+            if (err) throw err;
+            conn.query('SELECT * FROM users WHERE id = ' + mysql.escape(id), (err, result) => {
                 if (err) throw err;
-                console.log('Info changed at id: ' + id);
-                conn.query('SELECT * FROM users WHERE id = ' + mysql.escape(id), (err, result) => {
-                    if (err) throw err;
-                    infoUpdateResult(result[0]);
-                });
+                infoUpdateResult(result[0]);
             });
         });
     }
@@ -407,6 +371,82 @@ class Model {
                 return call_back('409');
 
             conn.query('DELETE FROM users WHERE id = ' + mysql.escape(id), (err) => {
+                if (err) throw err;
+                return call_back('100');
+            });
+        });
+    }
+
+    admin_CreateLocation(user_username, user_password, name, pointCost, type, call_back) {
+        //Check for admin privilege
+        this.getAccount(user_username, user_password, fetchedUser => {
+            if (fetchedUser == '409' || fetchedUser.privilege != ADMIN_PRIVILEGE)
+                return call_back('409');
+            //Check for location name repeat
+            this.getLocations(locations => {
+                for (var i = 0; i < locations.length; i++) {
+                    if (locations[i].name == name)
+                        return call_back('408');
+                }
+                //Create User
+                conn.query("INSERT INTO locations (name, pointCost, type) VALUES ('"+name+"', '"+pointCost+"', '"+type+"')", (err) => {
+                    if (err) throw err;
+                    return call_back('100');
+                });
+            });
+        });
+    }
+
+    admin_UpdateLocation(user_username, user_password, id, previousName, name, pointCost, type, call_back) {
+        //Check for admin privilege
+        this.getAccount(user_username, user_password, fetchedUser => {
+            if (fetchedUser == '409' || fetchedUser.privilege != ADMIN_PRIVILEGE)
+                return call_back('409');
+            // eslint-disable-next-line
+            this.admin_UpdateLocationName(id, previousName, name, nameUpdateResult => {
+                this.admin_UpdateLocationInfo(id, pointCost, type, infoUpdateResult => {
+                    return call_back(infoUpdateResult);
+                });                    
+            });
+        });
+    }
+    admin_UpdateLocationName(id, previousName, name, nameUpdateResult) {
+        if (previousName != name) {
+            //Check if new name is in use
+            this.getLocations(locations => {
+                for (var i = 0; i < locations.length; i++) {
+                    if (locations[i].name == name)
+                        return nameUpdateResult('408');
+                }
+                //Update Email
+                conn.query('Update locations SET name = ' + mysql.escape(name) + ' WHERE id = ' + mysql.escape(id), (err) => {
+                    if (err) throw err;
+                    return nameUpdateResult('100');
+                });
+            });
+        }
+        else
+            return nameUpdateResult('100');
+    }
+    admin_UpdateLocationInfo(id, pointCost, type, infoUpdateResult) {
+        //Update profile info
+        conn.query('Update locations SET pointCost = ' + mysql.escape(pointCost) +
+                                        ', type = ' + mysql.escape(type) +
+                                        ' WHERE id = ' + mysql.escape(id), (err) => {
+            if (err) throw err;
+            conn.query('SELECT * FROM locations WHERE id = ' + mysql.escape(id), (err, result) => {
+                if (err) throw err;
+                infoUpdateResult(result[0]);
+            });
+        });
+    }
+
+    admin_RemoveLocation(user_username, user_password, id, call_back) {
+        this.getAccount(user_username, user_password, fetchedUser => {
+            if (fetchedUser == '409' || fetchedUser.privilege != ADMIN_PRIVILEGE)
+                return call_back('409');
+
+            conn.query('DELETE FROM locations WHERE id = ' + mysql.escape(id), (err) => {
                 if (err) throw err;
                 return call_back('100');
             });

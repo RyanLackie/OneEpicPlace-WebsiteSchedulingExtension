@@ -6,7 +6,6 @@ import Home from './views/1. shaired views/Home.vue'
 import About from './views/1. shaired views/About.vue'
 
 //2. nonuser views
-import SignUp from './views/2. nonuser views/SignUp.vue'
 import Login from './views/2. nonuser views/Login.vue'
 
 //3. user views
@@ -33,9 +32,6 @@ export default new Router({
         },
 
         //2. nonuser views
-        {
-            path: '/signup', name: 'signup', component: SignUp
-        },
         {
             path: '/login', name: 'login', component: Login
         },

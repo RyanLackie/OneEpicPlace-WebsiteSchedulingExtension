@@ -33,7 +33,7 @@
                 </div>
                 <div class="usersColBtn">
                     <button class="btn btn-primary usersBtn editBtn" v-on:click="openViewUserModal(user)"></button>
-                    <button class="btn btn-dark usersBtn deleteBtn" v-on:click="removeUser(user.id)"></button>
+                    <button class="btn btn-dark usersBtn deleteBtn" v-on:click="removeUser(user)"></button>
                 </div>
             </div>
 
@@ -58,8 +58,8 @@
     import * as api from '@/services/api_access';
 
     //Modals
-    import ViewUserModal from '../modals/ViewUserModal.vue';
-    import CreateUserModal from '../modals/CreateUserModal.vue';
+    import ViewUserModal from '../modals/users/ViewUserModal.vue';
+    import CreateUserModal from '../modals/users/CreateUserModal.vue';
 
     export default {
         components: {
@@ -78,16 +78,18 @@
                 this.$parent.getUsers();
             },
 
-            removeUser(id) {
-                api.admin_RemoveAccount(id).then(
-                    removeResponce => {
-                        if (removeResponce == '100') {
-                            this.$parent.getUsers();
+            removeUser(user) {
+                var responce = confirm("Are you sure you want to delete user - " + user.username);
+                if (responce) {
+                    api.admin_RemoveAccount(user.id).then(
+                        removeResponce => {
+                            if (removeResponce == '100')
+                                this.$parent.getUsers();
+                            else if (removeResponce == '409') 
+                                this.$parent.$refs.Header.logout();
                         }
-                        else if (removeResponce == '409') 
-                            this.$parent.$refs.Header.logout();
-                    }
-                );
+                    );
+                }
             },
 
             openViewUserModal(user) {

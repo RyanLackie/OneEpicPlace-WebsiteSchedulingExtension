@@ -111,7 +111,7 @@
 
             getLocations() {
                 this.load = false;
-                api.admin_GetLocations().then(
+                api.getLocations().then(
                     locations => {
                         this.locations = this.sortLocations(locations);
                         this.load = true;
@@ -135,7 +135,7 @@
 
             getResources() {
                 this.load = false;
-                api.admin_GetResources().then(
+                api.getResources().then(
                     resources => {
                         this.resources = this.sortResources(resources);
                         this.load = true;

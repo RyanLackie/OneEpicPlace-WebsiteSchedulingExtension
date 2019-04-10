@@ -23,6 +23,16 @@ app.post('/updateProfile', (req, res) => {
 })
 
 //Booking Methods
+app.post('/getLocations', (req, res) => {
+    model.getLocations(
+        fetchedLocations => res.send(fetchedLocations)
+    );
+})
+app.post('/getResources', (req, res) => {
+    model.getResources(
+        fetchedResources => res.send(fetchedResources)
+    );
+})
 app.post('/getCalendarData', (req, res) => {
     model.getCalendarData(
         fetchedCalendarData => res.send(fetchedCalendarData)
@@ -57,18 +67,6 @@ app.post('/admin_GetUsers', (req, res) => {
         fetchedUsers => res.send(fetchedUsers)
     );
 })
-app.post('/admin_GetLocations', (req, res) => {
-    model.admin_GetLocations(
-        req.body.user_username, req.body.user_password,
-        fetchedLocations => res.send(fetchedLocations)
-    );
-})
-app.post('/admin_GetResources', (req, res) => {
-    model.admin_GetResources(
-        req.body.user_username, req.body.user_password,
-        fetchedResources => res.send(fetchedResources)
-    );
-})
 
 app.post('/admin_CreateAccount', (req, res) => {
     model.admin_CreateAccount(
@@ -91,6 +89,29 @@ app.post('/admin_UpdateAccount', (req, res) => {
 })
 app.post('/admin_RemoveAccount', (req, res) => {
     model.admin_RemoveAccount(
+        req.body.user_username, req.body.user_password, req.body.id,
+        removeResult => res.send(removeResult)
+    );
+})
+
+app.post('/admin_CreateLocation', (req, res) => {
+    model.admin_CreateLocation(
+        req.body.user_username, req.body.user_password,
+        req.body.name, req.body.pointCost, req.body.type,
+        updateResult => res.send(updateResult)
+    );
+})
+app.post('/admin_UpdateLocation', (req, res) => {
+    model.admin_UpdateLocation(
+        req.body.user_username, req.body.user_password,
+        req.body.id, req.body.previousName, req.body.name,
+        req.body.pointCost, req.body.type,
+        updateResult => res.send(updateResult)
+    );
+})
+
+app.post('/admin_RemoveLocation', (req, res) => {
+    model.admin_RemoveLocation(
         req.body.user_username, req.body.user_password, req.body.id,
         removeResult => res.send(removeResult)
     );

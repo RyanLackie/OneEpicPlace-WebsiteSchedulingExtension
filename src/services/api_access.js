@@ -33,6 +33,12 @@ export function updateProfile(email, username, password, firstName, lastName, oc
 }
 
 //Booking Methods
+export function getLocations() {
+    return myFetch(api_root + "/app/getLocations", {});
+}
+export function getResources() {
+    return myFetch(api_root + "/app/getResources", {});
+}
 export function getCalendarData() {
     return myFetch(api_root + "/app/getCalendarData", {});
 }
@@ -61,18 +67,6 @@ export function admin_GetUsers() {
         user_username, user_password
     });
 }
-export function admin_GetLocations() {
-    var user_username = user.username, user_password = user.password;
-    return myFetch(api_root + "/app/admin_GetLocations", {
-        user_username, user_password
-    });
-}
-export function admin_GetResources() {
-    var user_username = user.username, user_password = user.password;
-    return myFetch(api_root + "/app/admin_GetResources", {
-        user_username, user_password
-    });
-}
 
 export function admin_CreateAccount(privilege, email, username, password, firstName, lastName, occupation, description) {
     var user_username = user.username, user_password = user.password;
@@ -89,6 +83,25 @@ export function admin_UpdateAccount(id, privilege, previousEmail, email, previou
 export function admin_RemoveAccount(id) {
     var user_username = user.username, user_password = user.password;
     return myFetch(api_root + "/app/admin_RemoveAccount", {
+        user_username, user_password, id
+    });
+}
+
+export function admin_CreateLocation(name, pointCost, type) {
+    var user_username = user.username, user_password = user.password;
+    return myFetch(api_root + "/app/admin_CreateLocation", {
+        user_username, user_password, name, pointCost, type
+    });
+}
+export function admin_UpdateLocation(id, previousName, name, pointCost, type) {
+    var user_username = user.username, user_password = user.password;
+    return myFetch(api_root + "/app/admin_UpdateLocation", {
+        user_username, user_password, id, previousName, name, pointCost, type
+    });
+}
+export function admin_RemoveLocation(id) {
+    var user_username = user.username, user_password = user.password;
+    return myFetch(api_root + "/app/admin_RemoveLocation", {
         user_username, user_password, id
     });
 }
