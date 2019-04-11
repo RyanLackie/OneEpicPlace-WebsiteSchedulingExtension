@@ -14,6 +14,7 @@
         <!-- Views -->
         <Users ref="Users" v-if="viewSelected == 0 && load"></Users>
         <Locations ref="Locations" v-if="viewSelected == 1 && load"></Locations>
+        <Resources ref="Resources" v-if="viewSelected == 2 && load"></Resources>
 
     </div>
 </template>
@@ -29,12 +30,14 @@
     //Views
     import Users from './components/views/Users.vue';
     import Locations from './components/views/Locations.vue';
+    import Resources from './components/views/Resources.vue';
 
     export default {
         components: {
             //Views
             Users,
-            Locations
+            Locations,
+            Resources
         },
         
         data() {
@@ -61,11 +64,12 @@
                         this.locations = this.sortLocations(data[1]);
 
                         //Resources
-                        this.resources = this.sortResources(data[2]);
+                        this.resources = data[2];
 
                         //Complete
                         this.load = true;
-                    });
+                    }
+                );
             },
 
             getUsers() {
@@ -137,16 +141,10 @@
                 this.load = false;
                 api.getResources().then(
                     resources => {
-                        this.resources = this.sortResources(resources);
+                        this.resources = resources;
                         this.load = true;
                     }
                 )
-            },
-            sortResources(resources) {
-                resources.sort(function(resource1, resource2) {
-                    return resource1.orderID - resource2.orderID;
-                });
-                this.resources = resources;
             }
         },
 

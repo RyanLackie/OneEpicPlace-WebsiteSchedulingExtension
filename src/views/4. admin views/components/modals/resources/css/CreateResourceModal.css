@@ -1,0 +1,93 @@
+/*
+    Modal
+*/
+.CreateResourceModal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    width: 35%;
+    min-width: 300px;
+
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+    transition: 0.5s;
+
+    /* Make larger modals scrollable */
+    max-height: calc(100vh - 100px);
+    overflow-y: auto;
+
+    background: whitesmoke;
+    color: black;
+    outline: 3px lightgray solid;
+    padding: 0px 20px;
+    opacity: 0;
+    visibility: hidden;
+    z-index: 3;
+}
+.CreateResourceModal::-webkit-scrollbar-track {
+	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+	border-radius: 3px;
+    background-color: #F5F5F5;
+}
+.CreateResourceModal::-webkit-scrollbar {
+	width: 12px;
+	background-color: #F5F5F5;
+}
+.CreateResourceModal::-webkit-scrollbar-thumb {
+	border-radius: 3px;
+	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+	background-color: #555;
+}
+
+.CreateResourceModal .modal-header {
+    display: inline-block;
+    width: 100%;
+}
+.CreateResourceModal .modal-header-text {
+    font-size: 30px;
+    font-weight: bold;
+    font-family: 'Quicksand', sans-serif;
+}
+.CreateResourceModal .modal-header .close {
+    position: absolute;
+    top: 10px;
+    right: 30px;
+    color: black;
+    opacity: 1;
+}
+
+.CreateResourceModal .sectionLabel {
+    margin-left: 3px;
+}
+.CreateResourceModal .inputLg {
+    width: 94%;
+    margin: 5px auto;
+}
+.CreateResourceModal .inputSmLeft {
+    display: inline-block;
+    width: 45%;
+    margin: 5px 0px 5px 3%;
+}
+.CreateResourceModal .inputSmRight {
+    float: right;
+    width: 45%;
+    margin: 5px 3% 5px 0px;
+}
+
+/*
+    Modal Footer
+*/
+.CreateResourceModal .submitBtn {
+    float: left;
+    width: 45%;
+    height: 50px;
+    margin: 30px 0px 30px 3%;
+    font-size: 20px;
+}
+.CreateResourceModal .cancelBtn {
+    float: right;
+    width: 45%;
+    height: 50px;
+    margin: 30px 3% 30px 0px;
+    font-size: 20px;
+}

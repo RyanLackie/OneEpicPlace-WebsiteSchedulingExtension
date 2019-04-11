@@ -2,7 +2,7 @@
     <div class="CreateLocationModal" id="CreateLocationModal" aria-hidden="true">
                 
         <div class="modal-header">
-            <div class="modal-header-text">Create User</div>
+            <div class="modal-header-text">Create Location</div>
             
             <button type="button" class="close" aria-label="Close" @click="closeModal()">
                 <span aria-hidden="true">&times;</span>
@@ -78,9 +78,9 @@
                         this.$parent.updateLocations();
                     }
                     if (createResult == '408') 
-                        this.$parent.$refs.Header.logout();
-                    else if (createResult == '409') 
                         alert('Name is already taken');
+                    else if (createResult == '409') 
+                        this.$parent.$refs.Header.logout();
                 });
                 
                 //Prevent submit refresh

@@ -109,9 +109,30 @@ app.post('/admin_UpdateLocation', (req, res) => {
         updateResult => res.send(updateResult)
     );
 })
-
 app.post('/admin_RemoveLocation', (req, res) => {
     model.admin_RemoveLocation(
+        req.body.user_username, req.body.user_password, req.body.id,
+        removeResult => res.send(removeResult)
+    );
+})
+
+app.post('/admin_CreateResource', (req, res) => {
+    model.admin_CreateResource(
+        req.body.user_username, req.body.user_password,
+        req.body.name, req.body.quantity,
+        updateResult => res.send(updateResult)
+    );
+})
+app.post('/admin_UpdateResource', (req, res) => {
+    model.admin_UpdateResource(
+        req.body.user_username, req.body.user_password,
+        req.body.id, req.body.previousName, req.body.name,
+        req.body.quantity,
+        updateResult => res.send(updateResult)
+    );
+})
+app.post('/admin_RemoveResource', (req, res) => {
+    model.admin_RemoveResource(
         req.body.user_username, req.body.user_password, req.body.id,
         removeResult => res.send(removeResult)
     );

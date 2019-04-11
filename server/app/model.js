@@ -369,7 +369,6 @@ class Model {
         this.getAccount(user_username, user_password, fetchedUser => {
             if (fetchedUser == '409' || fetchedUser.privilege != ADMIN_PRIVILEGE)
                 return call_back('409');
-
             conn.query('DELETE FROM users WHERE id = ' + mysql.escape(id), (err) => {
                 if (err) throw err;
                 return call_back('100');
@@ -377,6 +376,9 @@ class Model {
         });
     }
 
+    /*
+    Locations
+    */
     admin_CreateLocation(user_username, user_password, name, pointCost, type, call_back) {
         //Check for admin privilege
         this.getAccount(user_username, user_password, fetchedUser => {
@@ -388,7 +390,7 @@ class Model {
                     if (locations[i].name == name)
                         return call_back('408');
                 }
-                //Create User
+                //Create location
                 conn.query("INSERT INTO locations (name, pointCost, type) VALUES ('"+name+"', '"+pointCost+"', '"+type+"')", (err) => {
                     if (err) throw err;
                     return call_back('100');
@@ -418,7 +420,7 @@ class Model {
                     if (locations[i].name == name)
                         return nameUpdateResult('408');
                 }
-                //Update Email
+                //Update name
                 conn.query('Update locations SET name = ' + mysql.escape(name) + ' WHERE id = ' + mysql.escape(id), (err) => {
                     if (err) throw err;
                     return nameUpdateResult('100');
@@ -445,8 +447,79 @@ class Model {
         this.getAccount(user_username, user_password, fetchedUser => {
             if (fetchedUser == '409' || fetchedUser.privilege != ADMIN_PRIVILEGE)
                 return call_back('409');
-
             conn.query('DELETE FROM locations WHERE id = ' + mysql.escape(id), (err) => {
+                if (err) throw err;
+                return call_back('100');
+            });
+        });
+    }
+
+
+    /*
+    Resources
+    */
+    admin_CreateResource(user_username, user_password, name, quantity, call_back) {
+        //Check for admin privilege
+        this.getAccount(user_username, user_password, fetchedUser => {
+            if (fetchedUser == '409' || fetchedUser.privilege != ADMIN_PRIVILEGE)
+                return call_back('409');
+            //Check for resouce name repeat
+            this.getResources(resources => {
+                for (var i = 0; i < resources.length; i++) {
+                    if (resources[i].name == name)
+                        return call_back('408');
+                }
+                //Create resource
+                conn.query("INSERT INTO resources (name, quantity) VALUES ('"+name+"', '"+quantity+"')", (err) => {
+                    if (err) throw err;
+                    return call_back('100');
+                });
+            });
+        });
+    }
+
+    admin_UpdateResource(user_username, user_password, id, previousName, name, quantity, call_back) {
+        //Check for admin privilege
+        this.getAccount(user_username, user_password, fetchedUser => {
+            if (fetchedUser == '409' || fetchedUser.privilege != ADMIN_PRIVILEGE)
+                return call_back('409');
+            // eslint-disable-next-line
+            this.admin_UpdateResourceName(id, previousName, name, nameUpdateResult => {
+                //Update profile info
+                conn.query('Update resources SET quantity = ' + mysql.escape(quantity) + ' WHERE id = ' + mysql.escape(id), (err) => {
+                    if (err) throw err;
+                    conn.query('SELECT * FROM resources WHERE id = ' + mysql.escape(id), (err, result) => {
+                        if (err) throw err;
+                        call_back(result[0]);
+                    });
+                });                   
+            });
+        });
+    }
+    admin_UpdateResourceName(id, previousName, name, nameUpdateResult) {
+        if (previousName != name) {
+            //Check if new name is in use
+            this.getResources(resources => {
+                for (var i = 0; i < resources.length; i++) {
+                    if (resources[i].name == name)
+                        return nameUpdateResult('408');
+                }
+                //Update name
+                conn.query('Update resources SET name = ' + mysql.escape(name) + ' WHERE id = ' + mysql.escape(id), (err) => {
+                    if (err) throw err;
+                    return nameUpdateResult('100');
+                });
+            });
+        }
+        else
+            return nameUpdateResult('100');
+    }
+
+    admin_RemoveResource(user_username, user_password, id, call_back) {
+        this.getAccount(user_username, user_password, fetchedUser => {
+            if (fetchedUser == '409' || fetchedUser.privilege != ADMIN_PRIVILEGE)
+                return call_back('409');
+            conn.query('DELETE FROM resources WHERE id = ' + mysql.escape(id), (err) => {
                 if (err) throw err;
                 return call_back('100');
             });

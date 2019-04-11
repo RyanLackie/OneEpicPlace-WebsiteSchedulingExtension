@@ -1,0 +1,96 @@
+.Resources .resContainer {
+    width: 90%;
+    margin: 0px auto;
+    overflow-y: hidden;
+    white-space: nowrap;
+    margin-bottom: 30px;
+}
+.Resources .resContainer::-webkit-scrollbar-track {
+	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+	border-radius: 3px;
+    background-color: #F5F5F5;
+}
+.Resources .resCcontainer::-webkit-scrollbar {
+	width: 12px;
+	background-color: #F5F5F5;
+}
+.Resources .resCcontainer::-webkit-scrollbar-thumb {
+	border-radius: 3px;
+	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+	background-color: #555;
+}
+
+.Resources .label {
+    font-size: 25px;
+    font-weight: bold;
+    font-family: 'Quicksand', sans-serif;
+    text-transform: uppercase;
+}
+
+.Resources .resTopRow {
+    width: 100%;
+    height: 25px;
+    font-size: 20px;
+    font-family: 'Quicksand', sans-serif;
+    margin-bottom: 10px;
+    border-bottom: 1px black solid;
+    pointer-events: none;
+}
+
+.Resources .resRow {
+    width: 100%;
+    height: 25px;
+    margin-bottom: 2px;
+}
+
+.Resources .resCol {
+    display: inline-block;
+    width: 30%;
+    min-width: 170px;
+    height: 100%;
+    text-align: center;   
+}
+.Resources .colText {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    pointer-events: none;
+}
+
+.Resources .resColBtn {
+    float: right;
+    width: 10%;
+    min-width: 100px;
+    height: 100%;
+    text-align: center;
+}
+.Resources .resBtn {
+    width: calc(50% - 4px);
+    height: 100%;
+    margin: -15px 2px 0px 2px;
+    background-size: 40%;
+    background-repeat: no-repeat;
+    background-position: center;    
+}
+.Resources .editBtn {
+    background-image: url("../../../../../assets/edit-white.png");
+}
+.Resources .deleteBtn {
+    background-image: url("../../../../../assets/delete-white.png");
+}
+
+.Resources .createBtn {
+    position: absolute;
+    left: 0;
+    right: 0;
+    margin: 0px auto;
+    width: 30%;
+    height: 30px;
+    background-image: url("../../../../../assets/add-white.png");
+    background-size: 30px;
+    background-repeat: no-repeat;
+    background-position: center;    
+    margin-bottom: 20px;
+}

@@ -1,10 +1,31 @@
-.Analysis .form-container {
-    width: 60%;
+.Analysis .inputSection {
+    width: 80%;
     margin: 0px auto;
+}
+
+.Analysis .inputContainer {
+    width: 45%;
+    margin-bottom: 20px;
+}
+.Analysis .inputContainerLeft {
+    float: left;
+}
+.Analysis .inputContainerRight {
+    float: right;
 }
 
 .Analysis .label {
     font-size: 20px;
     font-family: 'Quicksand', sans-serif;
     text-transform: uppercase;
+}
+
+.Analysis .date {
+    width: 47%;
+}
+.Analysis .leftDate {
+    float: left;
+}
+.Analysis .rightDate {
+    float: right;
 }

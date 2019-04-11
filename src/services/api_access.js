@@ -106,6 +106,25 @@ export function admin_RemoveLocation(id) {
     });
 }
 
+export function admin_CreateResource(name, quantity) {
+    var user_username = user.username, user_password = user.password;
+    return myFetch(api_root + "/app/admin_CreateResource", {
+        user_username, user_password, name, quantity
+    });
+}
+export function admin_UpdateResource(id, previousName, name, quantity) {
+    var user_username = user.username, user_password = user.password;
+    return myFetch(api_root + "/app/admin_UpdateResource", {
+        user_username, user_password, id, previousName, name, quantity
+    });
+}
+export function admin_RemoveResource(id) {
+    var user_username = user.username, user_password = user.password;
+    return myFetch(api_root + "/app/admin_RemoveResource", {
+        user_username, user_password, id
+    });
+}
+
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 function myFetch(url = ``, data = null) {
