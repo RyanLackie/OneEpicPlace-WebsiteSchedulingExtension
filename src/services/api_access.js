@@ -48,6 +48,12 @@ export function insertBooking(date, locationID, locationName, title, description
         date, userID, username, password, locationID, locationName, title, description, startTime, endTime, bookingColor, noiseLevel
     });
 }
+//Must be updated to be secure (For presentation only)
+export function removeBooking(id) {
+    return myFetch(api_root + "/app/removeBooking", {
+        id
+    });
+}
 export function getBookingsDate(startDate, endDate) {
     return myFetch(api_root + "/app/getBookingsDate", {
         startDate, endDate

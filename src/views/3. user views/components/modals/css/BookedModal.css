@@ -77,9 +77,20 @@
 /*
     Modal Footer
 */
-.BookedModal .closeBtn {
+.BookedModal .footerBtnContainer {
     width: 94%;
     height: 50px;
     margin: 20px 3% 30px 3%;
+}
+.BookedModal .footerBtnContainer .deleateBtn {
+    float: left;
+    width: 48%;
+    height: 100%;
+    font-size: 20px;
+}
+.BookedModal .footerBtnContainer .cancelBtn {
+    float: right;
+    width: 48%;
+    height: 100%;
     font-size: 20px;
 }

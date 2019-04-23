@@ -5,7 +5,6 @@
 .Header .text-container .text {
     font-size: 50px;
     text-decoration: none;
-    text-transform: uppercase;
     color: black;
 }
 
@@ -13,50 +12,39 @@
     text-align: center;
     margin: 0px auto 20px auto;
 }
+
 .Header .logo-container .logo {
     max-width: 150px;
 }
 
-.Header .nonUserNavbar {
-    margin: 20px auto 0px auto;
+.Header .navbar {
+    width: 100%;
+    margin-bottom: -20px;
+}
+.Header .navbar .buttonGroup {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0px auto;
     text-align: center;
 }
-.Header .nonUserNavbar .text {
-    padding: 10px 2%;
+.Header .navbar .text {
+    display: inline-block;
+    padding: 0px 2%;
     color: black;
     font-size: 20px;
     text-decoration: none;
 }
-.Header .nonUserNavbar .text:hover {
+.Header .navbar .text:hover {
     color: gray;
 }
 
-.Header .userNavbar {
-    margin: 20px auto 0px auto;
-    text-align: center;
+.Header .navbar .text .underline {
+    width: 0px;
+    border-bottom: 3px orange solid;
+    transition: width 0.3s;
 }
-.Header .userNavbar .text {
-    padding: 10px 2%;
-    color: black;
-    font-size: 20px;
-    text-decoration: none;
-}
-.Header .userNavbar .text:hover {
-    color: gray;
-}
-
-.Header .adminNavbar {
-    margin: 20px auto 0px auto;
-    text-align: center;
-}
-.Header .adminNavbar .text {
-    padding: 10px 2%;
-    color: black;
-    font-size: 20px;
-    text-decoration: none;
-}
-.Header .adminNavbar .text:hover {
-    color: gray;
+.Header .navbar .buttonGroup .active .underline {
+    width: 100%;
 }
 
 .Header .line {

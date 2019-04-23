@@ -5,40 +5,69 @@
         <div class="loadingAnimation" v-if="!load"></div>
 
         <div class="inputSection" v-if="load">
-            
-            <div class="inputContainer inputContainerLeft">
-                <label class="label">Users</label>
-                <select id="users" class="form-control">
-                    <option value='all'>Select All</option>
-                    <option v-for="user in this.users" :key='user.id' :value='user.id'>{{user.username}}</option>
-                </select>
-            </div>
-            
-            <div class="inputContainer inputContainerRight">
-                <label class="label">Locations</label>
-                <select id="locations" class="form-control">
-                    <option value='all'>Select All</option>
-                    <option v-for="location in this.locations" :key='location.id' :value='location.id'>{{location.name}}</option>
-                </select>
+
+            <div id="users" class="dropdown-check-list inputContainer inputContainerLeft">
+                <span class="anchor" @click="clickList('users')">Select Users</span>
+                <div class="items">
+                    <label class="container">
+                        <div class="text">Select All</div>
+                        <input type="checkbox">
+                        <span class="checkmark"></span>
+                    </label>
+                    <label class="container" v-for="user in this.users" :key='user.id' :value='user.id'>
+                        <div class="text">{{user.username}}</div>
+                        <input type="checkbox">
+                        <span class="checkmark"></span>
+                    </label>
+                </div>
             </div>
 
-            <div class="inputContainer inputContainerLeft">
-                <label class="label">Resources</label>
-                <select id="resources" class="form-control">
-                    <option value='all'>Select All</option>
-                    <option v-for="resource in this.resources" :key='resource.id' :value='resource.id'>{{resource.name}}</option>
-                </select>
+            <div id="locations" class="dropdown-check-list inputContainer inputContainerRight">
+                <span class="anchor" @click="clickList('locations')">Select Locations</span>
+                <div class="items">
+                    <label class="container">
+                        <div class="text">Select All</div>
+                        <input type="checkbox">
+                        <span class="checkmark"></span>
+                    </label>
+                    <label class="container" v-for="location in this.locations" :key='location.id' :value='location.id'>
+                        <div class="text">{{location.name}}</div>
+                        <input type="checkbox">
+                        <span class="checkmark"></span>
+                    </label>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="inputSection" v-if="load">
+
+            <div id="resources" class="dropdown-check-list inputContainer inputContainerLeft">
+                <span class="anchor" @click="clickList('resources')">Select Resources</span>
+                <div class="items">
+                    <label class="container">
+                        <div class="text">Select All</div>
+                        <input type="checkbox">
+                        <span class="checkmark"></span>
+                    </label>
+                    <label class="container" v-for="resource in this.resources" :key='resource.id' :value='resource.id'>
+                        <div class="text">{{resource.name}}</div>
+                        <input type="checkbox">
+                        <span class="checkmark"></span>
+                    </label>
+                </div>
             </div>
             
             <div class="inputContainer inputContainerRight">
-                <label class="label">Date Range</label>
                 <div>
-                    <input type='date' class="form-control date leftDate">
-                    <input type='date' class="form-control date rightDate">
+                    <input type='date' class="form-control date leftDate" placeholder="Start Date: ">
+                    <input type='date' class="form-control date rightDate" placeholder="End Date: ">
                 </div>
             </div>
             
         </div>
+
+        
 
     </div>
 </template>
@@ -120,6 +149,17 @@
                 locations = room.concat(desk);
                 return locations;
             },
+
+            clickList(id) {
+                var checkList = document.getElementById(id);
+                
+                if (checkList.classList.contains('visible'))
+                    checkList.classList.remove('visible');
+                else
+                    checkList.classList.add('visible');
+                
+                
+            }
         },
 
         mounted() {

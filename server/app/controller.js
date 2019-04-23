@@ -47,6 +47,13 @@ app.post('/insertBooking', (req, res) => {
         bookingResult => res.send(bookingResult)
     );
 })
+//Must be updated to be secure (For presentation only)
+app.post('/removeBooking', (req, res) => {
+    model.removeBooking(
+        req.body.id,
+        removeResult => res.send(removeResult)
+    );
+})
 app.post('/getBookingsDate', (req, res) => {
     model.getBookingsDate(
         req.body.startDate, req.body.endDate,

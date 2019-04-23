@@ -46,7 +46,10 @@
             <input type="time" min="7:00" max="22:00" step="300" id="BookedModal-EndTime" class="form-control" :disabled='inputDisabled()'>
         </div>
 
-        <button v-if='inputDisabled()' class="btn btn-secondary closeBtn" type="button" @click="closeModal()">Close</button>
+        <div class="footerBtnContainer">
+            <button v-if='!inputDisabled()' class="btn btn-danger deleateBtn" :style='styleButton()' @click="deleateBooking()">Deleate</button>
+            <button class="btn btn-secondary cancelBtn" :style='styleButton()' @click="closeModal()">Close</button>
+        </div>
 
     </div>
 </template>
@@ -105,7 +108,37 @@
                 document.getElementById("BookedModal").style.visibility = "hidden";
             },
 
+            //This feature is not reforced by the server (For presentation only)
+            deleateBooking() {
+                var responce = confirm("Are you sure you want to delete booking - " + this.booking.title);
+                if (responce) {
+                    api.removeBooking(this.booking.id).then(
+                        removeResponce => {
+                            this.$parent.checkBookings();
+                            this.closeModal();
+                        }
+                    );
+                }
+            },
+
+            styleButton() {
+                if (api.getLocalUser().privilege == 6)
+                    return 'width: 48%';
+
+                if (this.booking.date != '') {
+                    var bookingDate = new Date(this.booking.date);
+                    bookingDate.setHours(this.booking.startTime.split(':')[0], this.booking.startTime.split(':')[1]);
+                    if (this.booking.userID != api.getLocalUser().id && (bookingDate - new Date())/(1000*60*60) > 22)
+                        return 'width: 48%';
+                    else
+                        return 'width: 100%';
+                }
+            },
             inputDisabled() {
+                //This feature is not reforced by the server (For presentation only)
+                if (api.getLocalUser().privilege == 6)
+                    return false;
+
                 if (this.booking.date != '') {
                     var bookingDate = new Date(this.booking.date);
                     bookingDate.setHours(this.booking.startTime.split(':')[0], this.booking.startTime.split(':')[1]);

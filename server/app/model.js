@@ -235,6 +235,13 @@ class Model {
             });
         });    
     }
+    removeBooking(id, call_back) {
+        console.log(id);
+        conn.query('DELETE FROM bookings WHERE id = ' + mysql.escape(id), (err) => {
+            if (err) throw err;
+            return call_back('100');
+        });
+    }
     getBookingsDate(startDate, endDate, call_back) {
         console.log("#################getBookingsDate()#################");
 

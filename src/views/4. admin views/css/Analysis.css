@@ -1,23 +1,24 @@
-.Analysis .inputSection {
-    width: 80%;
-    margin: 0px auto;
+.Analysis {
+    height: 2000px;
 }
 
-.Analysis .inputContainer {
+.Analysis .inputSection {
+    position: relative;
+    width: 80%;
+    height: 40px;
+    margin: 30px auto 0px auto;
+}
+
+.Analysis .inputSection .inputContainer {
+    position: absolute;
     width: 45%;
     margin-bottom: 20px;
 }
-.Analysis .inputContainerLeft {
-    float: left;
+.Analysis .inputSection .inputContainerLeft {
+    left: 0;
 }
-.Analysis .inputContainerRight {
-    float: right;
-}
-
-.Analysis .label {
-    font-size: 20px;
-    font-family: 'Quicksand', sans-serif;
-    text-transform: uppercase;
+.Analysis .inputSection .inputContainerRight {
+    right: 0;
 }
 
 .Analysis .date {
@@ -28,4 +29,128 @@
 }
 .Analysis .rightDate {
     float: right;
+}
+.Analysis input[type="date"]:before {
+    content: attr(placeholder) !important;
+    color: #aaa;
+    margin-right: 10px;
+  }
+.Analysis input[type="date"]:focus:before,
+.Analysis input[type="date"]:valid:before {
+    content: "";
+}
+
+
+.Analysis .dropdown-check-list {
+    display: inline-block;
+}
+.Analysis .dropdown-check-list .anchor {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+    padding: 5px 50px 5px 10px;
+    border: 1px solid #ccc;
+    cursor: pointer;
+}
+.Analysis .dropdown-check-list.visible .anchor {
+    color: #0094ff;
+}
+.Analysis .dropdown-check-list .anchor:after {
+    position: absolute;
+    top: 20%;
+    right: 10px;
+    padding: 5px;
+    border-left: 2px solid black;
+    border-top: 2px solid black;
+    content: "";
+    -moz-transform: rotate(-135deg);
+    -ms-transform: rotate(-135deg);
+    -o-transform: rotate(-135deg);
+    -webkit-transform: rotate(-135deg);
+    transform: rotate(-135deg);
+}
+.Analysis .dropdown-check-list .anchor:active:after {
+    right: 8px;
+    top: 21%;
+}
+
+.Analysis .dropdown-check-list .items {
+    display: none;
+    padding: 2px;
+    margin: 0;
+    border: 1px solid #ccc;
+    border-top: none;
+}
+
+.Analysis .dropdown-check-list.visible .items {
+    display: block;
+}
+
+.Analysis .dropdown-check-list .items .container {
+    position: relative;
+    display: block;
+    margin: 0px;
+    padding-left: 40px;
+    font-size: 22px;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    background: white;
+    z-index: 1;
+}
+  
+.Analysis .dropdown-check-list .items .container .text {
+    font-size: 17px;
+    padding: 5px 0px;
+}
+/* Hide the browser's default checkbox */
+.Analysis .dropdown-check-list .items .container input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+}
+/* Create a custom checkbox */
+.Analysis .dropdown-check-list .items .container .checkmark {
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    height: 25px;
+    width: 25px;
+    border-radius: 5px;
+    background-color: #eee;
+}
+/* On Hover */
+.Analysis .dropdown-check-list .items .container:hover input ~ .checkmark {
+    background-color: lightgray;
+}
+/* When the checkbox is checked */
+.Analysis .dropdown-check-list .items .container input:checked ~ .checkmark {
+    background-color: purple;
+}
+  
+/* Create the checkmark/indicator (hidden when not checked) */
+.Analysis .dropdown-check-list .items .container .checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+}
+/* Show the checkmark when checked */
+.Analysis .dropdown-check-list .items .container input:checked ~ .checkmark:after {
+    display: block;
+}
+/* Style the checkmark/indicator */
+.Analysis .dropdown-check-list .items .container .checkmark:after {
+    left: 9px;
+    top: 5px;
+    width: 8px;
+    height: 13px;
+    border: solid white;
+    border-width: 0 3px 3px 0;
+    -webkit-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    transform: rotate(45deg);
 }

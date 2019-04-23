@@ -14,30 +14,62 @@
         </div>
 
         <!-- Non User Navbar -->
-        <div class="nonUserNavbar" v-if="privilegeLevel < MIN_MEMBER_PRIVILEGE">
-            <router-link class="text" exact-active-class="active" to="/">Home</router-link>
-            <router-link class="text" exact-active-class="active" to="/about">About</router-link>
-            <router-link class="text" exact-active-class="active" to="/login">Login</router-link>
+        <div class="navbar" v-if="privilegeLevel < MIN_MEMBER_PRIVILEGE">
+            <div class="buttonGroup">
+                <router-link class="text" exact-active-class="active" to="/">Home
+                    <div class="underline"></div>
+                </router-link>
+                <router-link class="text" exact-active-class="active" to="/about">About
+                    <div class="underline"></div>
+                </router-link>
+                <router-link class="text" exact-active-class="active" to="/login">Login
+                    <div class="underline"></div>
+                </router-link>
+            </div>
         </div>
 
         <!-- User Navbar -->
-        <div class="userNavbar" v-if="privilegeLevel > MIN_MEMBER_PRIVILEGE && privilegeLevel < ADMIN_PRIVILEGE">
-            <router-link class="text" exact-active-class="active" to="/">Home</router-link>
-            <router-link class="text" exact-active-class="active" to="/profile">Profile</router-link>
-            <router-link class="text" exact-active-class="active" to="/schedule">Schedule</router-link>
-            <router-link class="text" exact-active-class="active" to="/about">About</router-link>
-            <router-link class="text" exact-active-class="active" to="/" v-on:click.native="logout()">Logout</router-link>
+        <div class="navbar" v-if="privilegeLevel >= MIN_MEMBER_PRIVILEGE && privilegeLevel < ADMIN_PRIVILEGE">
+            <div class="buttonGroup">
+                <router-link class="text" exact-active-class="active" to="/">Home
+                    <div class="underline"></div>
+                </router-link>
+                <router-link class="text" exact-active-class="active" to="/profile">Profile
+                    <div class="underline"></div>
+                </router-link>
+                <router-link class="text" exact-active-class="active" to="/schedule">Schedule
+                    <div class="underline"></div>
+                </router-link>
+                <router-link class="text" exact-active-class="active" to="/about">About
+                    <div class="underline"></div>
+                </router-link>
+                <router-link class="text" exact-active-class="active" to="/" v-on:click.native="logout()">Logout</router-link>
+            </div>
         </div>
 
         <!-- Admin Navbar -->
-        <div class="adminNavbar" v-if="privilegeLevel == ADMIN_PRIVILEGE">
-            <router-link class="text" exact-active-class="active" to="/">Home</router-link>
-            <router-link class="text" exact-active-class="active" to="/profile">Profile</router-link>
-            <router-link class="text" exact-active-class="active" to="/schedule">Schedule</router-link>
-            <router-link class="text" exact-active-class="active" to="/data">Data</router-link>
-            <router-link class="text" exact-active-class="active" to="/analysis">Analysis</router-link>
-            <router-link class="text" exact-active-class="active" to="/about">About</router-link>
-            <router-link class="text" exact-active-class="active" to="/" v-on:click.native="logout()">Logout</router-link>
+        <div class="navbar" v-if="privilegeLevel == ADMIN_PRIVILEGE">
+            <div class="buttonGroup">
+                <router-link class="text" exact-active-class="active" to="/">Home
+                    <div class="underline"></div>
+                </router-link>
+                <router-link class="text" exact-active-class="active" to="/profile">Profile
+                    <div class="underline"></div>
+                </router-link>
+                <router-link class="text" exact-active-class="active" to="/schedule">Schedule
+                    <div class="underline"></div>
+                </router-link>
+                <router-link class="text" exact-active-class="active" to="/data">Data
+                    <div class="underline"></div>
+                </router-link>
+                <router-link class="text" exact-active-class="active" to="/analysis">Analysis
+                    <div class="underline"></div>
+                </router-link>
+                <router-link class="text" exact-active-class="active" to="/about">About
+                    <div class="underline"></div>
+                </router-link>
+                <router-link class="text" exact-active-class="active" to="/" v-on:click.native="logout()">Logout</router-link>
+            </div>
         </div>
 
         <!-- Line -->
