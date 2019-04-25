@@ -130,6 +130,12 @@ export function admin_RemoveResource(id) {
         user_username, user_password, id
     });
 }
+export function admin_RunReport(users, locations, resources, startDate, endDate) {
+    var user_username = user.username, user_password = user.password;
+    return myFetch(api_root + "/app/admin_RunReport", {
+        user_username, user_password, users, locations, resources, startDate, endDate
+    });
+}
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////

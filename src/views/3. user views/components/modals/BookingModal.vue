@@ -76,21 +76,22 @@
             <button class="btn btn-outline-secondary advancedBtn" type="button" @click="changeOptions()">{{showMoreText}}</button>
 
             <div class="inputLg" v-if="showMore">
-                <label class="sectionLabel">Resources</label>
-                <select id="BookingModal-Resources" class="form-control">
-                    <option v-for="resource in $parent.resources" :key='resource.id' :value='resource.id'>{{resource.name}}</option>
-                </select>
+                <div id="resources" class="dropdown-check-list">
+                    <span class="anchor" @click="clickList('resources')">Select Resources</span>
+                    <div class="items">
+                        <label class="container" @click="selectAll()">
+                            <div class="text">Select All</div>
+                            <input type="checkbox" id='selectAllBtn'>
+                            <span class="checkmark"></span>
+                        </label>
+                        <label class="container" v-for="resource in $parent.resources" :key='resource.id' :value='resource.id'>
+                            <div class="text">{{resource.name}}</div>
+                            <input type="checkbox" :id="'res'+resource.id">
+                            <span class="checkmark"></span>
+                        </label>
+                    </div>
+                </div>
             </div>
-            <!--
-            <div class="calendarLabel" v-if="showMore">
-                <label class="sectionLabel">Repeat</label>
-            </div>
-            <div class="dateSelector" v-if="showMore">
-                <button id="dateSelectorPreviousBtn" class="btn backBtn" type="button" @click="decMonth()"></button>
-                <input id="dateSelectorDate" class="date" :value="getMonthName(date)+' '+date.getFullYear()" disabled>
-                <button id="dateSelectorPreviousBtn" class="btn forwardBtn" type="button" @click="incMonth()"></button>
-            </div>
-            -->
 
             <button class="btn btn-success submitBtn" type="submit">Submit</button>
             <button class="btn btn-secondary cancelBtn" type="button" @click="closeModal()">Cancel</button>
@@ -268,6 +269,21 @@
                     this.showMoreText = 'Show Less';
                 else
                     this.showMoreText = 'Show More';
+            },
+
+            clickList(id) {
+                var checkList = document.getElementById(id);
+                if (checkList.classList.contains('visible'))
+                    checkList.classList.remove('visible');
+                else
+                    checkList.classList.add('visible');
+            },
+            selectAll() {
+                var checked = document.getElementById('selectAllBtn').checked;
+
+                for (var i = 0; i < this.$parent.resources.length; i++) {
+                    document.getElementById('res'+this.$parent.resources[i].id).checked = checked;
+                }
             }
         },
 

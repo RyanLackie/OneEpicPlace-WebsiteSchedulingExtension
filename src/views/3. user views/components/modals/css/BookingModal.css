@@ -231,3 +231,133 @@
     margin: 30px 3% 30px 0px;
     font-size: 20px;
 }
+
+/* 
+    DropDown
+*/
+.BookingModal .dropdown-check-list .anchor {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+    padding: 5px 50px 5px 10px;
+    border: 1px solid #ccc;
+    cursor: pointer;
+}
+.BookingModal .dropdown-check-list.visible .anchor {
+    color: #0094ff;
+}
+.BookingModal .dropdown-check-list .anchor:after {
+    position: absolute;
+    top: 20%;
+    right: 10px;
+    padding: 5px;
+    border-left: 2px solid black;
+    border-top: 2px solid black;
+    content: "";
+    -moz-transform: rotate(-135deg);
+    -ms-transform: rotate(-135deg);
+    -o-transform: rotate(-135deg);
+    -webkit-transform: rotate(-135deg);
+    transform: rotate(-135deg);
+}
+.BookingModal .dropdown-check-list .anchor:active:after {
+    right: 8px;
+    top: 21%;
+}
+
+.BookingModal .dropdown-check-list .items {
+    display: none;
+    padding: 2px;
+    margin: 0;
+    border: 1px solid #ccc;
+    border-top: none;
+    max-height: 200px;
+    overflow-y: scroll;
+}
+.BookingModal .dropdown-check-list .items::-webkit-scrollbar-track {
+	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+	border-radius: 3px;
+    background-color: #F5F5F5;
+}
+.BookingModal .dropdown-check-list .items::-webkit-scrollbar {
+	width: 12px;
+    background-color: #F5F5F5;
+}
+.BookingModal .dropdown-check-list .items::-webkit-scrollbar-thumb {
+	border-radius: 3px;
+	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+    background-color: #555;
+}
+
+.BookingModal .dropdown-check-list.visible .items {
+    display: block;
+}
+
+.BookingModal .dropdown-check-list .items .container {
+    position: relative;
+    display: block;
+    margin: 0px;
+    padding-left: 40px;
+    font-size: 22px;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    background: white;
+    z-index: 1;
+}
+  
+.BookingModal .dropdown-check-list .items .container .text {
+    font-size: 17px;
+    padding: 5px 0px;
+}
+/* Hide the browser's default checkbox */
+.BookingModal .dropdown-check-list .items .container input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+}
+/* Create a custom checkbox */
+.BookingModal .dropdown-check-list .items .container .checkmark {
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    height: 25px;
+    width: 25px;
+    border-radius: 5px;
+    background-color: #eee;
+}
+/* On Hover */
+.BookingModal .dropdown-check-list .items .container:hover input ~ .checkmark {
+    background-color: lightgray;
+}
+/* When the checkbox is checked */
+.BookingModal .dropdown-check-list .items .container input:checked ~ .checkmark {
+    background-color: purple;
+}
+  
+/* Create the checkmark/indicator (hidden when not checked) */
+.BookingModal .dropdown-check-list .items .container .checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+}
+/* Show the checkmark when checked */
+.BookingModal .dropdown-check-list .items .container input:checked ~ .checkmark:after {
+    display: block;
+}
+/* Style the checkmark/indicator */
+.BookingModal .dropdown-check-list .items .container .checkmark:after {
+    left: 9px;
+    top: 5px;
+    width: 8px;
+    height: 13px;
+    border: solid white;
+    border-width: 0 3px 3px 0;
+    -webkit-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    transform: rotate(45deg);
+}

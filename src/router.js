@@ -10,7 +10,6 @@ import Login from './views/2. nonuser views/Login.vue'
 
 //3. user views
 import Profile from './views/3. user views/Profile.vue'
-import Reserve from './views/3. user views/Reserve.vue'
 import Schedule from './views/3. user views/Schedule.vue'
 
 //3. edit views
@@ -39,9 +38,6 @@ export default new Router({
         //3. user views
         {
             path: '/profile', name: 'profile', component: Profile
-        },
-        {
-            path: '/reserve', name: 'reserve', component: Reserve
         },
         {
             path: '/schedule', name: 'schedule', component: Schedule

@@ -6,9 +6,17 @@
 
         <!-- Calendar Navbar -->
         <div class="viewSelector">
-            <a class="viewText" href="JavaScript:void(0)" v-if="load" @click="viewSelected = 0, closeModals()">Daily View</a>
-            <a class="viewText" href="JavaScript:void(0)" v-if="load" @click="viewSelected = 1, closeModals()">Weekly View</a>
-            <a class="viewText" href="JavaScript:void(0)" v-if="load" @click="viewSelected = 2, closeModals()">Monthly View</a>
+            <div class='buttonGroup'>
+                <div class="text" v-if="load" @click="viewSelected = 0, closeModals()">Daily View
+                    <div class="underline" :style="styleUnderline(0)"></div>
+                </div>
+                <div class="text" v-if="load" @click="viewSelected = 1, closeModals()">Weekly View
+                    <div class="underline" :style="styleUnderline(1)"></div>
+                </div>
+                <div class="text" v-if="load" @click="viewSelected = 2, closeModals()">Monthly View
+                    <div class="underline" :style="styleUnderline(2)"></div>
+                </div>
+            </div>
         </div>
 
         <!-- Calendars -->
@@ -109,6 +117,12 @@
                 this.$refs.BookingModal.closeModal();
                 this.$refs.BookedModal.closeModal();
                 this.$refs.BookedDayModal.closeModal();
+            },
+
+            styleUnderline(viewSelected) {
+                if (this.viewSelected == viewSelected)
+                    return 'width: 100%;';
+                return 'width: 0px;';
             }
         },
 

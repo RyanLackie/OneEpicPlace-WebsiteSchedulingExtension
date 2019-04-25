@@ -145,5 +145,14 @@ app.post('/admin_RemoveResource', (req, res) => {
     );
 })
 
+app.post('/admin_RunReport', (req, res) => {
+    model.admin_RunReport(
+        req.body.user_username, req.body.user_password,
+        req.body.users, req.body.locations, req.body.resources,
+        req.body.startDate, req.body.endDate,
+        reportResoult => res.send(reportResoult)
+    );
+})
+
 
 module.exports = app;

@@ -2,17 +2,30 @@
     Views Navbar
 */
 .Schedule .viewSelector {
+    width: 100%;
+    margin-bottom: 20px;
+}
+.Schedule .viewSelector .buttonGroup {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0px auto;
     text-align: center;
-    margin-bottom: 40px;
 }
-.Schedule .viewText {
-    margin: 0px 4%;
-    font-size: 20px;
+.Schedule .viewSelector .buttonGroup .text {
+    display: inline-block;
+    padding: 0px 2%;
     color: black;
+    font-size: 20px;
     text-decoration: none;
+    cursor: pointer;
 }
-.Schedule .viewText:hover {
+.Schedule .viewSelector .text:hover {
     color: gray;
+}
+.Schedule .viewSelector .text .underline {
+    width: 0px;
+    border-bottom: 3px orange solid;
+    transition: width 0.3s;
 }
 
 .Schedule .loadingAnimation {

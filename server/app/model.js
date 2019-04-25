@@ -532,6 +532,60 @@ class Model {
             });
         });
     }
+
+    admin_RunReport(user_username, user_password, users, locations, resources, startDate, endDate, call_back) {
+        this.getAccount(user_username, user_password, fetchedUser => {
+            if (fetchedUser == '409' || fetchedUser.privilege != ADMIN_PRIVILEGE)
+                return call_back('409');
+            
+            this.getBookingsDate(startDate, endDate, bookings => {
+
+                for (var booking = 0; booking < bookings.length; booking++) {
+                    //Users
+                    var keep = false;
+                    for (var user = 0; user < users.length; user++) {
+                        if (bookings[booking].userID == users[user].id) {
+                            keep = true;
+                            break;
+                        }
+                    }
+                    if (!keep) {
+                        bookings.splice(booking, 1);
+                        booking--;
+                        continue;
+                    }
+                    //Locations
+                    keep = false;
+                    for (var loc = 0; loc < locations.length; loc++) {
+                        if (bookings[booking].locationID == locations[loc].id) {
+                            keep = true;
+                            break;
+                        }
+                    }
+                    if (!keep) {
+                        bookings.splice(booking, 1);
+                        booking--;
+                        continue;
+                    }
+                    //Resources
+                    keep = false;
+                    for (var res = 0; res < resources.length; res++) {
+                        if (bookings[booking].resourceID == resources[res].id) {
+                            keep = true;
+                            break;
+                        }
+                    }
+                    if (!keep) {
+                        bookings.splice(booking, 1);
+                        booking--;
+                        continue;
+                    }
+                }
+
+                call_back(bookings);
+            });
+        });
+    }
 }
 
 module.exports = Model;
