@@ -2,7 +2,7 @@
 //const api_root = "http://localhost:81";
 
 //Server Deployment
-const api_root = "http://134.209.119.199:80";
+const api_root = "http://134.209.119.199:81";
 
 var user = null;
 
