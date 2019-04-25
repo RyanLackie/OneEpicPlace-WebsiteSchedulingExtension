@@ -100,7 +100,7 @@
                         <div class="reportCol">Resources</div>
                     </div>
 
-                    <div class="reportRow" v-for="user in this.selectedUsers">
+                    <div class="reportRow" v-for="user in this.selectedUsers" :key="'user:'+user.id">
                         <div class="reportCol">
                             <div class="colText">{{user.username}}</div>
                         </div>
@@ -108,18 +108,18 @@
                             <div class="colText">{{user.hours}}</div>
                         </div>
                         <div class="reportCol">
-                            <div class="barGraph" :style="styleBar(bar, user.activity)" v-for="(bar, index) in user.activity"></div>
+                            <div class="barGraph" :style="styleBar(bar, user.activity)" v-for="(bar, index) in user.activity" :key="'bar1:'+index"></div>
                         </div>
                         <div class="reportCol">
                             <select class='selectMenu'>
-                                <option class="colText" v-for="location in user.locations">
+                                <option class="colText" v-for="location in user.locations" :key="'loc1:'+location.id">
                                     {{getLocationName(location.id) + '   |   hours: ' + location.hours}}
                                 </option>
                             </select>
                         </div>
                         <div class="reportCol">
                             <select class='selectMenu'>
-                                <option class="colText" v-for="resource in user.resources">
+                                <option class="colText" v-for="resource in user.resources" :key="'res1:'+resource.id">
                                     {{getResourceName(resource.id) + '   |   hours: ' + resource.hours}}
                                 </option>
                             </select>
@@ -137,7 +137,7 @@
                         <div class="reportCol">Resources</div>
                     </div>
 
-                    <div class="reportRow" v-for="location in this.selectedLocations">
+                    <div class="reportRow" v-for="location in this.selectedLocations" :key="'location:'+location.id">
                         <div class="reportCol">
                             <div class="colText">{{location.name}}</div>
                         </div>
@@ -145,18 +145,18 @@
                             <div class="colText">{{location.hours}}</div>
                         </div>
                         <div class="reportCol">
-                            <div class="barGraph" :style="styleBar(bar, location.activity)" v-for="(bar, index) in location.activity"></div>
+                            <div class="barGraph" :style="styleBar(bar, location.activity)" v-for="(bar, index) in location.activity" :key="'bar2:'+index"></div>
                         </div>
                         <div class="reportCol">
                             <select class='selectMenu'>
-                                <option class="colText" v-for="user in location.users">
+                                <option class="colText" v-for="user in location.users" :key="'use2:'+user.id">
                                     {{getUserName(user.id) + '   |   hours: ' + location.hours}}
                                 </option>
                             </select>
                         </div>
                         <div class="reportCol">
                             <select class='selectMenu'>
-                                <option class="colText" v-for="resource in location.resources">
+                                <option class="colText" v-for="resource in location.resources" :key="'res2'+resource.id">
                                     {{getResourceName(resource.id) + '   |   hours: ' + resource.hours}}
                                 </option>
                             </select>
@@ -174,7 +174,7 @@
                         <div class="reportCol">Locations</div>
                     </div>
 
-                    <div class="reportRow" v-for="resource in this.selectedResources">
+                    <div class="reportRow" v-for="resource in this.selectedResources" :key="'resource:'+resource.id">
                         <div class="reportCol">
                             <div class="colText">{{resource.name}}</div>
                         </div>
@@ -182,18 +182,18 @@
                             <div class="colText">{{resource.hours}}</div>
                         </div>
                         <div class="reportCol">
-                            <div class="barGraph" :style="styleBar(bar, resource.activity)" v-for="(bar, index) in resource.activity"></div>
+                            <div class="barGraph" :style="styleBar(bar, resource.activity)" v-for="(bar, index) in resource.activity" :key="'bar3::'+index"></div>
                         </div>
                         <div class="reportCol">
                             <select class='selectMenu'>
-                                <option class="colText" v-for="user in resource.users">
+                                <option class="colText" v-for="(user, index) in resource.users" :key="'use3:'+user.id+index">
                                     {{getUserName(user.id) + '   |   hours: ' + user.hours}}
                                 </option>
                             </select>
                         </div>
                         <div class="reportCol">
                             <select class='selectMenu'>
-                                <option class="colText" v-for="location in resource.locations">
+                                <option class="colText" v-for="location in resource.locations" :key="'loc3:'+location.id">
                                     {{getLocationName(location.id) + '   |   hours: ' + location.hours}}
                                 </option>
                             </select>
