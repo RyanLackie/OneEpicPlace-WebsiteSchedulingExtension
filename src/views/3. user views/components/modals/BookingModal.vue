@@ -84,7 +84,7 @@
                             <input type="checkbox" id='selectAllBtn'>
                             <span class="checkmark"></span>
                         </label>
-                        <label class="container" v-for="resource in $parent.resources" :key='resource.id' :value='resource.id'>
+                        <label class="container" v-for="resource in $parent.resources" :key='resource.id'>
                             <div class="text">{{resource.name}}</div>
                             <input type="checkbox" :id="'res'+resource.id">
                             <span class="checkmark"></span>
@@ -163,6 +163,18 @@
                 var date = this.date.toJSON().slice(0, 10);
                 var locationID = document.getElementById('BookingModal-Location').value;
                 var locationName = this.$parent.locations[document.getElementById('BookingModal-Location').value].name;
+                
+                var resourceID = '';
+                for (var i = 0; i < this.$parent.resources.length; i++) {
+                    if (document.getElementById('res'+this.$parent.resources[i].id) != null && document.getElementById('res'+this.$parent.resources[i].id).checked) {
+                        resourceID += this.$parent.resources[i].id + ',';
+                    }
+                }
+                if (resourceID == '')
+                    resourceID = '0';
+                else
+                    resourceID = resourceID.substring(0, resourceID.length - 1);
+                
                 var title = document.getElementById('BookingModal-Title').value;          
                 var description = document.getElementById('BookingModal-Description').value;
                 var startTime = document.getElementById('BookingModal-StartTime').value;
@@ -170,7 +182,7 @@
                 var bookingColor = this.selectedColor;
                 var noiseLevel = document.getElementById('BookingModal-NoiseSlider').value;
                 
-                api.insertBooking(date, locationID, locationName, title, description, startTime, endTime, bookingColor, noiseLevel).then(bookingResult => {
+                api.insertBooking(date, locationID, locationName, resourceID, title, description, startTime, endTime, bookingColor, noiseLevel).then(bookingResult => {
                     if (bookingResult == '100') {
                         this.closeModal();
                         this.$parent.checkBookings();
@@ -280,7 +292,6 @@
             },
             selectAll() {
                 var checked = document.getElementById('selectAllBtn').checked;
-
                 for (var i = 0; i < this.$parent.resources.length; i++) {
                     document.getElementById('res'+this.$parent.resources[i].id).checked = checked;
                 }

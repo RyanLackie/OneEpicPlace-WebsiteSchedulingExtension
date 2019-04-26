@@ -42,10 +42,10 @@ export function getResources() {
 export function getCalendarData() {
     return myFetch(api_root + "/app/getCalendarData", {});
 }
-export function insertBooking(date, locationID, locationName, title, description, startTime, endTime, bookingColor, noiseLevel) {
+export function insertBooking(date, locationID, locationName, resourceID, title, description, startTime, endTime, bookingColor, noiseLevel) {
     var userID = user.id, username = user.username, password = user.password;
     return myFetch(api_root + "/app/insertBooking", {
-        date, userID, username, password, locationID, locationName, title, description, startTime, endTime, bookingColor, noiseLevel
+        date, userID, username, password, locationID, locationName, resourceID, title, description, startTime, endTime, bookingColor, noiseLevel
     });
 }
 //Must be updated to be secure (For presentation only)

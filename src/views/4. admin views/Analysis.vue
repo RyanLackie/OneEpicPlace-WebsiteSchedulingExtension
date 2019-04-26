@@ -66,10 +66,8 @@
                 </div>
                 
                 <div class="inputContainer inputContainerRight">
-                    <input type='date' id='startDate' class="form-control date leftDate" placeholder="Start Date: "
-                    :value="startDate">
-                    <input type='date' id='endDate' class="form-control date rightDate" placeholder="End Date: " 
-                    :value="endDate">
+                    <input type='date' id='startDate' class="form-control date leftDate" :value="startDate">
+                    <input type='date' id='endDate' class="form-control date rightDate" :value="endDate">
                 </div>
                 
             </div>
@@ -93,7 +91,7 @@
 
                 <div class='reportContainer'>
                     <div class="topRow">
-                        <div class="reportCol">Username</div>
+                        <div class="reportCol">Users</div>
                         <div class="reportCol">Hours Booked</div>
                         <div class="reportCol">Activity</div>
                         <div class="reportCol">Locations</div>
@@ -119,7 +117,7 @@
                         </div>
                         <div class="reportCol">
                             <select class='selectMenu'>
-                                <option class="colText" v-for="resource in user.resources" :key="'res1:'+resource.id">
+                                <option class="colText" v-for="(resource, index) in user.resources" :key="'res1:'+index">
                                     {{getResourceName(resource.id) + '   |   hours: ' + resource.hours}}
                                 </option>
                             </select>
@@ -130,7 +128,7 @@
 
                 <div class='reportContainer'>
                     <div class="topRow">
-                        <div class="reportCol">Location</div>
+                        <div class="reportCol">Locations</div>
                         <div class="reportCol">Hours Booked</div>
                         <div class="reportCol">Activity</div>
                         <div class="reportCol">Users</div>
@@ -156,7 +154,7 @@
                         </div>
                         <div class="reportCol">
                             <select class='selectMenu'>
-                                <option class="colText" v-for="resource in location.resources" :key="'res2'+resource.id">
+                                <option class="colText" v-for="(resource, index) in location.resources" :key="'res2'+index">
                                     {{getResourceName(resource.id) + '   |   hours: ' + resource.hours}}
                                 </option>
                             </select>
@@ -167,7 +165,7 @@
 
                 <div class='reportContainer'>
                     <div class="topRow">
-                        <div class="reportCol">Location</div>
+                        <div class="reportCol">Resources</div>
                         <div class="reportCol">Hours Booked</div>
                         <div class="reportCol">Activity</div>
                         <div class="reportCol">Users</div>
@@ -413,14 +411,16 @@
                                         users[user].locations[users[user].locations.length] = {id: bookings[booking].locationID, hours: hours};
                                     //Resources
                                     var foundResource = false;
-                                    for (var iii = 0; iii < users[user].resources.length; iii++) {
-                                        if (users[user].resources[iii].id == bookings[booking].resourceID) {
-                                            foundResource = true;
-                                            users[user].resources[iii].hours += Math.round( (hours + mins/60) * 100 ) / 100;
+                                    for (var j = 0; j < bookings[booking].resourceID.length; j++) {
+                                        for (var jj = 0; jj < users[user].resources.length; jj++) {
+                                            if (bookings[booking].resourceID[j] == users[user].resources[jj].id) {
+                                                foundResource = true;
+                                                users[user].resources[jj].hours += Math.round( (hours + mins/60) * 100 ) / 100;
+                                            }
                                         }
+                                        if (!foundResource)
+                                            users[user].resources[users[user].resources.length] = {id: bookings[booking].resourceID[j], hours: hours};
                                     }
-                                    if (!foundResource)
-                                        users[user].resources[users[user].resources.length] = {id: bookings[booking].resourceID, hours: hours};
                                 }
                             }
                             
@@ -447,14 +447,16 @@
                                         locations[loc].users[locations[loc].users.length] = {id: bookings[booking].userID, hours: hours};
                                     //Resources
                                     var foundResource = false;
-                                    for (var iii = 0; iii < locations[loc].resources.length; iii++) {
-                                        if (locations[loc].resources[iii].id == bookings[booking].resourceID) {
-                                            foundResource = true;
-                                            locations[loc].resources[iii].hours += Math.round( (hours + mins/60) * 100 ) / 100;
+                                    for (var j = 0; j < bookings[booking].resourceID.length; j++) {
+                                        for (var jj = 0; jj < locations[loc].resources.length; jj++) {
+                                            if (bookings[booking].resourceID[j] == locations[loc].resources[jj].id) {
+                                                foundResource = true;
+                                                locations[loc].resources[jj].hours += Math.round( (hours + mins/60) * 100 ) / 100;
+                                            }
                                         }
+                                        if (!foundResource)
+                                            locations[loc].resources[locations[loc].resources.length] = {id: bookings[booking].resourceID[j], hours: hours};
                                     }
-                                    if (!foundResource)
-                                        locations[loc].resources[locations[loc].resources.length] = {id: bookings[booking].resourceID, hours: hours};
                                 }
                             }
 
@@ -536,7 +538,6 @@
             getResourceName(id) {
                 if (id == 0)
                     return 'None'
-                
                 for (var i = 0; i < this.resources.length; i++) {
                     if (this.resources[i].id == id)
                         return this.resources[i].name;

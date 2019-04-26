@@ -27,15 +27,6 @@
 .Analysis .rightDate {
     float: right;
 }
-.Analysis input[type="date"]:before {
-    content: attr(placeholder) !important;
-    color: #aaa;
-    margin-right: 10px;
-  }
-.Analysis input[type="date"]:focus:before,
-.Analysis input[type="date"]:valid:before {
-    content: "";
-}
 
 
 .Analysis .dropdown-check-list {

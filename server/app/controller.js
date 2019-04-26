@@ -41,8 +41,8 @@ app.post('/getCalendarData', (req, res) => {
 app.post('/insertBooking', (req, res) => {
     model.insertBooking(
         req.body.date, req.body.userID, req.body.username, req.body.password,
-        req.body.locationID, req.body.locationName, req.body.title, 
-        req.body.description, req.body.startTime, req.body.endTime,
+        req.body.locationID, req.body.locationName, req.body.resourceID,
+        req.body.title, req.body.description, req.body.startTime, req.body.endTime,
         req.body.bookingColor, req.body.noiseLevel,
         bookingResult => res.send(bookingResult)
     );

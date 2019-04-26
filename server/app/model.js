@@ -167,7 +167,7 @@ class Model {
         });
     }
 
-    insertBooking(date, userID, username, password, locationID, locationName, title, description, startTime, endTime, bookingColor, noiseLevel, call_back) {
+    insertBooking(date, userID, username, password, locationID, locationName, resourceID, title, description, startTime, endTime, bookingColor, noiseLevel, call_back) {
         console.log("#################insertBooking()#################");
 
         //Check if user is valid
@@ -195,12 +195,12 @@ class Model {
             conn.query('SELECT * FROM bookings WHERE date = ' + mysql.escape(date), (err, result) => {
                 if (err) throw err;
                 
-                for (var index2 = 0; index2 < result.length; index2++) {
+                for (var index = 0; index < result.length; index++) {
                     var checkStartTime = new Date();
-                    checkStartTime.setHours(result[index2].startTime.split(":")[0], result[index2].startTime.split(":")[1], 0, 0)
+                    checkStartTime.setHours(result[index].startTime.split(":")[0], result[index].startTime.split(":")[1], 0, 0)
                     
                     var checkEndTime = new Date();
-                    checkEndTime.setHours(result[index2].endTime.split(":")[0], result[index2].endTime.split(":")[1], 0, 0);
+                    checkEndTime.setHours(result[index].endTime.split(":")[0], result[index].endTime.split(":")[1], 0, 0);
                     
                     //.getTime() is used so that there is numarical data to compair
                     var check1 = checkStartTime.getTime() < insertStartTime.getTime() && checkEndTime.getTime() > insertStartTime.getTime();
@@ -224,7 +224,7 @@ class Model {
                 }
 
                 //Insert booking
-                var sql = "INSERT INTO bookings (date, userID, username, locationID, locationName, title, description, startTime, endTime, bookingColor, noiseLevel) VALUES ('"+date+"', '"+userID+"', '"+username+"', '"+locationID+"', '"+locationName+"', '"+title+"', '"+description+"', '"+startTime+"', '"+endTime+"', '"+bookingColor+"', '"+noiseLevel+"')";
+                var sql = "INSERT INTO bookings (date, userID, username, locationID, locationName, resourceID, title, description, startTime, endTime, bookingColor, noiseLevel) VALUES ('"+date+"', '"+userID+"', '"+username+"', '"+locationID+"', '"+locationName+"', '"+resourceID+"', '"+title+"', '"+description+"', '"+startTime+"', '"+endTime+"', '"+bookingColor+"', '"+noiseLevel+"')";
                 conn.query(sql, function(err, result) {
                     if (err) throw err;
                     console.log("Booking " + result.insertId + " inserted: " + locationName + " at " + startTime + " to " + endTime);
@@ -567,11 +567,18 @@ class Model {
                     }
                     //Resources
                     keep = false;
-                    for (var res = 0; res < resources.length; res++) {
-                        if (bookings[booking].resourceID == resources[res].id) {
-                            keep = true;
-                            break;
+                    console.log(bookings[booking].resourceID);
+                    bookings[booking].resourceID = bookings[booking].resourceID.split(',');             //put into array format
+                    for (var res1 = 0; res1 < resources.length; res1++) {                               //filtered resources
+                        for (var res2 = 0; res2 < bookings[booking].resourceID.length; res2++) {        //found resources
+                            console.log(bookings[booking].resourceID[res2] +'=='+ resources[res1].id);
+                            if (bookings[booking].resourceID[res2] == resources[res1].id) {             //if found resource is apart of the filtered condition
+                                keep = true;
+                                break;
+                            }
                         }
+                        if(keep)
+                            break;
                     }
                     if (!keep) {
                         bookings.splice(booking, 1);
