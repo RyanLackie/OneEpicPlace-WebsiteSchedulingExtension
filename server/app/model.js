@@ -567,11 +567,9 @@ class Model {
                     }
                     //Resources
                     keep = false;
-                    console.log(bookings[booking].resourceID);
                     bookings[booking].resourceID = bookings[booking].resourceID.split(',');             //put into array format
                     for (var res1 = 0; res1 < resources.length; res1++) {                               //filtered resources
                         for (var res2 = 0; res2 < bookings[booking].resourceID.length; res2++) {        //found resources
-                            console.log(bookings[booking].resourceID[res2] +'=='+ resources[res1].id);
                             if (bookings[booking].resourceID[res2] == resources[res1].id) {             //if found resource is apart of the filtered condition
                                 keep = true;
                                 break;
