@@ -175,12 +175,20 @@
                 else
                     resourceID = resourceID.substring(0, resourceID.length - 1);
                 
-                var title = document.getElementById('BookingModal-Title').value;          
-                var description = document.getElementById('BookingModal-Description').value;
+                var title = '';
+                if (document.getElementById('BookingModal-Title'))
+                    title = document.getElementById('BookingModal-Title').value;
+                var description = '';
+                if (document.getElementById('BookingModal-Description'))
+                    description = document.getElementById('BookingModal-Description').value;
+                
                 var startTime = document.getElementById('BookingModal-StartTime').value;
                 var endTime = document.getElementById('BookingModal-EndTime').value;
                 var bookingColor = this.selectedColor;
-                var noiseLevel = document.getElementById('BookingModal-NoiseSlider').value;
+                
+                var noiseLevel = 0;
+                if (document.getElementById('BookingModal-NoiseSlider'))
+                    noiseLevel = document.getElementById('BookingModal-NoiseSlider').value;
                 
                 api.insertBooking(date, locationID, locationName, resourceID, title, description, startTime, endTime, bookingColor, noiseLevel).then(bookingResult => {
                     if (bookingResult == '100') {
