@@ -22,14 +22,13 @@ This application has business tailored features such as allowing clients to list
 
 ## Tech ##
 
-The applicationuses HTML, CSS, JavaScript, Vue.js, Express.js, Node.js, and MySQL. 
-
+Application:
 - HTML – Used to structure the web pages.
 -	CSS – Used to style the HTML.
 -	JavaScript – Used to make the pages interactive.
--	Vue.js – Used to structure the JavaScript.
--	Express.js – A JavaScript backend framework to run on a server that accepts requests and responds back to allow the API to interact with the server to interact with the database.
--	Node.js – A runtime to run the Express.js framework inside of.
+-	Vue – Used to structure the JavaScript.
+-	Express – A JavaScript backend framework to run on a server that accepts requests and responds back to allow the API to interact with the server to interact with the database.
+-	Node – A runtime to run the Express.js framework inside of.
 -	MySQL – Used to statically store information for later reference.
 
 Cloud Server (LEMP Stack):
