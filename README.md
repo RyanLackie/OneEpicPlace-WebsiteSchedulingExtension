@@ -1,43 +1,49 @@
 # One Epic Place Website Extension
 
-## User Levels (Listed From High To Low)
-- Admin
-  - Public profile
-  - Stat analysis
-  - Ability to edit all information
-- Staff
-  - Public profile
-  - Stat analysis
-  - Ability to edit some information
-- Member
-  - Public profile
-  - Ability to edit their information and room scheduling
-  - Spend money to continue membership and add points
-- Profile Holder
-  - Public profile
-  - Ability to edit their information and room scheduling
-  - Spend money to rent a room
-  - Spend money to start a membership
-- Guest
-  - Can create a profile
-  - Spend money to rent a room
-  - Spend money to start a membership
+## About ##
+The One EPIC Place Scheduling Web Application is a web-based scheduler to help both the clients and the staff. 
+The clients can use the application to view a schedule to see the availability of locations and to rent rooms from the business using a friendly intuitive interface.
+The staff can use the application to manage the rented locations by holding administrator privileges allowing for editing and removal of client made bookings. The application also serves as a data analysis platform to view data on the clients, locations, and provided resources that they are renting to help price the services and better accommodate the clients.
 
-## Web Pages (Member Example - For Visualization)
-- First Page (After Clicking Link From Normal Website)
-  - Login/Sign-up
-- Second Page (After Logining In)
-  - Profile Page - Active Tab - (Everything Can Be Switched Public Or Private)
-    - User Picture/Icon
-    - User's Public Name
-    - User's Contact Info
-  - Scheduling Page - Second Tab - __(High Priority - Bare Bones First)__
-    - Select Building
-      - (Clickable Icons For Each?)
-    - Selectable Date
-      - (Clickable Calendar?)
-    - Selectable Time
-      - (Slider?)
-    - View If A Specific Room Is Available Or Not Based On Previous Information 
-      - (Floor Plan With Updating Room Images If They Are Taken Or Not?) 
-      - (Icon For Room Could Have A Solid Red Outline If The Booking Was Listed As High Noise Level?)
+  - Allows users to interact with the application API with restricted privileges:
+    -	View the renting availability.
+    -	Book locations at available times.
+    -	View offered accommodations (locations and resources).
+
+  -	Let staff hold administrator level privileges in the site letting them:
+    -	Create accounts.
+    -	View the renting availability.
+    -	View and edit booking data with sorting functions.
+    -	View and edit client accounts.
+    -	View and edit offered accommodations (locations and resources).
+
+This Scheduling Application is being made as a competitor against YArooms, another web-based scheduler that holds many of the same features as this application but does not have as many data analytic features as this application.
+This application has business tailored features such as allowing clients to list the noise level of their meeting as well making it a more suitable choice for the business.
+
+## Tech ##
+
+The applicationuses HTML, CSS, JavaScript, Vue.js, Express.js, Node.js, and MySQL. 
+
+- HTML – Used to structure the web pages.
+-	CSS – Used to style the HTML.
+-	JavaScript – Used to make the pages interactive.
+-	Vue.js – Used to structure the JavaScript.
+-	Express.js – A JavaScript backend framework to run on a server that accepts requests and responds back to allow the API to interact with the server to interact with the database.
+-	Node.js – A runtime to run the Express.js framework inside of.
+-	MySQL – Used to statically store information for later reference.
+
+Cloud Server (LEMP Stack):
+-	Linux – Operating system to manage the hardware and to run the other software.
+-	Nginx – A web server that is run to host the application.
+-	MySQL – A relational database management database system.
+-	PHP – A general purpose programming language installed to allow installed software to compile.
+-	phpMyAdmin – A PHP based UI to assist in interacting with the MySQL Database.
+
+## Design ##
+
+![alt text](./git/Design.png)
+
+
+## Architecture ##
+
+![alt text](./git/Architecture.png)
