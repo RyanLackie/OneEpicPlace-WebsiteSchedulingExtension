@@ -41,7 +41,7 @@
 
                         <!-- Bookings -->
                         <div class="booking" v-for="booking in sortBookingsFor(week, day)" :key="'booking'+booking.id" @click='viewBookings(week, day)'>
-                            <div class="timeBox" :style='"background-color:"+booking.bookingColor'>
+                            <div class="timeBox" :style='"background-color:"+$parent.getLocation(booking.locationID).color'>
                                 <div class="time">{{fillBookingStartTime(booking)}}</div>
                             </div>
                             <div v-if="booking.noiseLevel != 0" class="icon" :style='styleIcon(booking)'></div>

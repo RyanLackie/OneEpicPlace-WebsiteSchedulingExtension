@@ -13,6 +13,8 @@
 <style lang="scss">
     //Bootstrap
     @import "../node_modules/bootstrap/scss/bootstrap.scss";
+    //Personal CSS
+    @import "./components/css/PopUpModal.css";
     //Fonts
     @import url('https://fonts.googleapis.com/css?family=Roboto');
     @import url('https://fonts.googleapis.com/css?family=Playfair+Display');

@@ -25,9 +25,9 @@
         <MonthlyViewCalendar ref="MonthlyViewCalendar" v-if="viewSelected == 2 && load"></MonthlyViewCalendar>
 
         <!-- Modals -->
+        <BookedDayModal ref="BookedDayModal"></BookedDayModal>
         <BookingModal ref="BookingModal"></BookingModal>
         <BookedModal ref="BookedModal"></BookedModal>
-        <BookedDayModal ref="BookedDayModal"></BookedDayModal>
 
     </div>
 </template>
@@ -46,11 +46,10 @@
     import MonthlyViewCalendar from './components/calendars/MonthlyViewCalendar.vue';
 
     //Modals
+    import BookedDayModal from './components/modals/BookedDayModal.vue';
     import BookingModal from './components/modals/BookingModal.vue';
     import BookedModal from './components/modals/BookedModal.vue';
-    import BookedDayModal from './components/modals/BookedDayModal.vue';
     
-
     export default {
         components: {
             //Calendars
@@ -59,9 +58,9 @@
             MonthlyViewCalendar,
 
             //Modals
+            BookedDayModal,
             BookingModal,
-            BookedModal,
-            BookedDayModal
+            BookedModal
         },
 
         data() {
@@ -94,6 +93,8 @@
                 ],
                 resources: [],
 
+                users: [],
+
                 load: false
             }
         },
@@ -123,7 +124,14 @@
                 if (this.viewSelected == viewSelected)
                     return 'width: 100%;';
                 return 'width: 0px;';
-            }
+            },
+
+            getLocation(locationID) {
+                for (var i = 0; i < this.locations.length; i++) {
+                    if (this.locations[i].id == locationID)
+                        return this.locations[i];
+                }
+            },
         },
 
         mounted() {
@@ -131,6 +139,32 @@
                 this.locations = fetchedCalendarData[0];
                 this.resources = fetchedCalendarData[1];
                 this.load = true;
+            });
+            api.admin_GetAllUsers().then(fetchedUsers => {
+                var admin = [];
+                var tier5Member = [];
+                var tier4Member = [];
+                var tier3Member = [];
+                var tier2Member = [];
+                var tier1Member = [];
+                var nonMember = [];
+                for (var i = 0; i < fetchedUsers.length; i++) {
+                    if (fetchedUsers[i].memberLevel == 6)
+                        admin.push(fetchedUsers[i]);
+                    else if (fetchedUsers[i].memberLevel == 5)
+                        tier5Member.push(fetchedUsers[i]);
+                    else if (fetchedUsers[i].memberLevel == 4)
+                        tier4Member.push(fetchedUsers[i]);
+                    else if (fetchedUsers[i].memberLevel == 3)
+                        tier3Member.push(fetchedUsers[i]);
+                    else if (fetchedUsers[i].memberLevel == 2)
+                        tier2Member.push(fetchedUsers[i]);
+                    else if (fetchedUsers[i].memberLevel == 1)
+                        tier1Member.push(fetchedUsers[i]);
+                    else if (fetchedUsers[i].memberLevel == 0)
+                        nonMember.push(fetchedUsers[i]);
+                }
+                this.users = admin.concat(tier5Member).concat(tier4Member).concat(tier3Member).concat(tier2Member).concat(tier1Member).concat(nonMember);
             });
         }
     }

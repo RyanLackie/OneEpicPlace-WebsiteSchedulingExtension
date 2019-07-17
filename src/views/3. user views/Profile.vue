@@ -3,25 +3,50 @@
 
         <form class="form-container" id="profileForm">
 
-            <div class="label">Username</div>
-            <input type="text" class="input-box form-control" id="username" placeholder="What would you like to be called?" required>
+            <div class="picture" id='picture'></div>
             
-            <div class="label">Name</div>
-            <div class="form-inline">
-                <input type="text" class="input-box-sm-left form-control" id="firstName" placeholder="First Name">
-                <input type="text" class="input-box-sm-right form-control" id="lastName" placeholder="Last Name">
+            <div class="label-lg">ABOUT</div>
+            <div class="leftContainer">
+                <div class="label">First Name</div>
+                <input type="text" class="input-box form-control" id="firstName" placeholder="John">
+            </div>
+            <div class="rightContainer">
+                <div class="label">Last Name</div>
+                <input type="text" class="input-box form-control" id="lastName" placeholder="Smith">
             </div>
 
-            <div class="label">Occupation</div>
-            <input type="text" class="input-box form-control" id="occupation" placeholder="What do you do?">
+            <div class="label">Company Name</div>
+            <input type="text" class="input-box form-control" id="companyName" placeholder="What do you do / Who do you work for?">
 
-            <div class="label">Description</div>
-            <textarea type="text" class="input-box form-control" id="description" placeholder="Tell Everyone About yourself!"></textarea>
+            <div class="label">Bio</div>
+            <textarea type="text" class="input-box form-control" id="bio" placeholder="Tell Us About yourself!"></textarea>
 
-            <div class="label">Account Info</div>
-            <div class="form-inline">
-                <input type="text" class="input-box-sm-left form-control" id="email" placeholder="Email" required>
-                <input type="text" class="input-box-sm-right form-control" id="password" placeholder="Password" required>
+            <div class="sectionBreak"></div>
+
+            <div class="label-lg">CONTACT INFO</div>
+            <div class="leftContainer">
+                <div class="label">Email</div>
+                <input type="email" class="input-box form-control" id="email" placeholder="exmaple@domain.com">
+            </div>
+            <div class="rightContainer">
+                <div class="label">Phone Number</div>
+                <input type="text" class="input-box form-control" id="phoneNumber" placeholder="111-222-3333">
+            </div>
+
+            <div class="sectionBreak"></div>
+
+            <div class="label-lg">ACCOUNT INFO</div>
+            <div class="leftContainer">
+                <div class="label">Username
+                    <span class="required">*</span>
+                </div>
+                <input type="text" class="input-box form-control" id="username" required>
+            </div>
+            <div class="rightContainer">
+                <div class="label">Password
+                    <span class="required">*</span>
+                </div>
+                <input type="text" class="input-box form-control" id="password" required>
             </div>
 
             <button class="btn btn-outline-primary formButton" type='submit'>Submit</button>
@@ -42,32 +67,37 @@
     export default {
         methods: {
             fillProfile() {
-                api.getThisAccount().then(user => {
-                    if (user == '409')
-                        this.$parent.$refs.Header.logout();
-                    else
-                        document.getElementById('username').value = user.username;
-                        document.getElementById('firstName').value = user.firstName;
-                        document.getElementById('lastName').value = user.lastName;
-                        document.getElementById("occupation").value = user.occupation;
-                        document.getElementById('description').value = user.description;
-                        document.getElementById('email').value = user.email;
-                        document.getElementById('password').value = user.password;
-                });
+                api.getAccount_local().then(
+                    user => {
+                        if (user == '404')
+                            this.$parent.$refs.Header.logout();
+                        else {
+                            //document.getElementById('picture').value = user.picture;
+                            document.getElementById('firstName').value = user.firstName;
+                            document.getElementById('lastName').value = user.lastName;
+                            document.getElementById("companyName").value = user.companyName;
+                            document.getElementById('bio').value = user.bio;
+                            document.getElementById('email').value = user.email;
+                            document.getElementById('phoneNumber').value = user.phoneNumber;
+                            document.getElementById('username').value = user.username;
+                            document.getElementById('password').value = user.password;
+                        }
+                    }
+                );
             },
 
             updateProfile(event) {
-                //Handle Update Submit
-                var username = document.getElementById('username').value;
+                var picture = "";// = document.getElementById('picture').value;
                 var firstName = document.getElementById('firstName').value;
                 var lastName = document.getElementById('lastName').value;
-                var occupation = document.getElementById('occupation').value;
-                var description = document.getElementById('description').value;
+                var companyName = document.getElementById("companyName").value;
+                var bio = document.getElementById('bio').value;
                 var email = document.getElementById('email').value;
+                var phoneNumber = document.getElementById('phoneNumber').value;
+                var username = document.getElementById('username').value;
                 var password = document.getElementById('password').value;
                 
-                //Update user
-                api.updateProfile(email, username, password, firstName, lastName, occupation, description).then(
+                api.updateAccount(picture, firstName, lastName, companyName, bio, email, phoneNumber, username, password).then(
                     updateResult => {
                         if (updateResult == '409')
                             this.$parent.$refs.Header.logout();
@@ -75,15 +105,12 @@
                             this.fillProfile();
                             alert('Profile updated');
 
-                            if (email != updateResult.email)
-                                alert('Email is taken');
                             if (username != updateResult.username)
                                 alert('Username is taken');
                         }
                     }
                 );
 
-                //Prevent form submit refresh
                 event.preventDefault();
             }
         },

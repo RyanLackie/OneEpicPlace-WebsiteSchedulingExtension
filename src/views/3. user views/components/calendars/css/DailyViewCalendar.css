@@ -171,25 +171,26 @@
     background-color: black;  /* Default color if error occurs */
     cursor: pointer;
 }
-.DailyViewCalendar .calendar .innerSection .calendarRow .booking .icon {
-    float: left;
-    width: 20px;
-    height: 20px;
-    margin-top: 2px;
-    margin-left: 2px;
-    border: none;
-    text-decoration: none;
-    background-size: 70%;
-    background-repeat: no-repeat;
-    background-position: center;
-}
 .DailyViewCalendar .calendar .innerSection .calendarRow .booking .title {
+    display: inline-block;
     width: calc(100% - 5px);
     margin-left: 5px;
     overflow: hidden;
     text-overflow: ellipsis;
     text-transform: capitalize;
     color: white;
+}
+.DailyViewCalendar .calendar .innerSection .calendarRow .booking .noiseIcon {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    margin-left: 2px;
+    margin-bottom: 2px;
+    border: none;
+    text-decoration: none;
+    background-size: 70%;
+    background-repeat: no-repeat;
+    background-position: center;
 }
 .DailyViewCalendar .calendar .innerSection .calendarRow .booking .name {
     position: absolute;

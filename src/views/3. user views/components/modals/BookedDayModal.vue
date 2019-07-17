@@ -1,5 +1,5 @@
 <template>
-    <div class="BookedDayModal" id="BookedDayModal" aria-hidden="true">
+    <div class="PopUpModal BookedDayModal" id="BookedDayModal" aria-hidden="true">
                 
         <div class="modal-header">
             <div class="text">Bookings</div>
@@ -10,22 +10,21 @@
             </button>
         </div>
 
-        <div class="booking" v-for="booking in bookings" :key="'booking'+booking.id" :id="'booking'+booking.id">
+        <div class="booking" v-for="booking in bookings" :key="'booking'+booking.id" :id="'booking'+booking.id"
+        :style='"background-color:"+$parent.getLocation(booking.locationID).color+";"' @click="openBookedModal(booking)">
             <div class="line">
-                <div class="details">{{getTime(booking.startTime) + ' - ' + getTime(booking.endTime) + '  /  ' + booking.locationName}}</div>
+                {{booking.username}}
             </div>
             <div class="line">
-                <div class="color" :style='"background-color:"+booking.bookingColor+";"'></div>
+                <div class="time">{{getTime(booking.startTime) + ' - ' + getTime(booking.endTime)}}</div>
                 <div v-if='booking.noiseLevel != 0' class="icon" :style='styleIcon(booking)'></div>
-                <div class="title">{{booking.title}}</div>
             </div>
             <div class="line">
-                <div class="name">{{booking.username}}</div>
+                {{$parent.getLocation(booking.locationID).name}}
             </div>
-            
         </div>
 
-        <button class="btn btn-secondary closeBtn" type="button" @click="closeModal()">Close</button>
+        <button class="btn btn-secondary centerBtn" type="button" id="BookedDayModal-CloseBtn" @click="closeModal()">Close</button>
 
     </div>
 </template>
@@ -51,6 +50,9 @@
                 //Modal Header
                 document.getElementById('BookedDayModal-HeaderDate').innerHTML = this.getDayOfTheWeek(this.date)+', '+this.getMonthName(this.date)+' '+this.date.getDate()+' '+this.date.getFullYear();
 
+                //Height
+                this.resizeModal();
+                
                 //Scroll
                 document.getElementById('BookedDayModal').scrollTo(0, 0);
 
@@ -60,6 +62,15 @@
             closeModal() {
                 document.getElementById("BookedDayModal").style.opacity = "0.0";
                 document.getElementById("BookedDayModal").style.visibility = "hidden";
+            },
+
+            resizeModal() {
+                var distance = Math.min(200 + this.bookings.length * 100, window.innerHeight*0.9);
+                document.getElementById('BookedDayModal').style.height = distance + 'px';
+            },
+
+            openBookedModal(booking) {
+                this.$parent.$refs.BookedModal.openModal(booking);
             },
 
             getDayOfTheWeek(date) {
@@ -110,13 +121,20 @@
             },
 
             styleIcon(booking) {
-                var volumeOn = require('../../../../assets/volumeOn-black.png');
-                var volumeOff = require('../../../../assets/volumeOff-black.png');
                 if (booking.noiseLevel > 0)
-                    return 'background-image: url('+volumeOn+');';
+                    return 'background-image: url('+require('../../../../assets/volumeOn-black.png')+');';
                 else if (booking.noiseLevel < 0)
-                    return 'background-image: url('+volumeOff+');';
-            },
+                    return 'background-image: url('+require('../../../../assets/volumeOff-black.png');+');';
+            }
+        },
+
+        mounted() {
+            //Start page resize listener
+            window.addEventListener('resize', this.resizeModal);
+        },
+        beforeDestroy() {
+            //End page resize listener
+            window.removeEventListener('resize', this.resizeModal);
         }
     }
 </script>

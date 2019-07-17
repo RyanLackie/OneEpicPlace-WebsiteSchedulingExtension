@@ -37,10 +37,11 @@
 
                 <!-- Calendar Rows -->
                 <div class="calendarRow" v-for="(location, row) in locations" :key="'row'+row" :style='styleDeskElements(location)'>
+                    
                     <!-- Booking Blocks -->
-                    <div class="booking" v-for="booking in bookings" :key="'booking'+booking.id" :style='styleBooking(location.id, booking)' @click='bookingClicked(booking)'>
-                        <div v-if="location.type == 'room' && booking.noiseLevel != 0" class="icon" :style='styleIcon(booking)'></div>
+                    <div class="booking" v-for="booking in bookings" :key="'booking'+booking.id" :style='styleBooking(location, booking)' @click='bookingClicked(booking)'>
                         <div v-if="location.type == 'room'" class="title" :style='styleTitle(booking)'>{{booking.title}}</div>
+                        <div v-if="location.type == 'room' && booking.noiseLevel != 0" class="noiseIcon" :style='styleIcon(booking)'></div>
                         <div v-if="location.type == 'room'" class="name">{{booking.username}}</div>
                         <div v-if="location.type == 'desk'" class="centerText">{{booking.username}}</div>
                     </div>
@@ -104,10 +105,16 @@
             },
             decDate: function() {
                 this.date = new Date(this.date.setDate(this.date.getDate() - 1));
+                clearTimeout(this.timeHighlighterTimeout);
+                this.timeHighlighterDelay = 0;
+                this.styleTimeHighlighterLoop();
                 this.checkBookings();
             },
             incDate: function() {
                 this.date = new Date(this.date.setDate(this.date.getDate() + 1));
+                clearTimeout(this.timeHighlighterTimeout);
+                this.timeHighlighterDelay = 0;
+                this.styleTimeHighlighterLoop();
                 this.checkBookings();
             },
 
@@ -130,9 +137,15 @@
                 var THIS = this;
                 this.timeHighlighterTimeout = setTimeout(function() {
                     THIS.timeHighlighterDelay = (60 - new Date().getSeconds()) * 1000;
-                    
+
+                    var currentDate = new Date();
+                    currentDate.setHours(0, 0, 0, 0);
+                    var selectedDate = new Date(THIS.date);
+                    selectedDate.setHours(0, 0, 0, 0);
+
                     var currentHour = parseInt(new Date().getHours());
                     var currentMin = parseInt(new Date().getMinutes());
+                    
                     for (var row = 0; row < THIS.locations.length; row++) {
                         for (var timeSlot = 1; timeSlot <= THIS.hours.length*12; timeSlot++) {
                             var timeSlotHour = parseInt((timeSlot-1)/12, 10) + parseInt(THIS.hours[0].time.substring(0, THIS.hours[0].time.length - 2));
@@ -140,15 +153,17 @@
                             
                             document.getElementById('timeSlot'+row+':'+timeSlot).style.backgroundColor = 'white';
                             
-                            if (timeSlotHour == currentHour) {
-                                if (currentMin >= 0 && currentMin < 15 && timeSlotMin >= 0 && timeSlotMin < 15)
-                                    document.getElementById('timeSlot'+row+':'+timeSlot).style.backgroundColor = 'Gainsboro';
-                                else if (currentMin >= 15 && currentMin < 30 && timeSlotMin >= 15 && timeSlotMin < 30)
-                                    document.getElementById('timeSlot'+row+':'+timeSlot).style.backgroundColor = 'Gainsboro';
-                                else if (currentMin >= 30 && currentMin < 45 && timeSlotMin >= 30 && timeSlotMin < 45)
-                                    document.getElementById('timeSlot'+row+':'+timeSlot).style.backgroundColor = 'Gainsboro';
-                                else if (currentMin >= 45 && currentMin < 60 && timeSlotMin >= 45 && timeSlotMin < 60)
-                                    document.getElementById('timeSlot'+row+':'+timeSlot).style.backgroundColor = 'Gainsboro';
+                            if (currentDate.getTime() == selectedDate.getTime()) {
+                                if (timeSlotHour == currentHour) {
+                                    if (currentMin >= 0 && currentMin < 15 && timeSlotMin >= 0 && timeSlotMin < 15)
+                                        document.getElementById('timeSlot'+row+':'+timeSlot).style.backgroundColor = 'Gainsboro';
+                                    else if (currentMin >= 15 && currentMin < 30 && timeSlotMin >= 15 && timeSlotMin < 30)
+                                        document.getElementById('timeSlot'+row+':'+timeSlot).style.backgroundColor = 'Gainsboro';
+                                    else if (currentMin >= 30 && currentMin < 45 && timeSlotMin >= 30 && timeSlotMin < 45)
+                                        document.getElementById('timeSlot'+row+':'+timeSlot).style.backgroundColor = 'Gainsboro';
+                                    else if (currentMin >= 45 && currentMin < 60 && timeSlotMin >= 45 && timeSlotMin < 60)
+                                        document.getElementById('timeSlot'+row+':'+timeSlot).style.backgroundColor = 'Gainsboro';
+                                }
                             }
                         }
                     }
@@ -156,8 +171,8 @@
                     THIS.styleTimeHighlighterLoop();
                 }, this.timeHighlighterDelay)
             },
-            styleBooking(locationID, booking) {
-                if (locationID == booking.locationID) {
+            styleBooking(location, booking) {
+                if (location.id == booking.locationID) {
                     var startTime = booking.startTime;
                     var startTimeHour = parseInt(startTime.split(':')[0], 10);
                     var startTimeMin = parseInt(startTime.split(':')[1], 10);
@@ -172,10 +187,10 @@
                     Left is tricky because getting the bounds is not relative to inside the row, getting the left value of the 
                     first slot and subtractiing it from the used slot solves this problem
                     */
-                    var left = document.getElementById('timeSlot'+locationID+':'+startTimeSlot).getBoundingClientRect().left - document.getElementById('timeSlot'+locationID+':'+1).getBoundingClientRect().left;
-                    var width = (endTimeSlot - startTimeSlot) * document.getElementById('timeSlot'+locationID+':'+startTimeSlot).getBoundingClientRect().width;
+                    var left = document.getElementById('timeSlot'+location.id+':'+startTimeSlot).getBoundingClientRect().left - document.getElementById('timeSlot'+location.id+':'+1).getBoundingClientRect().left;
+                    var width = (endTimeSlot - startTimeSlot) * document.getElementById('timeSlot'+location.id+':'+startTimeSlot).getBoundingClientRect().width;
 
-                    return 'left:'+left+'px; width:'+width+'px;background-color:'+booking.bookingColor+';';
+                    return 'left:'+left+'px; width:'+width+'px;background-color:'+location.color+';';
                 }
                 return 'left: 0px; width: 0px; height: 0px; display: none;';
             },

@@ -43,23 +43,23 @@
                     <!-- Calendar Blocks -->
                     <div class="block" v-for="(day, index) in week" :key="'block'+location.id+':'+index" :style='styleCurrentDay(day)'>
                         
+                        <!-- Bookings -->
+                        <div class="booking" v-for="booking in sortBookingsFor(day, location)" :key="'booking'+booking.id" @click='viewBookings(day, location)'>
+                            <div class="timeBox" :style='"background-color:"+location.color'>
+                                <div class="time">{{fillBookingStartTime(booking)}}</div>
+                            </div>
+                            <div v-if='booking.noiseLevel != 0' class="icon" :style='styleIcon(booking)'></div>
+                            <div class="textBox" :style='styleBookingText(booking)'>
+                                <div class="text">{{booking.username}}</div>
+                            </div>
+                        </div>
+
                         <!-- Buttons -->
                         <div class="searchIcon" :style='styleBookingCount(day, location)' @click='viewBookings(day, location)'></div>
                         <div class="searchText" :style='styleBookingCount(day, location)' @click='viewBookings(day, location)'>
                             {{getBookingCount(day, location) + ' total'}}
                         </div>
                         <button class="addBtn" @click="addBookingClicked(day, location)"></button>
-                        
-                        <!-- Bookings -->
-                        <div class="booking" v-for="booking in sortBookingsFor(day, location)" :key="'booking'+booking.id" @click='viewBookings(day, location)'>
-                            <div class="timeBox" :style='"background-color:"+booking.bookingColor'>
-                                <div class="time">{{fillBookingStartTime(booking)}}</div>
-                            </div>
-                            <div v-if='booking.noiseLevel != 0' class="icon" :style='styleIcon(booking)'></div>
-                            <div class="textBox" :style='styleBookingText(booking)'>
-                                <div class="text">{{booking.title}}</div>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -184,12 +184,10 @@
                     return booking.startTime.split(':')[0] - 12 + ':' + booking.startTime.split(':')[1] + ' pm';
             },
             styleIcon(booking) {
-                var volumeOn = require('../../../../assets/volumeOn-black.png');
-                var volumeOff = require('../../../../assets/volumeOff-black.png');
                 if (booking.noiseLevel > 0)
-                    return 'background-image: url('+volumeOn+');';
+                    return 'background-image: url('+require('../../../../assets/volumeOn-black.png')+');';
                 else if (booking.noiseLevel < 0)
-                    return 'background-image: url('+volumeOff+');';
+                    return 'background-image: url('+require('../../../../assets/volumeOff-black.png')+');';
             },
             styleBookingText(booking) {
                 if (booking.noiseLevel != 0)
@@ -248,7 +246,6 @@
                 matchedBookings.sort(function(booking1, booking2) {
                     booking1 = booking1.startTime.split(':')[0] + booking1.startTime.split(':')[1];
                     booking2 = booking2.startTime.split(':')[0] + booking2.startTime.split(':')[1];
-                    //console.log(booking1 + '  ' + booking2);
                     return booking1 - booking2;
                 });
                 this.$parent.closeModals();

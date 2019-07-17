@@ -1,40 +1,48 @@
 <template>
-    <div class="Resources">
+    <div class="Data">
 
-        <div class="resContainer">
+        <div class="dataContainer">
 
-            <div class="resTopRow">
-                <div class="resCol">Name</div>
-                <div class="resCol">Quantity</div>
-                <div class="resColBtn">Actions</div>
+            <div class="nameRow">
+                <div class="dataCol-3">Name</div>
+                <div class="dataCol-3">Point Cost</div>
+                <div class="dataCol-3">Quantity</div>
+                <div class="dataBtnCol">Actions</div>
             </div>
 
-            <div class="resRow" v-for='resource in this.resources' :key="'res:'+resource.id">
-                <div class="resCol">
-                    <div class="colText">{{resource.name}}</div>
+            <div class="dataRow" v-for='(resource, index) in this.resources' :key="'res:'+resource.id" :style="$parent.styleRow(index)">
+                <div class="dataCol-3">
+                    <div class="text">{{resource.name}}</div>
                 </div>
-                <div class="resCol">
-                    <div class="colText">{{resource.quantity}}</div>
+                <div class="dataCol-3">
+                    <div class="text">{{resource.cost}}</div>
                 </div>
-                <div class="resColBtn">
-                    <button class="btn btn-primary resBtn editBtn" v-on:click="openViewResourceModal(resource)"></button>
-                    <button class="btn btn-dark resBtn deleteBtn" v-on:click="removeResource(resource)"></button>
+                <div class="dataCol-3">
+                    <div class="text">{{resource.quantity}}</div>
+                </div>
+                <div class="dataBtnCol">
+                    <button class="btn btn-primary actionBtn editBtn" v-on:click="openViewResourceModal(resource)"></button>
+                    <button class="btn btn-dark actionBtn deleteBtn" v-on:click="removeResource(resource)"></button>
                 </div>
             </div>
         </div>
 
-        <button class="btn btn-success usersBtn createBtn" v-on:click="openCreateResourceModal()"></button>
+        <div class="space"></div>
+
+        <button class="btn btn-success actionBtn createBtn" v-on:click="openCreateResourceModal()"></button>
 
         <!-- Modals -->
         <ViewResourceModal ref="ViewResourceModal"></ViewResourceModal>
         <CreateResourceModal ref="CreateResourceModal"></CreateResourceModal>
 
+        <!-- Dimmer -->
+        <Dimmer ref="Dimmer"></Dimmer>
+
     </div>
 </template>
 
 <style scoped lang="scss">
-    //Personal CSS
-    @import "./css/Resources.css";
+
 </style>
 
 <script>
@@ -44,10 +52,17 @@
     import ViewResourceModal from '../modals/resources/ViewResourceModal.vue';
     import CreateResourceModal from '../modals/resources/CreateResourceModal.vue';
 
+    //Dimmer
+    import Dimmer from '../modals/components/Dimmer';
+
     export default {
         components: {
+            //Modals
             ViewResourceModal,
-            CreateResourceModal
+            CreateResourceModal,
+
+            //Dimmer
+            Dimmer
         },
 
         data() {
@@ -66,10 +81,9 @@
                 if (responce) {
                     api.admin_RemoveResource(resource.id).then(
                         removeResponce => {
-                            if (removeResponce == '100') {
+                            if (removeResponce == '100')
                                 this.$parent.getResources();
-                            }
-                            else if (removeResponce == '409') 
+                            else if (removeResponce == '404') 
                                 this.$parent.$refs.Header.logout();
                         }
                     );
@@ -79,14 +93,19 @@
             openViewResourceModal(resource) {
                 this.closeModals();
                 this.$refs.ViewResourceModal.openModal(resource);
+                this.$refs.Dimmer.openDimmer();
             },
             openCreateResourceModal() {
                 this.closeModals();
                 this.$refs.CreateResourceModal.openModal();
+                this.$refs.Dimmer.openDimmer();
             },
             closeModals() {
-                this.$refs.ViewResourceModal.closeModal()
+                this.$refs.ViewResourceModal.closeModal();
                 this.$refs.CreateResourceModal.closeModal();
+            },
+            closeDimmer() {
+                this.$refs.Dimmer.closeDimmer();
             }
         }
     }

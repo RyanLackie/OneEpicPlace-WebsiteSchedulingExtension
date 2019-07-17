@@ -7,13 +7,13 @@
         <!-- Edit Navbar -->
         <div class="viewSelector">
             <div class='buttonGroup'>
-                <div class="text" v-if="load" @click="viewSelected = 0">Users
+                <div class="text" v-if="load" @click="selectView(0)">Users
                     <div class="underline" :style="styleUnderline(0)"></div>
                 </div>
-                <div class="text" v-if="load" @click="viewSelected = 1">Locations
+                <div class="text" v-if="load" @click="selectView(1)">Locations
                     <div class="underline" :style="styleUnderline(1)"></div>
                 </div>
-                <div class="text" v-if="load" @click="viewSelected = 2">Resources
+                <div class="text" v-if="load" @click="selectView(2)">Resources
                     <div class="underline" :style="styleUnderline(2)"></div>
                 </div>
             </div>
@@ -61,17 +61,14 @@
         },
 
         methods: {
+            //Data
+            /*
             getData() {
                 this.load = false;
                 api.admin_GetData().then(
                     data => {
-                        //Users
                         this.users = this.sortUsers(data[0]);
-
-                        //Locations
                         this.locations = this.sortLocations(data[1]);
-
-                        //Resources
                         this.resources = data[2];
 
                         //Complete
@@ -79,10 +76,10 @@
                     }
                 );
             },
-
-            getUsers() {
+            */
+            getAllUsers() {
                 this.load = false;
-                api.admin_GetUsers().then(
+                api.admin_GetAllUsers().then(
                     users => {
                         this.users = this.sortUsers(users);
                         this.load = true;
@@ -98,19 +95,19 @@
                 var tier1Member = [];
                 var nonMember = [];
                 for (var i = 0; i < users.length; i++) {
-                    if (users[i].privilege == 6)
+                    if (users[i].memberLevel == 6)
                         admin.push(users[i]);
-                    else if (users[i].privilege == 5)
+                    else if (users[i].memberLevel == 5)
                         tier5Member.push(users[i]);
-                    else if (users[i].privilege == 4)
+                    else if (users[i].memberLevel == 4)
                         tier4Member.push(users[i]);
-                    else if (users[i].privilege == 3)
+                    else if (users[i].memberLevel == 3)
                         tier3Member.push(users[i]);
-                    else if (users[i].privilege == 2)
+                    else if (users[i].memberLevel == 2)
                         tier2Member.push(users[i]);
-                    else if (users[i].privilege == 1)
+                    else if (users[i].memberLevel == 1)
                         tier1Member.push(users[i]);
-                    else if (users[i].privilege == 0)
+                    else if (users[i].memberLevel == 0)
                         nonMember.push(users[i]);
                 }
                 users = [
@@ -155,15 +152,33 @@
                 )
             },
 
+            //Interaction
+            selectView(id) {
+                this.viewSelected = id;
+                if (id == 0)
+                    this.getAllUsers();
+                if (id == 1)
+                    this.getLocations();
+                if (id == 2)
+                    this.getResources();
+            },
+
+            //Style
             styleUnderline(viewSelected) {
                 if (this.viewSelected == viewSelected)
                     return 'width: 100%;';
                 return 'width: 0px;';
-            }
+            },
+
+            styleRow(index) {
+                if (index % 2 == 0)
+                    return "background: DeepSkyBlue; color: white";
+                return "background: white";
+            },
         },
 
         mounted() {
-            this.getData();
+            this.getAllUsers();
         }
     }
 </script>

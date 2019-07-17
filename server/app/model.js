@@ -2,7 +2,7 @@
 const mysql = require('mysql');
 var conn = mysql.createPool({
     
-    host: '134.209.119.199', //ip of server
+    host: '159.89.238.244', //ip of server
     port: '3306',
 
     database: 'OEP',
@@ -21,104 +21,124 @@ var conn = mysql.createPool({
 
 const ADMIN_PRIVILEGE = 6, MIN_MEMBER_PRIVILEGE = 1;
 
+/*
+    100 => Method was sucessful
+    404 => Method search results in an element not being found / Admin method being called without finding matching credentials
+    405 => Username is already taken
+    406 => Name is already taken
+*/
+
 class Model {
     constructor() {}
 
     /*////////////////////////////////////////////////////////////////////////////////////////////////////////
-    /////////////////////////////////          User Methods         //////////////////////////////////////////
+    /////////////////////////////////        Account Methods        //////////////////////////////////////////
     */////////////////////////////////////////////////////////////////////////////////////////////////////////
-    checkForEmail(email, emailCheckResponse) {
-        conn.query('SELECT * FROM users WHERE email = ' + mysql.escape(email), (err, result) => {
-            if (err) throw err;
-            if (result.length > 0)
-                return emailCheckResponse(result[0]);
-            else
-                return emailCheckResponse('409');           
+    //User Methods
+    getAccount(identity, password, call_back) {       
+        this.checkForUsername(identity, usernameCheckResponse => {
+            if (usernameCheckResponse != '404' && password == usernameCheckResponse.password) {
+                var account = this.stripAccount(usernameCheckResponse);
+                return call_back(account);
+            }
+            return call_back('404');
         });
     }
+    
+    updateAccount(user_username, user_password, picture, firstName, lastName, companyName, bio, email, phoneNumber, username, password, call_back) {
+        this.getAccount(user_username, user_password, fetchedUser => {
+            if (fetchedUser == '404')
+                return call_back('404');
+            // eslint-disable-next-line
+            this.updateUsername(fetchedUser.id, fetchedUser.username, username, usernameUpdateResult => {
+                //Change other user info
+                this.updateAccountInfo(fetchedUser.id, picture, firstName, lastName, companyName, bio, email, phoneNumber, username, password, infoUpdateResult => {
+                    var account = this.stripAccount(infoUpdateResult);
+                    return call_back(account);
+                });                    
+            });
+        });
+    }
+
+    //Admin Methods
+    admin_GetAllUsers(user_username, user_password, call_back) {
+        this.admin_CheckAdminPrivilege(user_username, user_password, fetchedUser => {
+            if (fetchedUser == '404')
+                return call_back('404');
+            conn.query('SELECT * FROM users', (err, result) => {
+                if (err) throw err;
+                return call_back(result);
+            });
+        });
+    }
+
+    admin_CreateAccount(user_username, user_password, memberLevel, username, password, points, notes, picture, firstName, lastName, companyName, bio, email, phoneNumber, call_back) {
+        this.admin_CheckAdminPrivilege(user_username, user_password, fetchedUser => {
+            if (fetchedUser == '404')
+                return call_back('404');
+            this.checkForUsername(username, usernameCheckResponse => {
+                if (usernameCheckResponse != '404')
+                    return call_back('405');
+                conn.query("INSERT INTO users (memberLevel, username, password, points, notes, picture, firstName, lastName, companyName, bio, email, phoneNumber) VALUES " +
+                "('"+memberLevel+"', '"+username+"', '"+password+"', '"+points+"', '"+notes+"', '"+picture+"', '"+firstName+"', '"+lastName+"', '"+companyName+"', '"+bio+"', '"+email+"', '"+phoneNumber+"')", (err) => {
+                    if (err) throw err;
+                    return call_back('100');
+                });
+            });
+        });
+    }
+
+    admin_UpdateAccount(user_username, user_password, id, memberLevel, previousUsername, username, password, points, notes, picture, firstName, lastName, companyName, bio, email, phoneNumber, call_back) {
+        this.admin_CheckAdminPrivilege(user_username, user_password, fetchedUser => {
+            if (fetchedUser == '404')
+                return call_back('404');
+            // eslint-disable-next-line
+            this.updateUsername(id, previousUsername, username, usernameUpdateResult => {
+                // eslint-disable-next-line
+                this.updateAccountInfo(id, picture, firstName, lastName, companyName, bio, email, phoneNumber, username, password, infoUpdateResult => {
+                    this.admin_UpdateAccountInfo(id, memberLevel, points, notes, adminInfoUpdateResult => {
+                        return call_back(adminInfoUpdateResult);
+                    });  
+                });             
+            });
+        });
+    }
+
+    admin_RemoveAccount(user_username, user_password, id, call_back) {
+        this.admin_CheckAdminPrivilege(user_username, user_password, fetchedUser => {
+            if (fetchedUser == '404')
+                return call_back('404');
+            conn.query('DELETE FROM users WHERE id = ' + mysql.escape(id), (err) => {
+                if (err) throw err;
+                return call_back('100');
+            });
+        });
+    }
+
+    //Utility Methods
+    stripAccount(account) {
+        delete account.points;
+        delete account.notes;
+        return account;
+    }
+
     checkForUsername(username, usernameCheckResponse) {
         conn.query('SELECT * FROM users WHERE username = ' + mysql.escape(username), (err, result) => {
             if (err) throw err;
             if (result.length > 0)
                 return usernameCheckResponse(result[0]);
             else
-                return usernameCheckResponse('409');
+                return usernameCheckResponse('404');
         });
     }
 
-    getAccount(identity, password, call_back) {
-        console.log('#################getAccount()#################');
-        
-        //Find user by email
-        this.checkForEmail(identity, emailCheckResponse => {
-            if (emailCheckResponse != '409' && password == emailCheckResponse.password) {
-                console.log(emailCheckResponse.username + ' has logged in with email');
-                return call_back(emailCheckResponse);
-            }
-
-            //Find user by username
-            this.checkForUsername(identity, usernameCheckResponse => {
-                if (usernameCheckResponse != '409' && password == usernameCheckResponse.password) {
-                    console.log(usernameCheckResponse.username + ' has logged in with username');
-                    return call_back(usernameCheckResponse);
-                }
-                console.log(identity + ' not found');
-                return call_back('409');
-            });
-        });
-    }
-    
-    updateProfile(user_username, user_password, email, username, password, firstName, lastName, occupation, description, call_back) {
-        console.log("#################updateProfile()#################");
-
-        //Get user's current information
-        this.getAccount(user_username, user_password, fetchedUser => {
-            if (fetchedUser == '409')
-                return call_back('409');
-            
-            // eslint-disable-next-line
-            this.updateUserEmail(fetchedUser.id, fetchedUser.email, email, emailUpdateResult => {
-                // eslint-disable-next-line
-                this.updateUserUsername(fetchedUser.id, fetchedUser.username, username, usernameUpdateResult => {
-                    //Change other user info
-                    this.updateUserInfo(fetchedUser.id, password, firstName, lastName, occupation, description, infoUpdateResult => {
-                        return call_back(infoUpdateResult);
-                    });                    
-                });
-            });
-        });
-    }
-    updateUserEmail(id, oldEmail, newEmail, emailUpdateResult) {
-        if (oldEmail != newEmail) {
-            //Check if new email is in use
-            this.checkForEmail(newEmail, emailCheckResponse => {
-                if (emailCheckResponse != '409') {
-                    console.log('email ' + newEmail + ' is taken');
-                    return emailUpdateResult('409');
-                }
-                //Update email
-                conn.query('Update users SET email = ' + mysql.escape(newEmail) + ' WHERE id = ' + mysql.escape(id), (err) => {
-                    if (err) throw err;
-                    console.log('Email ' + oldEmail + ' changed to ' + newEmail + ' at id: ' + id);
-                    return emailUpdateResult('100');
-                });
-            });
-        }
-        else
-            return emailUpdateResult('100');
-    }
-    updateUserUsername(id, oldUsername, newUsername, usernameUpdateResult) {
-        if (oldUsername != newUsername) {
-            //Check if new username is in use
-            this.checkForUsername(newUsername, usernameCheckResponse => {
-                if (usernameCheckResponse != '409') {
-                    console.log('Username ' + newUsername + ' is taken');
+    updateUsername(id, previousUsername, username, usernameUpdateResult) {
+        if (previousUsername != username) {
+            this.checkForUsername(username, usernameCheckResponse => {
+                if (usernameCheckResponse != '404')
                     return usernameUpdateResult(usernameCheckResponse);
-                }
-                //Update username
-                conn.query('Update users SET username = ' + mysql.escape(newUsername) + ' WHERE id = ' + mysql.escape(id), (err) => {
+                conn.query('Update users SET username = ' + mysql.escape(username) + ' WHERE id = ' + mysql.escape(id), (err) => {
                     if (err) throw err;
-                    console.log('Username ' + oldUsername + ' changed to ' + newUsername + ' at id: ' + id);
                     return usernameUpdateResult('100');
                 });
             });
@@ -126,26 +146,43 @@ class Model {
         else
             return usernameUpdateResult('100');
     }
-    updateUserInfo(id, password, firstName, lastName, occupation, description, infoUpdateResult) {
-        //Update profile info
-        conn.query('Update users SET password = ' + mysql.escape(password) +
+
+    updateAccountInfo(id, picture, firstName, lastName, companyName, bio, email, phoneNumber, username, password, infoUpdateResult) {
+        conn.query('Update users SET picture = ' + mysql.escape(picture) +
                                 ', firstName = ' + mysql.escape(firstName) +
                                 ', lastName = ' + mysql.escape(lastName) +
-                                ', occupation = ' + mysql.escape(occupation) +
-                                ', description = ' + mysql.escape(description) +
+                                ', companyName = ' + mysql.escape(companyName) +
+                                ', bio = ' + mysql.escape(bio) +
+                                ', email = ' + mysql.escape(email) +
+                                ', phoneNumber = ' + mysql.escape(phoneNumber) +
+                                ', password = ' + mysql.escape(password) +
                                 ' WHERE id = ' + mysql.escape(id), (err) => {
             if (err) throw err;
-            console.log('Info changed at id: ' + id);
-            //Get new profile info
             conn.query('SELECT * FROM users WHERE id = ' + mysql.escape(id), (err, result) => {
                 if (err) throw err;
                 infoUpdateResult(result[0]);
             });
         });
     }
+    admin_UpdateAccountInfo(id, memberLevel, points, notes, adminInfoUpdateResult) {
+        
+        conn.query('Update users SET memberLevel = ' + mysql.escape(memberLevel) +
+                                ', points = ' + mysql.escape(points) +
+                                ', notes = ' + mysql.escape(notes) +
+                                ' WHERE id = ' + mysql.escape(id), (err) => {
+            if (err) throw err;
+            conn.query('SELECT * FROM users WHERE id = ' + mysql.escape(id), (err, result) => {
+                if (err) throw err;
+                adminInfoUpdateResult(result[0]);
+            });
+        });
+    }
+    /*////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////
+    */////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /*////////////////////////////////////////////////////////////////////////////////////////////////////////
-    /////////////////////////////////           Booking Methods          /////////////////////////////////////
+    /////////////////////////////////           Location Methods         /////////////////////////////////////
     */////////////////////////////////////////////////////////////////////////////////////////////////////////
     getLocations(fetchedLocations) {
         conn.query('SELECT * FROM locations', (err, result) => {
@@ -153,49 +190,326 @@ class Model {
             fetchedLocations(result);
         });
     }
+    //Admin Methods
+    admin_CreateLocation(user_username, user_password, name, cost, type, color, call_back) {
+        this.admin_CheckAdminPrivilege(user_username, user_password, fetchedUser => {
+            if (fetchedUser == '404')
+                return call_back('404');
+            this.getLocations(locations => {
+                for (var i = 0; i < locations.length; i++) {
+                    if (locations[i].name == name)
+                        return call_back('406');
+                }
+                conn.query("INSERT INTO locations (name, cost, type, color) VALUES ('"+name+"', '"+cost+"', '"+type+"', '"+color+"')", (err) => {
+                    if (err) throw err;
+                    return call_back('100');
+                });
+            });
+        });
+    }
+
+    admin_UpdateLocation(user_username, user_password, id, previousName, name, cost, type, color, call_back) {
+        this.admin_CheckAdminPrivilege(user_username, user_password, fetchedUser => {
+            if (fetchedUser == '404')
+                return call_back('404');
+            // eslint-disable-next-line
+            this.admin_UpdateLocationName(id, previousName, name, nameUpdateResult => {
+                this.admin_UpdateLocationInfo(id, cost, type, color, infoUpdateResult => {
+                    return call_back(infoUpdateResult);
+                });                    
+            });
+        });
+    }
+    admin_UpdateLocationName(id, previousName, name, nameUpdateResult) {
+        if (previousName != name) {
+            this.getLocations(locations => {
+                for (var i = 0; i < locations.length; i++) {
+                    if (locations[i].name == name)
+                        return nameUpdateResult('406');
+                }
+                conn.query('Update locations SET name = ' + mysql.escape(name) + ' WHERE id = ' + mysql.escape(id), (err) => {
+                    if (err) throw err;
+                    return nameUpdateResult('100');
+                });
+            });
+        }
+        else
+            return nameUpdateResult('100');
+    }
+    admin_UpdateLocationInfo(id, cost, type, color, infoUpdateResult) {
+        conn.query('Update locations SET cost = ' + mysql.escape(cost) +
+                                        ', type = ' + mysql.escape(type) +
+                                        ', color = ' + mysql.escape(color) +
+                                        ' WHERE id = ' + mysql.escape(id), (err) => {
+            if (err) throw err;
+            conn.query('SELECT * FROM locations WHERE id = ' + mysql.escape(id), (err, result) => {
+                if (err) throw err;
+                infoUpdateResult(result[0]);
+            });
+        });
+    }
+
+    admin_RemoveLocation(user_username, user_password, id, call_back) {
+        this.admin_CheckAdminPrivilege(user_username, user_password, fetchedUser => {
+            if (fetchedUser == '404')
+                return call_back('404');
+            conn.query('DELETE FROM locations WHERE id = ' + mysql.escape(id), (err) => {
+                if (err) throw err;
+                return call_back('100');
+            });
+        });
+    }
+    /*////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////
+    */////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    /*////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////          Resource Methods          /////////////////////////////////////
+    */////////////////////////////////////////////////////////////////////////////////////////////////////////
     getResources(fetchedResources) {
         conn.query('SELECT * FROM resources', (err, result) => {
             if (err) throw err;
             fetchedResources(result);
         });
     }
-    getCalendarData(call_back) {
-        this.getLocations(fetchedLocations => {
-            this.getResources(fetchedResources => {
-                return call_back([fetchedLocations, fetchedResources]);
+
+    admin_CreateResource(user_username, user_password, name, cost, quantity, call_back) {
+        this.admin_CheckAdminPrivilege(user_username, user_password, fetchedUser => {
+            if (fetchedUser == '404')
+                return call_back('404');
+            this.getResources(resources => {
+                for (var i = 0; i < resources.length; i++) {
+                    if (resources[i].name == name)
+                        return call_back('408');
+                }
+                //Create resource
+                conn.query("INSERT INTO resources (name, cost, quantity) VALUES ('"+name+"', '"+cost+"', '"+quantity+"')", (err) => {
+                    if (err) throw err;
+                    return call_back('100');
+                });
             });
         });
     }
 
-    insertBooking(date, userID, username, password, locationID, locationName, resourceID, title, description, startTime, endTime, bookingColor, noiseLevel, call_back) {
-        console.log("#################insertBooking()#################");
+    admin_UpdateResource(user_username, user_password, id, previousName, name, cost, quantity, call_back) {
+        this.admin_CheckAdminPrivilege(user_username, user_password, fetchedUser => {
+            if (fetchedUser == '404')
+                return call_back('404');
+            // eslint-disable-next-line
+            this.admin_UpdateResourceName(id, previousName, name, nameUpdateResult => {
+                this.admin_UpdateResourceInfo(id, cost, quantity, infoUpdateResult => {
+                    return call_back(infoUpdateResult);
+                });                  
+            });
+        });
+    }
+    admin_UpdateResourceName(id, previousName, name, nameUpdateResult) {
+        if (previousName != name) {
+            this.getResources(resources => {
+                for (var i = 0; i < resources.length; i++) {
+                    if (resources[i].name == name)
+                        return nameUpdateResult('406');
+                }
+                conn.query('Update resources SET name = ' + mysql.escape(name) + ' WHERE id = ' + mysql.escape(id), (err) => {
+                    if (err) throw err;
+                    return nameUpdateResult('100');
+                });
+            });
+        }
+        else
+            return nameUpdateResult('100');
+    }
+    admin_UpdateResourceInfo(id, cost, quantity, infoUpdateResult) {
+        conn.query('Update resources SET cost = ' + mysql.escape(cost) +
+                                        ', quantity = ' + mysql.escape(quantity) +
+                                        ' WHERE id = ' + mysql.escape(id), (err) => {
+            if (err) throw err;
+            conn.query('SELECT * FROM resources WHERE id = ' + mysql.escape(id), (err, result) => {
+                if (err) throw err;
+                infoUpdateResult(result[0]);
+            });
+        });
+    }
 
-        //Check if user is valid
+    admin_RemoveResource(user_username, user_password, id, call_back) {
+        this.admin_CheckAdminPrivilege(user_username, user_password, fetchedUser => {
+            if (fetchedUser == '404')
+                return call_back('404');
+            conn.query('DELETE FROM resources WHERE id = ' + mysql.escape(id), (err) => {
+                if (err) throw err;
+                return call_back('100');
+            });
+        });
+    }
+    /*////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////
+    */////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    /*////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////           Admin Methods          //////////////////////////////////////
+    */////////////////////////////////////////////////////////////////////////////////////////////////////////
+    admin_CheckAdminPrivilege(user_username, user_password, call_back) {
+        this.getAccount(user_username, user_password, fetchedUser => {
+            if (fetchedUser == '404' || fetchedUser.memberLevel != ADMIN_PRIVILEGE)
+                return call_back('404');
+            else
+                return call_back(fetchedUser);
+        });
+    }
+
+    admin_GetData(user_username, user_password, call_back) {
+        this.admin_CheckAdminPrivilege(user_username, user_password, fetchedUser => {
+            if (fetchedUser == '404')
+                return call_back('404');
+            conn.query('SELECT * FROM users', (err, users) => {
+                if (err) throw err;
+                this.getLocations(locations => {
+                    this.getResources(resources => {
+                        return call_back([users, locations, resources]);
+                    });
+                });
+            });
+        });
+    }
+    /*////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////
+    */////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    /*////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////           Booking Methods          /////////////////////////////////////
+    */////////////////////////////////////////////////////////////////////////////////////////////////////////
+    getBookingsDate(username, password, startDate, endDate, call_back) {
         this.getAccount(username, password, fetchedUser => {
-            if (fetchedUser == '409' || fetchedUser.privilege < MIN_MEMBER_PRIVILEGE)
-                return call_back('403');
+            if (fetchedUser == '404' || fetchedUser.memberLevel < MIN_MEMBER_PRIVILEGE)
+                return call_back('404');
 
-            //Booking time must be between 7AM and 10PM and endTime must be larger than startTime
+            conn.query('SELECT * FROM bookings WHERE date >= ' + mysql.escape(startDate) + ' and  date <= ' + mysql.escape(endDate), (err, result) => {
+                if (err) throw err;
+                var bookings = result;
+                conn.query('SELECT * FROM users', (err, result) => {
+                    if (err) throw err;
+                    var users = result;
+                    for (var i = 0; i < bookings.length; i++) {
+                        if (fetchedUser.id != bookings[i].userID && bookings[i].private)
+                            bookings[i].username = 'Private Booking';
+                        else {
+                            for (var j = 0; j < users.length; j++) {
+                                if (bookings[i].userID == users[j].id) {
+                                    bookings[i].username = users[j].username;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    return call_back(bookings);
+                });
+            });
+        });
+    }
+    insertBooking(username, password, locationID, resourceID, date, startTime, endTime, meetingType, title, description, noiseLevel, privacy, call_back) {
+        this.getAccount(username, password, fetchedUser => {
+            if (fetchedUser == '404' || fetchedUser.memberLevel < MIN_MEMBER_PRIVILEGE)
+                return call_back(['404', null]);
+
             var insertStartTime = new Date();
             insertStartTime.setHours(parseInt(startTime.split(":")[0]), parseInt(startTime.split(":")[1]), 0, 0);
             var insertEndTime = new Date();
             insertEndTime.setHours(parseInt(endTime.split(":")[0]), parseInt(endTime.split(":")[1]), 0, 0);
 
-            //Booking time must be between 7AM and 10PM (used to be dates with set hours)
-            if (insertStartTime.getHours() < 7 || insertEndTime.getHours() > 22)
-                return call_back('404');
-            //endTime must be larger than startTime
-            if (insertStartTime > insertEndTime)
-                return call_back('405')
-            //Booking time not in a multiple of 5
-            if (parseInt(startTime.split(":")[1]) % 5 != 0 || parseInt(endTime.split(":")[1]) % 5 != 0)
-                return call_back('406')
+            var error = this.checkTimeFormating(startTime, endTime, insertStartTime, insertEndTime);
+            if (error == '405' || error == '406' || error == '407')
+                return call_back([error, null]);
 
-            //Check for booking overlaps
-            conn.query('SELECT * FROM bookings WHERE date = ' + mysql.escape(date), (err, result) => {
+            //Check For Booking Overlaps
+            this.checkForOverlap(null, insertStartTime, insertEndTime, date, locationID, noiseLevel, checkCallBack => {
+                if (checkCallBack[0] == '408' || checkCallBack[0] == '409' || checkCallBack[0] == '410')
+                    return call_back(checkCallBack);
+
+                //Insert Bookings If No Overlaps
+                for (var i = 0; i < date.length; i++) {
+                    var sql = "INSERT INTO bookings (userID, locationID, resourceID, date, startTime, endTime, meetingType, title, description, noiseLevel, private)"+
+                    "VALUES ('"+fetchedUser.id+"', '"+locationID+"', '"+resourceID+"', '"+date[i]+"', '"+startTime+"', '"+endTime+"', '"+meetingType+"', '"+title+"', '"+description+"', '"+noiseLevel+"', '"+privacy+"')";
+                    conn.query(sql, function(err, result) {
+                        if (err) throw err;
+                    });
+                }
+                return call_back(['100', null]);
+            });
+        });
+    }
+    updateBooking(username, password, bookingID, userID, locationID, resourceID, date, startTime, endTime, meetingType, title, description, noiseLevel, privacy, call_back) {
+        this.getAccount(username, password, fetchedUser => {
+            if (fetchedUser == '404' || fetchedUser.memberLevel < MIN_MEMBER_PRIVILEGE)
+                return call_back(['404', null]);
+
+            //Ensure Creator or Admin is Editing
+            this.checkForCapability(bookingID, fetchedUser.id, fetchedUser.memberLevel, capabilityResult => {
+                if (capabilityResult == '404')
+                    call_back(['404', null]);
+            
+                var insertStartTime = new Date();
+                insertStartTime.setHours(parseInt(startTime.split(":")[0]), parseInt(startTime.split(":")[1]), 0, 0);
+                var insertEndTime = new Date();
+                insertEndTime.setHours(parseInt(endTime.split(":")[0]), parseInt(endTime.split(":")[1]), 0, 0);
+
+                var error = this.checkTimeFormating(startTime, endTime, insertStartTime, insertEndTime);
+                if (error == '405' || error == '406' || error == '407')
+                    return call_back([error, null]);
+
+                //Check For Booking Overlaps
+                this.checkForOverlap(bookingID, insertStartTime, insertEndTime, date, locationID, noiseLevel, checkCallBack => {
+                    if (checkCallBack[0] == '408' || checkCallBack[0] == '409' || checkCallBack[0] == '410')
+                        return call_back(checkCallBack);
+
+                    conn.query('Update bookings SET userID = ' + mysql.escape(userID) +
+                                    ', locationID = ' + mysql.escape(locationID) +
+                                    ', resourceID = ' + mysql.escape(resourceID) +
+                                    ', date = ' + mysql.escape(date) +
+                                    ', startTime = ' + mysql.escape(startTime) +
+                                    ', endTime = ' + mysql.escape(endTime) +
+                                    ', meetingType = ' + mysql.escape(meetingType) +
+                                    ', title = ' + mysql.escape(title) +
+                                    ', description = ' + mysql.escape(description) +
+                                    ', noiseLevel = ' + mysql.escape(noiseLevel) +
+                                    ', private = ' + mysql.escape(privacy) +
+                                    ' WHERE id = ' + mysql.escape(bookingID), (err) => {
+                        if (err) throw err;
+                            return call_back(['100', null]);
+                    });
+                });
+            });
+        });
+    }
+    checkForCapability(bookingID, userID, memberLevel, capabilityResult) {
+        if (memberLevel == ADMIN_PRIVILEGE)
+            return capabilityResult('100');
+        conn.query('SELECT * FROM bookings WHERE id = ' + mysql.escape(bookingID), (err, result) => {
+            if (result.userID != userID)
+                return capabilityResult('404');
+            return capabilityResult('100');
+        });
+    }
+    checkTimeFormating(startTime, endTime, insertStartTime, insertEndTime) {
+        //Booking time must be between 7AM and 10PM (used to be dates with set hours)
+        if (insertStartTime.getHours() < 7 || insertEndTime.getHours() > 22)
+            return '405';
+        //endTime must be larger than startTime
+        if (insertStartTime > insertEndTime)
+            return '406';
+        //Booking time not in a multiple of 5
+        if (parseInt(startTime.split(":")[1]) % 5 != 0 || parseInt(endTime.split(":")[1]) % 5 != 0)
+            return '407';
+    }
+    checkForOverlap(bookingID, insertStartTime, insertEndTime, date, locationID, noiseLevel, checkCallBack) {
+        var j = 0;
+        for (var i = 0; i < date.length; i++) {
+            conn.query('SELECT * FROM bookings WHERE date = ' + mysql.escape(date[i]), (err, result) => {
                 if (err) throw err;
-                
+
                 for (var index = 0; index < result.length; index++) {
+                    if (bookingID == result[index].id)
+                        continue;
+
                     var checkStartTime = new Date();
                     checkStartTime.setHours(result[index].startTime.split(":")[0], result[index].startTime.split(":")[1], 0, 0)
                     
@@ -214,322 +528,50 @@ class Model {
                     var check9 = insertStartTime.getTime() == checkStartTime.getTime() && checkEndTime.getTime() == insertEndTime.getTime();
                     
                     if (check1 || check2 || check3 || check4 || check5 || check6 || check7 || check8 || check9) {
-                        if (result.locationID == locationID)
-                            return call_back('407');
-                        else if (result.noiseLevel == -1 && noiseLevel == 1)
-                            return call_back('408');
-                        else if (result.noiseLevel == 1 && noiseLevel == -1)
-                            return call_back('409');
+                        if (result[index].locationID == locationID)
+                            return checkCallBack(['408', date[j]]);
+                        else if (result[index].noiseLevel == -1 && noiseLevel == 1)
+                            return checkCallBack(['409', date[j]]);
+                        else if (result[index].noiseLevel == 1 && noiseLevel == -1)
+                            return checkCallBack(['410', date[j]]);
                     }
                 }
 
-                //Insert booking
-                var sql = "INSERT INTO bookings (date, userID, username, locationID, locationName, resourceID, title, description, startTime, endTime, bookingColor, noiseLevel) VALUES ('"+date+"', '"+userID+"', '"+username+"', '"+locationID+"', '"+locationName+"', '"+resourceID+"', '"+title+"', '"+description+"', '"+startTime+"', '"+endTime+"', '"+bookingColor+"', '"+noiseLevel+"')";
-                conn.query(sql, function(err, result) {
-                    if (err) throw err;
-                    console.log("Booking " + result.insertId + " inserted: " + locationName + " at " + startTime + " to " + endTime);
-                    return call_back('100');
-                });            
+                j++;
+                if (i == j)
+                    return checkCallBack('100');
             });
-        });    
-    }
-    removeBooking(id, call_back) {
-        console.log(id);
-        conn.query('DELETE FROM bookings WHERE id = ' + mysql.escape(id), (err) => {
-            if (err) throw err;
-            return call_back('100');
-        });
-    }
-    getBookingsDate(startDate, endDate, call_back) {
-        console.log("#################getBookingsDate()#################");
-
-        conn.query('SELECT * FROM bookings WHERE date >= ' + mysql.escape(startDate) + ' and  date <= ' + mysql.escape(endDate), (err, result) => {
-            if (err) throw err;
-            console.log(result.length + " Bookings found");
-            return call_back(result);
-        });
+        }
     }
 
+    removeBooking(username, password, bookingID, userID, date, startTime, call_back) {
+        this.getAccount(username, password, fetchedUser => {
+            if (fetchedUser == '404' || fetchedUser.memberLevel < MIN_MEMBER_PRIVILEGE)
+                return call_back('404');
+            
+            var bookingDate = new Date(date);
+            bookingDate.setHours(startTime.split(':')[0], startTime.split(':')[1]);
+            if (fetchedUser.memberLevel == ADMIN_PRIVILEGE || (userID == fetchedUser.id && (bookingDate - new Date()) / (1000*60*60) > 22)) {
+                conn.query('DELETE FROM bookings WHERE id = ' + mysql.escape(bookingID), (err) => {
+                    if (err) throw err;
+                    return call_back('100');
+                });
+            }
+        });
+    }
     /*////////////////////////////////////////////////////////////////////////////////////////////////////////
-    //////////////////////////////////           Admin Methods          //////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////
     */////////////////////////////////////////////////////////////////////////////////////////////////////////
-    admin_GetData(user_username, user_password, call_back) {
-        this.getAccount(user_username, user_password, fetchedUser => {
-            if (fetchedUser == '409' || fetchedUser.privilege != ADMIN_PRIVILEGE)
-                return call_back('409');
-
-            conn.query('SELECT * FROM users', (err, users) => {
-                if (err) throw err;
-                this.getLocations(locations => {
-                    this.getResources(resources => {
-                        return call_back([users, locations, resources]);
-                    });
-                });
-            });
-        });
-    }
-    admin_GetUsers(user_username, user_password, call_back) {
-        this.getAccount(user_username, user_password, fetchedUser => {
-            if (fetchedUser == '409' || fetchedUser.privilege != ADMIN_PRIVILEGE)
-                return call_back('409');
-
-            conn.query('SELECT * FROM users', (err, result) => {
-                if (err) throw err;
-                return call_back(result);
+    
+    
+    getCalendarData(call_back) {
+        this.getLocations(fetchedLocations => {
+            this.getResources(fetchedResources => {
+                return call_back([fetchedLocations, fetchedResources]);
             });
         });
     }
 
-    admin_CreateAccount(user_username, user_password, privilege, email, username, password, firstName, lastName, occupation, description, call_back) {
-        console.log('#################admin_CreateAccount()#################');
-
-        this.getAccount(user_username, user_password, fetchedUser => {
-            if (fetchedUser == '409' || fetchedUser.privilege != ADMIN_PRIVILEGE)
-                return call_back('408');
-            //Find user by email
-            this.checkForEmail(email, emailCheckResponse => {
-                if (emailCheckResponse != '409') {
-                    return call_back('409');
-                }
-                //Find user by username
-                this.checkForUsername(username, usernameCheckResponse => {
-                    if (usernameCheckResponse != '409') {
-                        return call_back('410');
-                    }
-                    //Create User
-                    conn.query("INSERT INTO users (privilege, email, username, password, firstName, lastName, occupation, description) VALUES ('"+privilege+"', '"+email+"', '"+username+"', '"+password+"', '"+firstName+"', '"+lastName+"', '"+occupation+"', '"+description+"')", (err) => {
-                        if (err) throw err;
-                        return call_back('100');
-                    });
-                });
-            });
-        });
-    }
-
-    admin_UpdateAccount(user_username, user_password, id, privilege, previousEmail, email, previousUsername, username, password, firstName, lastName, occupation, description, call_back) {
-        //Check for admin privilege
-        this.getAccount(user_username, user_password, fetchedUser => {
-            if (fetchedUser == '409' || fetchedUser.privilege != ADMIN_PRIVILEGE)
-                return call_back('409');
-            // eslint-disable-next-line
-            this.admin_UpdateUserEmail(id, previousEmail, email, emailUpdateResult => {
-                // eslint-disable-next-line
-                this.admin_UpdateUserUsername(id, previousUsername, username, usernameUpdateResult => {
-                    this.admin_UpdateUserInfo(id, privilege, password, firstName, lastName, occupation, description, infoUpdateResult => {
-                        return call_back(infoUpdateResult);
-                    });                    
-                });
-            });
-        });
-    }
-    admin_UpdateUserEmail(id, previousEmail, email, emailUpdateResult) {
-        if (previousEmail != email) {
-            //Check if new email is in use
-            this.checkForEmail(email, emailCheckResponse => {
-                if (emailCheckResponse != '409')
-                    return emailUpdateResult('408');
-                //Update Email
-                conn.query('Update users SET email = ' + mysql.escape(email) + ' WHERE id = ' + mysql.escape(id), (err) => {
-                    if (err) throw err;
-                    return emailUpdateResult('100');
-                });
-            });
-        }
-        else
-            return emailUpdateResult('100');
-    }
-    admin_UpdateUserUsername(id, previousUsername, username, usernameUpdateResult) {
-        if (previousUsername != username) {
-            //Check if new username is in use
-            this.checkForUsername(username, usernameCheckResponse => {
-                if (usernameCheckResponse != '409')
-                    return usernameUpdateResult('408');
-                conn.query('Update users SET username = ' + mysql.escape(username) + ' WHERE id = ' + mysql.escape(id), (err) => {
-                    if (err) throw err;
-                    return usernameUpdateResult('100');
-                });
-            });
-        }
-        else
-            return usernameUpdateResult('100');
-    }
-    admin_UpdateUserInfo(id, privilege, password, firstName, lastName, occupation, description, infoUpdateResult) {
-        //Update profile info
-        conn.query('Update users SET privilege = ' + mysql.escape(privilege) +
-                                ', password = ' + mysql.escape(password) +
-                                ', firstName = ' + mysql.escape(firstName) +
-                                ', lastName = ' + mysql.escape(lastName) +
-                                ', occupation = ' + mysql.escape(occupation) +
-                                ', description = ' + mysql.escape(description) +
-                                ' WHERE id = ' + mysql.escape(id), (err) => {
-            if (err) throw err;
-            conn.query('SELECT * FROM users WHERE id = ' + mysql.escape(id), (err, result) => {
-                if (err) throw err;
-                infoUpdateResult(result[0]);
-            });
-        });
-    }
-
-    admin_RemoveAccount(user_username, user_password, id, call_back) {
-        this.getAccount(user_username, user_password, fetchedUser => {
-            if (fetchedUser == '409' || fetchedUser.privilege != ADMIN_PRIVILEGE)
-                return call_back('409');
-            conn.query('DELETE FROM users WHERE id = ' + mysql.escape(id), (err) => {
-                if (err) throw err;
-                return call_back('100');
-            });
-        });
-    }
-
-    /*
-    Locations
-    */
-    admin_CreateLocation(user_username, user_password, name, pointCost, type, call_back) {
-        //Check for admin privilege
-        this.getAccount(user_username, user_password, fetchedUser => {
-            if (fetchedUser == '409' || fetchedUser.privilege != ADMIN_PRIVILEGE)
-                return call_back('409');
-            //Check for location name repeat
-            this.getLocations(locations => {
-                for (var i = 0; i < locations.length; i++) {
-                    if (locations[i].name == name)
-                        return call_back('408');
-                }
-                //Create location
-                conn.query("INSERT INTO locations (name, pointCost, type) VALUES ('"+name+"', '"+pointCost+"', '"+type+"')", (err) => {
-                    if (err) throw err;
-                    return call_back('100');
-                });
-            });
-        });
-    }
-
-    admin_UpdateLocation(user_username, user_password, id, previousName, name, pointCost, type, call_back) {
-        //Check for admin privilege
-        this.getAccount(user_username, user_password, fetchedUser => {
-            if (fetchedUser == '409' || fetchedUser.privilege != ADMIN_PRIVILEGE)
-                return call_back('409');
-            // eslint-disable-next-line
-            this.admin_UpdateLocationName(id, previousName, name, nameUpdateResult => {
-                this.admin_UpdateLocationInfo(id, pointCost, type, infoUpdateResult => {
-                    return call_back(infoUpdateResult);
-                });                    
-            });
-        });
-    }
-    admin_UpdateLocationName(id, previousName, name, nameUpdateResult) {
-        if (previousName != name) {
-            //Check if new name is in use
-            this.getLocations(locations => {
-                for (var i = 0; i < locations.length; i++) {
-                    if (locations[i].name == name)
-                        return nameUpdateResult('408');
-                }
-                //Update name
-                conn.query('Update locations SET name = ' + mysql.escape(name) + ' WHERE id = ' + mysql.escape(id), (err) => {
-                    if (err) throw err;
-                    return nameUpdateResult('100');
-                });
-            });
-        }
-        else
-            return nameUpdateResult('100');
-    }
-    admin_UpdateLocationInfo(id, pointCost, type, infoUpdateResult) {
-        //Update profile info
-        conn.query('Update locations SET pointCost = ' + mysql.escape(pointCost) +
-                                        ', type = ' + mysql.escape(type) +
-                                        ' WHERE id = ' + mysql.escape(id), (err) => {
-            if (err) throw err;
-            conn.query('SELECT * FROM locations WHERE id = ' + mysql.escape(id), (err, result) => {
-                if (err) throw err;
-                infoUpdateResult(result[0]);
-            });
-        });
-    }
-
-    admin_RemoveLocation(user_username, user_password, id, call_back) {
-        this.getAccount(user_username, user_password, fetchedUser => {
-            if (fetchedUser == '409' || fetchedUser.privilege != ADMIN_PRIVILEGE)
-                return call_back('409');
-            conn.query('DELETE FROM locations WHERE id = ' + mysql.escape(id), (err) => {
-                if (err) throw err;
-                return call_back('100');
-            });
-        });
-    }
-
-
-    /*
-    Resources
-    */
-    admin_CreateResource(user_username, user_password, name, quantity, call_back) {
-        //Check for admin privilege
-        this.getAccount(user_username, user_password, fetchedUser => {
-            if (fetchedUser == '409' || fetchedUser.privilege != ADMIN_PRIVILEGE)
-                return call_back('409');
-            //Check for resouce name repeat
-            this.getResources(resources => {
-                for (var i = 0; i < resources.length; i++) {
-                    if (resources[i].name == name)
-                        return call_back('408');
-                }
-                //Create resource
-                conn.query("INSERT INTO resources (name, quantity) VALUES ('"+name+"', '"+quantity+"')", (err) => {
-                    if (err) throw err;
-                    return call_back('100');
-                });
-            });
-        });
-    }
-
-    admin_UpdateResource(user_username, user_password, id, previousName, name, quantity, call_back) {
-        //Check for admin privilege
-        this.getAccount(user_username, user_password, fetchedUser => {
-            if (fetchedUser == '409' || fetchedUser.privilege != ADMIN_PRIVILEGE)
-                return call_back('409');
-            // eslint-disable-next-line
-            this.admin_UpdateResourceName(id, previousName, name, nameUpdateResult => {
-                //Update profile info
-                conn.query('Update resources SET quantity = ' + mysql.escape(quantity) + ' WHERE id = ' + mysql.escape(id), (err) => {
-                    if (err) throw err;
-                    conn.query('SELECT * FROM resources WHERE id = ' + mysql.escape(id), (err, result) => {
-                        if (err) throw err;
-                        call_back(result[0]);
-                    });
-                });                   
-            });
-        });
-    }
-    admin_UpdateResourceName(id, previousName, name, nameUpdateResult) {
-        if (previousName != name) {
-            //Check if new name is in use
-            this.getResources(resources => {
-                for (var i = 0; i < resources.length; i++) {
-                    if (resources[i].name == name)
-                        return nameUpdateResult('408');
-                }
-                //Update name
-                conn.query('Update resources SET name = ' + mysql.escape(name) + ' WHERE id = ' + mysql.escape(id), (err) => {
-                    if (err) throw err;
-                    return nameUpdateResult('100');
-                });
-            });
-        }
-        else
-            return nameUpdateResult('100');
-    }
-
-    admin_RemoveResource(user_username, user_password, id, call_back) {
-        this.getAccount(user_username, user_password, fetchedUser => {
-            if (fetchedUser == '409' || fetchedUser.privilege != ADMIN_PRIVILEGE)
-                return call_back('409');
-            conn.query('DELETE FROM resources WHERE id = ' + mysql.escape(id), (err) => {
-                if (err) throw err;
-                return call_back('100');
-            });
-        });
-    }
 
     admin_RunReport(user_username, user_password, users, locations, resources, startDate, endDate, call_back) {
         this.getAccount(user_username, user_password, fetchedUser => {

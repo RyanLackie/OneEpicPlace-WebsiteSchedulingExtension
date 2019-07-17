@@ -4,8 +4,8 @@
         <form id="loginForm">
 
             <div class="formGroup">
-                <label class="register-section-label">Username or Email</label>
-                <input type="text" id="usernameOrEmail" class="form-control" placeholder='Enter Your Username Or Email' required autofocus>
+                <label class="register-section-label">Username</label>
+                <input type="text" id="username" class="form-control" placeholder='Enter Your Username' required autofocus>
             </div>
             
             <div class="formGroup">
@@ -32,16 +32,16 @@
          methods: {
             loginUser(event) {
                 //Handle Login Submit
-                var identity = document.getElementById('usernameOrEmail').value;
+                var identity = document.getElementById('username').value;
                 var password = document.getElementById('password').value;
                 
                 //Login user
                 api.getAccount(identity, password).then(
                     fetchedUser => {
-                        if (fetchedUser == '409')
-                            alert('Incorrect identification');
+                        if (fetchedUser == '404')
+                            alert('Username or Password is incorrect');
                         else {
-                            this.$parent.$refs.Header.privilegeLevel = fetchedUser.privilege;
+                            this.$parent.$refs.Header.memberLevel = fetchedUser.memberLevel;
                             this.$router.push('/');
                         }
                     }

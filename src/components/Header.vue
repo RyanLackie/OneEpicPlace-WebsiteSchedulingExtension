@@ -14,7 +14,7 @@
         </div>
 
         <!-- Non User Navbar -->
-        <div class="navbar" v-if="privilegeLevel < MIN_MEMBER_PRIVILEGE">
+        <div class="navbar" v-if="memberLevel == 0">
             <div class="buttonGroup">
                 <router-link class="text" exact-active-class="active" to="/">Home
                     <div class="underline"></div>
@@ -29,7 +29,7 @@
         </div>
 
         <!-- User Navbar -->
-        <div class="navbar" v-if="privilegeLevel >= MIN_MEMBER_PRIVILEGE && privilegeLevel < ADMIN_PRIVILEGE">
+        <div class="navbar" v-if="memberLevel > 0 && memberLevel < ADMIN_PRIVILEGE">
             <div class="buttonGroup">
                 <router-link class="text" exact-active-class="active" to="/">Home
                     <div class="underline"></div>
@@ -48,7 +48,7 @@
         </div>
 
         <!-- Admin Navbar -->
-        <div class="navbar" v-if="privilegeLevel == ADMIN_PRIVILEGE">
+        <div class="navbar" v-if="memberLevel == ADMIN_PRIVILEGE">
             <div class="buttonGroup">
                 <router-link class="text" exact-active-class="active" to="/">Home
                     <div class="underline"></div>
@@ -90,31 +90,23 @@
         data() {
             return {
                 ADMIN_PRIVILEGE: 6,
-                MIN_MEMBER_PRIVILEGE: 1,
 
-                privilegeLevel: 0
+                memberLevel: 0
             }
         },
 
         methods: {
-            getUserPrivilege() {
-                var user = api.getLocalUser();
-                if (user != null && user.username != undefined && user.password != undefined) {
-                    api.getAccount(user.username, user.password).then(
-                        fetchedUser => {
-                            if (fetchedUser == '409')
-                                this.logout();
-                            else {
-                                this.privilegeLevel = fetchedUser.privilege;
-                                this.checkRoutePrivilege();
-                            }
+            checkMemberLevel() {
+                api.getAccount_local().then(
+                    fetchedUser => {
+                        if (fetchedUser == '404')
+                            this.logout();
+                        else {
+                            this.memberLevel = fetchedUser.memberLevel;
+                            this.checkRoutePrivilege();
                         }
-                    );
-                }
-                else {
-                    this.privilegeLevel = 0;
-                    this.checkRoutePrivilege();
-                }
+                    }
+                );
             },
             checkRoutePrivilege() {
                 var route = this.$router.currentRoute.name;
@@ -128,21 +120,21 @@
 
                     //Non Users
                     case 'login':
-                        if (this.privilegeLevel > this.MIN_MEMBER_PRIVILEGE)
+                        if (this.memberLevel > 0)
                             this.$router.push('/');
                         break;
 
                     //Users
                     case 'profile':
                     case 'schedule':
-                        if (this.privilegeLevel < this.MIN_MEMBER_PRIVILEGE)
+                        if (this.memberLevel < 0)
                             this.$router.push('/');
                         break;
 
                     //Admin
                     case 'data':
                     case 'analysis':
-                        if (this.privilegeLevel < this.ADMIN_PRIVILEGE)
+                        if (this.memberLevel < this.ADMIN_PRIVILEGE)
                             this.$router.push('/');
                         break;
                 }
@@ -150,13 +142,13 @@
 
             logout() {
                 api.logoutUser();
-                this.privilegeLevel = 0;
+                this.memberLevel = 0;
                 this.$router.push('/');
             }
         },
 
         mounted() {
-            this.getUserPrivilege();
+            this.checkMemberLevel();
         }
     }
 </script>

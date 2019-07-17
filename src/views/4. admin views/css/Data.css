@@ -53,3 +53,131 @@
         transform:rotate(360deg);
     }
 }
+/*
+    Children
+*/
+.Data .dataContainer {
+    width: 90%;
+    margin: 0px auto;
+    overflow-y: hidden;
+    white-space: nowrap;
+}
+.Data .dataContainer::-webkit-scrollbar-track {
+	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+	border-radius: 3px;
+    background-color: #F5F5F5;
+}
+.Data .dataContainer::-webkit-scrollbar {
+	width: 12px;
+	background-color: #F5F5F5;
+}
+.Data .dataContainer::-webkit-scrollbar-thumb {
+	border-radius: 3px;
+	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+	background-color: #555;
+}
+
+.Data .picture { /* Only for user modal */
+    width: 100px;
+    height: 100px;
+    margin: 5px 0px 5px 3px;
+    outline: 1px black solid;
+}
+
+.Data .label {
+    font-size: 25px;
+    font-weight: bold;
+    font-family: 'Quicksand', sans-serif;
+    text-transform: uppercase;
+}
+
+.Data .nameRow {
+    height: 25px;
+    margin-bottom: 10px;
+    font-size: 20px;
+    font-family: 'Quicksand', sans-serif;
+    border-bottom: 1px black solid;
+    pointer-events: none;
+}
+.Data .dataRow {
+    height: 25px;
+    margin-bottom: 2px;
+}
+
+.Data .dataCol-3 {
+    display: inline-block;
+    width: 30%;
+    min-width: 170px;
+    height: 100%;
+    text-align: center;  
+}
+.Data .dataCol-4 {
+    display: inline-block;
+    width: 22.5%;
+    min-width: 170px;
+    height: 100%;
+    text-align: center; 
+}
+.Data .dataRow .text {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    pointer-events: none; 
+}
+
+.Data .dataBtnCol {
+    display: inline-block;
+    width: 10%;
+    min-width: 100px;
+    height: 100%;
+    text-align: center;
+}
+.Data .dataRow .dataBtnCol .actionBtn {
+    width: 49%;
+    height: 100%;
+    background-size: 30%;
+    background-repeat: no-repeat;
+    background-position: center;  
+}
+.Data .dataRow .dataBtnCol .editBtn {
+    margin: -15px 2% 0px 0px;
+    background-image: url("../../../assets/edit-white.png");
+}
+.Data .dataRow .dataBtnCol .deleteBtn {
+    margin: -15px 0px 0px 0px;
+    background-image: url("../../../assets/delete-white.png");
+}
+
+.Data .space {
+    margin-bottom: 40px;
+}
+
+.Data .createBtn {
+    position: absolute;
+    left: 0;
+    right: 0;
+    margin: 0px auto;
+    width: 30%;
+    height: 30px;
+    background-image: url("../../../assets/add-white.png");
+    background-size: 30px;
+    background-repeat: no-repeat;
+    background-position: center;    
+    margin-bottom: 20px;
+}
+/*
+    Dimmer
+*/
+.Data .Dimmer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background: black;
+    opacity: 0;
+    visibility: hidden;
+    transition: 0.5s;
+}

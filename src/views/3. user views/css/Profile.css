@@ -1,32 +1,66 @@
 .Profile .form-container {
     width: 60%;
+    max-width: 1000px;
     margin: 0px auto;
 }
 
-.Profile .label {
+.Profile .form-container .picture {
+    width: 150px;
+    height: 150px;
+    margin: 0px 0px 20px 0px;
+    outline: 1px black solid;
+}
+
+.Profile .form-container .label-lg {
+    margin: 0px 0px 3px 3px;
     font-size: 20px;
     font-family: 'Quicksand', sans-serif;
-    text-transform: uppercase;
+    font-weight: bold;
+}
+.Profile .form-container .label {
+    margin: 3px 0px 3px 3px;
+    font-size: 15px;
+    font-family: 'Quicksand', sans-serif;
 }
 
-.Profile .input-box-sm-left {
+.Profile .leftContainer {
+    display: inline-block;
     width: 49%;
-    float: left;
+    min-width: 200px;
     margin-right: 2%;
-    margin-bottom: 20px;
 }
-.Profile .input-box-sm-right {
+.Profile .rightContainer {
+    display: inline-block;
     width: 49%;
-    float: left;
-    margin-bottom: 20px;
+    min-width: 200px;
 }
 
-.Profile .input-box {
-    width: 100%;
-    margin-bottom: 20px;
+@media only screen and (max-width: 680px) {
+    .Profile .form-container .picture {
+        margin: 0px auto 20px auto;
+    }
+    .Profile .leftContainer {
+        width: 100%;
+    }
+    .Profile .rightContainer {
+        width: 100%;
+    }
 }
 
-.Profile .formButton {
+/*.Profile .form-container .input-box {}*/
+.Profile .form-container .input-box::placeholder {
+    color: silver;
+}
+.Profile .form-container .required {
+    color: red;
+    margin-left: -2px;
+}
+
+.Profile .sectionBreak {
+    margin: 20px 0px;
+}
+
+.Profile .form-container .formButton {
     display: block;
     width: 60%;
     margin: 20px auto;

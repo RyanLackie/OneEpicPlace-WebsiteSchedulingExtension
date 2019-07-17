@@ -1,113 +1,38 @@
 /*
     Modal
 */
-.BookedDayModal {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    width: 30%;
-    min-width: 300px;
-
-    -ms-transform: translate(-50%, -50%);
-    transform: translate(-50%, -50%);
-    transition: 0.5s;
-
-    /* Make larger modals scrollable */
-    max-height: calc(100vh - 100px);
-    overflow-y: auto;
-
-    background: whitesmoke;
-    color: black;
-    outline: 3px lightgray solid;
-    padding: 0px 20px;
-    opacity: 0;
-    visibility: hidden;
-    z-index: 3;
-}
-.BookedDayModal::-webkit-scrollbar-track {
-	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
-	border-radius: 3px;
-    background-color: #F5F5F5;
-}
-.BookedDayModal::-webkit-scrollbar {
-	width: 12px;
-	background-color: #F5F5F5;
-}
-.BookedDayModal::-webkit-scrollbar-thumb {
-	border-radius: 3px;
-	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
-	background-color: #555;
-}
-
-.BookedDayModal .modal-header {
-    display: inline-block;
-    width: 100%;
-}
-.BookedDayModal .modal-header .text {
-    font-size: 30px;
-    font-weight: bold;
-    font-family: 'Quicksand', sans-serif;
-}
-.BookedDayModal .modal-header .date {
-    font-size: 25px;
-    font-family: 'Quicksand', sans-serif;
-}
-.BookedDayModal .modal-header .close {
-    position: absolute;
-    top: 10px;
-    right: 30px;
-    color: black;
-    opacity: 1;
-}
-
-.BookedDayModal .booking {
-    width: 95%;
-    margin: 0px auto 10px auto;
-}
-
-.BookedDayModal .booking .line {
-    width: 100%;
-    height: 20px;
-    margin-bottom: 5px;
-}
-
-.BookedDayModal .booking .line .details {
+.PopUpModal .booking {
+    width: 98%;
+    margin: 0px auto 7px auto;
+    padding: 5px;
     font-size: 17px;
+    cursor: pointer;
+    border: 2px black solid;
+    border-radius: 5px;
+    box-shadow: 2px 2px;
 }
-.BookedDayModal .booking .line .color {
-    float: left;
-    width: 5px;
+
+.PopUpModal .booking .line {
+    width: 100%;
     height: 20px;
-    margin: 3px 5px 0px 3px;
+    margin-bottom: 6px;
 }
-.BookedDayModal .booking .line .icon {
+.PopUpModal .booking .line .time {
     float: left;
-    width: 8%;
-    height: 20px;
-    margin-top: 3px;
-    margin-left: -4px;
+}
+.PopUpModal .booking .line .icon {
+    float: left;
+    width: 25px;
+    height: 25px;
+    margin-top: 1px;
+    margin-left: 2px;
     border: none;
     text-decoration: none;
-    background-image: url("../../../../../assets/warning-red.png");
     background-size: 50%;
     background-repeat: no-repeat;
     background-position: center;
 }
-.BookedDayModal .booking .line .title {
-    font-size: 17px;
-}
 
-.BookedDayModal .booking .line .name {
-    margin-left: 2px;
-    font-size: 17px;
-}
-
-/*
-    Modal Footer
-*/
-.BookedDayModal .closeBtn {
-    width: 94%;
-    height: 50px;
-    margin: 20px 3% 30px 3%;
-    font-size: 20px;
+.BookedDayModal .centerBtn {
+    margin-top: 10px;
 }

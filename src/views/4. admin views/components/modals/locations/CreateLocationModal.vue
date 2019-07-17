@@ -1,34 +1,45 @@
 <template>
-    <div class="CreateLocationModal" id="CreateLocationModal" aria-hidden="true">
+    <div class="PopUpModal CreateLocationModal" id="CreateLocationModal" aria-hidden="true">
                 
         <div class="modal-header">
-            <div class="modal-header-text">Create Location</div>
+            <div class="text">Create Location</div>
             
-            <button type="button" class="close" aria-label="Close" @click="closeModal()">
+            <button type="button" class="close" aria-label="Close" @click="close()">
                 <span aria-hidden="true">&times;</span>
             </button>
         </div>
 
         <form id="CreateLocationModal-Form">
 
-            <div class="inputLg">
-                <label class="sectionLabel">Name</label>
-                <input type="text" class="input-box form-control" id="CreateLocationModal-Name" placeholder="Location's Name">
-            </div>
-            <div class="inputLg">
-                <label class="sectionLabel">Point Cost</label>
-                <input type="number" min='0' class="input-box form-control" id="CreateLocationModal-PointCost" placeholder="Location's Point Cost">
-            </div>
-            <div class="inputLg">
-                <label class="sectionLabel">Type</label>
-                <select id="CreateLocationModal-Type" class="form-control" required>
-                    <option value='room'>Room</option>
-                    <option value='desk'>Desk</option>
-                </select>
-            </div>
+            <label class="label-sm">Name</label>
+            <input type="text" class="input-box form-control" id="CreateLocationModal-Name" placeholder="Location's Name" required>
 
-            <button class="btn btn-success submitBtn" type="submit">Submit</button>
-            <button class="btn btn-secondary cancelBtn" type="button" @click="closeModal()">Cancel</button>
+            <label class="label-sm">Point Cost</label>
+            <input type="number" class="input-box form-control" id="CreateLocationModal-Cost" placeholder="Location's Point Cost" required>
+
+            <label class="label-sm">Type</label>
+            <select id="CreateLocationModal-Type" class="form-control" required>
+                <option value='room'>Room</option>
+                <option value='desk'>Desk</option>
+            </select>
+
+            <label class="label-sm">Color</label>
+            <select id="CreateLocationModal-Color" class="form-control" required>
+                <option value='Aqua'>Aqua</option>
+                <option value='green'>Green</option>
+                <option value='yellow'>Yellow</option>
+                <option value='indigo'>Indigo</option>
+                <option value='teal'>Teal</option>
+                <option value='mediumorchid'>Medium Orchid</option>
+                <option value='red'>Red</option>
+                <option value='cyan'>Cyan</option>
+                <option value='lightpink'>Light Pink</option>
+                <option value='darkgoldenrod'>Brown</option>
+                <option value='darkgreen'>Dark Green</option>
+            </select>
+
+            <button class="btn btn-success leftBtn" type="submit">Submit</button>
+            <button class="btn btn-secondary rightBtn" type="button" @click="close()">Cancel</button>
         </form>
 
     </div>
@@ -36,7 +47,7 @@
 
 <style scoped lang="scss">
     //Personal CSS
-    @import "./css/CreateLocationModal.css";
+    @import "./LocationModals.css";
 </style>
 
 <script>
@@ -53,8 +64,9 @@
             openModal() {
                 //Fields
                 document.getElementById("CreateLocationModal-Name").value = '';
-                document.getElementById("CreateLocationModal-PointCost").value = 0;
+                document.getElementById("CreateLocationModal-Cost").value = 0;
                 document.getElementById("CreateLocationModal-Type").value = 'room';
+                document.getElementById("CreateLocationModal-Color").value = 'blue';
 
                 //Scroll
                 document.getElementById('CreateLocationModal').scrollTo(0, 0);
@@ -66,20 +78,25 @@
                 document.getElementById("CreateLocationModal").style.opacity = "0.0";
                 document.getElementById("CreateLocationModal").style.visibility = "hidden";
             },
+            close() {
+                this.closeModal();
+                this.$parent.closeDimmer();
+            },
             
             createLocation(event) {
                 var name = document.getElementById("CreateLocationModal-Name").value;
-                var pointCost = document.getElementById("CreateLocationModal-PointCost").value;
+                var cost = document.getElementById("CreateLocationModal-Cost").value;
                 var type = document.getElementById("CreateLocationModal-Type").value;
+                var color = document.getElementById("CreateLocationModal-Color").value;
                 
-                api.admin_CreateLocation(name, pointCost, type).then(createResult => {
+                api.admin_CreateLocation(name, cost, type, color).then(createResult => {
                     if (createResult == '100') {
-                        this.closeModal();
+                        this.close();
                         this.$parent.updateLocations();
                     }
-                    if (createResult == '408') 
-                        alert('Name is already taken');
-                    else if (createResult == '409') 
+                    else if (createResult == '406')
+                        alert('Location name is already taken');
+                    else if (createResult == '404') 
                         this.$parent.$refs.Header.logout();
                 });
                 

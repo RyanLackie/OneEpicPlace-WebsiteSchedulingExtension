@@ -2,139 +2,36 @@
     Modal
 */
 .BookingModal {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    width: 35%;
-    min-width: 300px;
-
-    -ms-transform: translate(-50%, -50%);
-    transform: translate(-50%, -50%);
-    transition: 0.5s;
-
-    /* Make larger modals scrollable */
-    max-height: calc(100vh - 100px);
-    overflow-y: auto;
-
-    background: whitesmoke;
-    color: black;
-    outline: 3px lightgray solid;
-    padding: 0px 20px;
-    opacity: 0;
-    visibility: hidden;
-    z-index: 3;
-}
-.BookingModal::-webkit-scrollbar-track {
-	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
-	border-radius: 3px;
-    background-color: #F5F5F5;
-}
-.BookingModal::-webkit-scrollbar {
-	width: 12px;
-	background-color: #F5F5F5;
-}
-.BookingModal::-webkit-scrollbar-thumb {
-	border-radius: 3px;
-	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
-	background-color: #555;
-}
-
-.BookingModal .modal-header {
-    display: inline-block;
-    width: 100%;
-}
-.BookingModal .modal-header .text {
-    font-size: 30px;
-    font-weight: bold;
-    font-family: 'Quicksand', sans-serif;
-}
-.BookingModal .modal-header .date {
-    font-size: 25px;
-    font-family: 'Quicksand', sans-serif;
-}
-.BookingModal .modal-header .close {
-    position: absolute;
-    top: 10px;
-    right: 30px;
-    color: black;
-    opacity: 1;
-}
-
-.BookingModal .sectionLabel {
-    margin-left: 3px;
-}
-.BookingModal .inputLg {
-    width: 94%;
-    margin: 10px auto;
-}
-.BookingModal .inputSmLeft {
-    display: inline-block;
-    width: 40%;
-    margin: 0px 0px 10px 3%;
-}
-.BookingModal .inputSmRight {
-    float: right;
-    width: 40%;
-    margin: 0px 3% 10px 0px;
+    height: 90%;
+    max-height: 730px;
 }
 
 /*
-    Color Selector
+    Header
 */
-.BookingModal .colorSelectorContainer {
-    position: relative;
-    display: inline-block;
-    width: 40%;
-    height: 100px;
-    margin: 10px 0px 10px 3%;
+.PopUpModal .modal-header .date {
+    margin-left: -13px;
+    font-size: 25px;
+    font-family: 'Quicksand', sans-serif;
 }
-.BookingModal .colorSelectorContainer .colorLabel {
-    width: 100%;
-    text-align: center;
-    margin-bottom: 12px;
-}
-.BookingModal .colorSelectorContainer .selectedColor {
-    position: absolute;
-    top: 15px;
-    left: 0;
-    right: 0;
-    margin: 24px auto 0px auto;
-    width: 60px;
-    height: 60px;
-    background: blue;
-}
-.BookingModal .colorSelectorContainer .colorRow {
-    display: flex;
-    width: 100%;
-    height: 25px;
-    margin: 10px 0px;
-    justify-content: space-between;
-}
-.BookingModal .colorSelectorContainer .colorRow .colorOption {
-    width: 25px;
-    height: 25px;
-    visibility: hidden;
-}
+
 
 /*
     Noise Selector
 */
-.BookingModal .sliderContainer {
+.PopUpModal .sliderContainer {
     position: relative;
-    float: right;
-    width: 40%;
-    margin: 10px 3% 0px auto;
+    display: inline-block;
+    width: 80%;
+    min-width: 100px;
+    margin: 10px 0px 0px 0px;
 }
-.BookingModal .sliderContainer .noiseLabel {
-    width: 100%;
+.PopUpModal .sliderContainer .value {
     text-align: center;
-    margin-bottom: 20px;
-}
-.BookingModal .sliderContainer .value {
-    text-align: center;
+    margin-top: -10px;
     margin-bottom: 10px;
 }
-.BookingModal .sliderContainer .slider {
+.PopUpModal .sliderContainer .slider {
     width: 100%;
     height: 20px;
     background: silver;
@@ -144,10 +41,10 @@
     -webkit-transition: .2s;
     transition: opacity .2s;
 }
-.BookingModal .sliderContainer .slider:hover {
+.PopUpModal .sliderContainer .slider:hover {
     opacity: 1;
 }
-.BookingModal .sliderContainer .slider::-webkit-slider-thumb {
+.PopUpModal .sliderContainer .slider::-webkit-slider-thumb {
     -webkit-appearance: none;
     appearance: none;
     width: 20px;
@@ -155,98 +52,153 @@
     background: black;
     cursor: pointer;
 }
-.BookingModal .sliderContainer .slider::-moz-range-thumb {
+.PopUpModal .sliderContainer .slider::-moz-range-thumb {
     width: 20px;
     height: 20px;
     background: black;
     cursor: pointer;
 }
 
-.BookingModal .advancedBtn {
-    width: 94%;
+
+/*
+    Privacy Selector
+*/
+.PopUpModal .privacyContainer {
+    position: relative;
+    display: inline-block;
+    width: 15%;
+    min-width: 30px;
+    margin: 10px 0px 0px 5%;
+}
+.PopUpModal .privacyContainer .checkbox {
+    width: 30px;
+    height: 30px;
+    margin-top: 15px;
+    margin-left: 2px;
+}
+
+/*
+    Advanced
+*/
+.PopUpModal .advancedBtn {
+    width: 100%;
     height: 25px;
-    margin: 20px 3% 0px 3%;
+    margin: 20px 0px 0px 0px;
     font-size: 13px;
     line-height: 0px;
+}
+.PopUpModal .advancedOptions {
+    overflow: hidden;
+    height: 0px;
+    transition: 1s;
+}
+
+
+/* 
+    Resources
+*/
+.PopUpModal .resourceContainer {
+    text-align: center;
+}
+.PopUpModal .resourceContainer .resource {
+    display: inline-block;
+    width: 30%;
+    min-width: 150px;
+    margin: 5px 10px;
+    text-align: left;
+}
+.PopUpModal .resourceContainer .resource .checkboxLabel {
+    display: inline-block;
+    font-size: 15px;
+    width: 25%;
+    min-width: 125px;
+}
+.PopUpModal .resourceContainer .resource .checkbox {
+    display: inline-block;
+    width: 5%;
+    min-width: 25px;
+    height: 25px;
 }
 
 /*
     Calendar
 */
-.BookingModal .calendarLabel {
-    margin-left: 3%;
-}
-.BookingModal .dateSelector {
+.PopUpModal .dateSelector {
     width: 100%;
-    margin: -10px auto 20px auto;
+    margin: 10px auto 20px auto;
     text-align: center;
     margin-bottom: 30px;
 }
-.BookingModal .dateSelector .backBtn {
+.PopUpModal .dateSelector .backBtn {
+    display: inline-block;
     width: 40px;
     height: 30px;
-    margin: -8px 3% 0px 0px;
+    margin: 0px 3% 0px 0px;
     background-color: black;
     background-image: url("../../../../../assets/backarrow-white.png");
     background-size: 50%;
     background-repeat: no-repeat;
     background-position: center;
 }
-.BookingModal .dateSelector .date {
+.PopUpModal .dateSelector .date {
+    position: relative;
+    display: inline-block;
+    top: -7px;
     min-width: 150px;
     width: 10%;
-    height: 40px;
+    height: 30px;
     text-align: center;
-    background: transparent;
-    border: 0;
-    border-radius: 3px;
     font-size: 20px;
 }
-.BookingModal .dateSelector .forwardBtn {
+.PopUpModal .dateSelector .forwardBtn {
     display: inline-block;
     width: 40px;
     height: 30px;
-    margin: -8px 0px 0px 3%;
+    margin: 0px 0px 0px 3%;
     background-color: black;
     background-image: url("../../../../../assets/forwardarrow-white.png");
     background-size: 50%;
     background-repeat: no-repeat;
     background-position: center;
 }
+.PopUpModal .calendar {
+    position: relative;
+    width: 99%;
+    margin: 0px auto;
+    overflow: auto;
+    border: 1px blue solid;
+}
+.PopUpModal .calendar .daysOfWeek {
+    float: left;
+    width: 14.28%;
+    font-size: 80%;
+    border: 1px indigo solid;
+}
+.PopUpModal .calendar .day {
+    position: relative;
+    float: left;
+    width: 14.28%;
+    height: 30px;
+    border: 1px blue solid;
+    cursor: pointer;
+}
 
 /*
-    Modal Footer
+    Drop Down
 */
-.BookingModal .submitBtn {
-    float: left;
-    width: 40%;
-    height: 50px;
-    margin: 30px 0px 30px 3%;
-    font-size: 20px;
-}
-.BookingModal .cancelBtn {
-    float: right;
-    width: 40%;
-    height: 50px;
-    margin: 30px 3% 30px 0px;
-    font-size: 20px;
-}
-
-/* 
-    DropDown
-*/
-.BookingModal .dropdown-check-list .anchor {
+.PopUpModal .dropdown-check-list .anchor {
     position: relative;
     display: inline-block;
     width: 100%;
+    margin-top: 20px;
     padding: 5px 50px 5px 10px;
     border: 1px solid #ccc;
     cursor: pointer;
 }
-.BookingModal .dropdown-check-list.visible .anchor {
+.PopUpModal .dropdown-check-list.visible .anchor {
     color: #0094ff;
 }
-.BookingModal .dropdown-check-list .anchor:after {
+.PopUpModal .dropdown-check-list .anchor:after {
     position: absolute;
     top: 20%;
     right: 10px;
@@ -260,12 +212,12 @@
     -webkit-transform: rotate(-135deg);
     transform: rotate(-135deg);
 }
-.BookingModal .dropdown-check-list .anchor:active:after {
+.PopUpModal .dropdown-check-list .anchor:active:after {
     right: 8px;
     top: 21%;
 }
 
-.BookingModal .dropdown-check-list .items {
+.PopUpModal .dropdown-check-list .items {
     display: none;
     padding: 2px;
     margin: 0;
@@ -274,26 +226,26 @@
     max-height: 200px;
     overflow-y: scroll;
 }
-.BookingModal .dropdown-check-list .items::-webkit-scrollbar-track {
+.PopUpModal .dropdown-check-list .items::-webkit-scrollbar-track {
 	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
 	border-radius: 3px;
     background-color: #F5F5F5;
 }
-.BookingModal .dropdown-check-list .items::-webkit-scrollbar {
+.PopUpModal .dropdown-check-list .items::-webkit-scrollbar {
 	width: 12px;
     background-color: #F5F5F5;
 }
-.BookingModal .dropdown-check-list .items::-webkit-scrollbar-thumb {
+.PopUpModal .dropdown-check-list .items::-webkit-scrollbar-thumb {
 	border-radius: 3px;
 	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
     background-color: #555;
 }
 
-.BookingModal .dropdown-check-list.visible .items {
+.PopUpModal .dropdown-check-list.visible .items {
     display: block;
 }
 
-.BookingModal .dropdown-check-list .items .container {
+.PopUpModal .dropdown-check-list .items .container {
     position: relative;
     display: block;
     margin: 0px;
@@ -308,12 +260,12 @@
     z-index: 1;
 }
   
-.BookingModal .dropdown-check-list .items .container .text {
+.PopUpModal .dropdown-check-list .items .container .itemText {
     font-size: 17px;
     padding: 5px 0px;
 }
 /* Hide the browser's default checkbox */
-.BookingModal .dropdown-check-list .items .container input {
+.PopUpModal .dropdown-check-list .items .container input {
     position: absolute;
     opacity: 0;
     cursor: pointer;
@@ -321,7 +273,7 @@
     width: 0;
 }
 /* Create a custom checkbox */
-.BookingModal .dropdown-check-list .items .container .checkmark {
+.PopUpModal .dropdown-check-list .items .container .checkmark {
     position: absolute;
     top: 5px;
     left: 5px;
@@ -331,26 +283,26 @@
     background-color: #eee;
 }
 /* On Hover */
-.BookingModal .dropdown-check-list .items .container:hover input ~ .checkmark {
+.PopUpModal .dropdown-check-list .items .container:hover input ~ .checkmark {
     background-color: lightgray;
 }
 /* When the checkbox is checked */
-.BookingModal .dropdown-check-list .items .container input:checked ~ .checkmark {
+.PopUpModal .dropdown-check-list .items .container input:checked ~ .checkmark {
     background-color: purple;
 }
   
 /* Create the checkmark/indicator (hidden when not checked) */
-.BookingModal .dropdown-check-list .items .container .checkmark:after {
+.PopUpModal .dropdown-check-list .items .container .checkmark:after {
     content: "";
     position: absolute;
     display: none;
 }
 /* Show the checkmark when checked */
-.BookingModal .dropdown-check-list .items .container input:checked ~ .checkmark:after {
+.PopUpModal .dropdown-check-list .items .container input:checked ~ .checkmark:after {
     display: block;
 }
 /* Style the checkmark/indicator */
-.BookingModal .dropdown-check-list .items .container .checkmark:after {
+.PopUpModal .dropdown-check-list .items .container .checkmark:after {
     left: 9px;
     top: 5px;
     width: 8px;
@@ -361,3 +313,4 @@
     -ms-transform: rotate(45deg);
     transform: rotate(45deg);
 }
+

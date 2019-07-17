@@ -1,0 +1,139 @@
+/*
+    Modal
+*/
+.PopUpModal {
+    position: fixed;
+    margin: auto;
+    top: 0; right: 0; bottom: 0; left: 0;
+    width: 35%;
+    min-width: 300px;
+    padding: 0px 20px;
+    /*
+    left: 50%;
+    -ms-transform: translate(-50%, -50%, 0);
+    transform: translate(-50%, -50%, 0);
+    */
+    
+    /* Make larger modals scrollable */
+    overflow-y: auto;
+
+    background: whitesmoke;
+    color: black;
+    border: 3px lightgray solid;
+    border-radius: 7px;
+    opacity: 0;
+    transition: 0.5s;
+    visibility: hidden;
+    z-index: 3;
+}
+.PopUpModal::-webkit-scrollbar-track {
+	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+	border-radius: 3px;
+    background-color: #F5F5F5;
+}
+.PopUpModal::-webkit-scrollbar {
+	width: 12px;
+	background-color: #F5F5F5;
+}
+.PopUpModal::-webkit-scrollbar-thumb {
+	border-radius: 3px;
+	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+	background-color: #555;
+}
+
+/*
+    Modal Header
+*/
+.PopUpModal .modal-header {
+    display: inline-block;
+    width: 100%;
+}
+.PopUpModal .text {
+    margin-left: -13px;
+    font-size: 30px;
+    font-weight: bold;
+    font-family: 'Quicksand', sans-serif;
+}
+.PopUpModal .modal-header .close {
+    position: absolute;
+    top: 10px;
+    right: 30px;
+    color: black;
+    opacity: 1;
+}
+
+/*
+    Modal Body
+*/
+.PopUpModal .label-lg {
+    margin: 0px 0px 3px 3px;
+    font-size: 20px;
+    font-family: 'Quicksand', sans-serif;
+    font-weight: bold;
+}
+.PopUpModal .label-sm {
+    margin: 3px 0px 3px 3px;
+}
+
+/*.PopUpModal .input-box {}*/
+.PopUpModal .input-box::placeholder {
+    color: silver;
+}
+.PopUpModal .required {
+    color: red;
+    margin-left: -2px;
+}
+
+.PopUpModal .leftContainer {
+    display: inline-block;
+    width: 49%;
+    min-width: 200px;
+    margin-right: 2%;
+}
+.PopUpModal .rightContainer {
+    display: inline-block;
+    width: 49%;
+    min-width: 200px;
+}
+
+.PopUpModal .leftContainer-sm {
+    display: inline-block;
+    width: 49%;
+    min-width: 100px;
+    margin-right: 2%;
+}
+.PopUpModal .rightContainer-sm {
+    display: inline-block;
+    width: 49%;
+    min-width: 100px;
+}
+
+.PopUpModal .sectionBreak {
+    margin: 20px 0px;
+}
+
+/*
+    Modal Footer
+*/
+.PopUpModal .leftBtn {
+    display: inline-block;
+    width: 45%;
+    height: 50px;
+    margin: 30px 2% 15px 3%;
+    font-size: 20px;
+}
+.PopUpModal .rightBtn {
+    display: inline-block;
+    width: 45%;
+    height: 50px;
+    margin: 30px 3% 15px 2%;
+    font-size: 20px;
+}
+
+.PopUpModal .centerBtn {
+    display: inline-block;
+    width: 94%;
+    height: 50px;
+    margin: 30px 3% 15px 3%;
+    font-size: 20px;
+}
