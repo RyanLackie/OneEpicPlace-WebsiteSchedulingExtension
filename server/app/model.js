@@ -35,7 +35,7 @@ class Model {
     /////////////////////////////////        Account Methods        //////////////////////////////////////////
     */////////////////////////////////////////////////////////////////////////////////////////////////////////
     //User Methods
-    getAccount(identity, password, call_back) {       
+    getAccount(identity, password, call_back) {
         this.checkForUsername(identity, usernameCheckResponse => {
             if (usernameCheckResponse != '404' && password == usernameCheckResponse.password) {
                 var account = this.stripAccount(usernameCheckResponse);

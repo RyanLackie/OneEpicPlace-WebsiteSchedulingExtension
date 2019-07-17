@@ -1,7 +1,21 @@
 <template>
     <div class="Home">
 
-        <div class="text">This is the Home page</div>
+        <div class="header">
+            One EPIC Place scheduling Extension
+        </div>
+
+        <div class="text">
+            Admin User<br>
+            Username - admin, Password - admin
+            <div class="space"></div>
+            Normal User<br>
+            Username - user, Password - user
+        </div>
+
+        <div class="footer">
+            Full Release Available February 2020
+        </div>
 
     </div>
 </template>
@@ -12,8 +26,6 @@
 </style>
 
 <script>
-    //import * as api from '@/services/api_access';
-
     export default {
         
     }

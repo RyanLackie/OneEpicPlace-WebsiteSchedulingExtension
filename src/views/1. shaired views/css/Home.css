@@ -1,4 +1,20 @@
+.Home .header {
+    text-align: center;
+    font-size: 35px;
+    margin-bottom: 30px;
+}
+
 .Home .text {
     text-align: center;
-    font-size: 40px;
+    font-size: 25px;
+    margin-bottom: 50px;
+}
+.Home .text .space {
+    margin: 30px 0px;
+}
+
+.Home .footer {
+    text-align: center;
+    font-size: 25px;
+    font-weight: bold;
 }
