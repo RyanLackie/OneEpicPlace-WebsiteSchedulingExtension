@@ -8,8 +8,9 @@
 
             <div class="inputSection">
 
-                <div id="users" class="dropdown-check-list inputContainer inputContainerLeft">
-                    <span class="anchor" @click="clickList('users')">Select Users</span>
+                <div id="users" class="dropdown-check-list inputContainer inputContainerLeft noselect"
+                style="z-index: 2;">
+                    <span class="anchor" @click="clickList('users')">Users</span>
                     <div class="items">
                         <label class="container" @click="selectAll('usersSelectAllBtn')">
                             <div class="text">Select All</div>
@@ -24,8 +25,9 @@
                     </div>
                 </div>
 
-                <div id="locations" class="dropdown-check-list inputContainer inputContainerRight">
-                    <span class="anchor" @click="clickList('locations')">Select Locations</span>
+                <div id="locations" class="dropdown-check-list inputContainer inputContainerRight noselect"
+                style="z-index: 2;">
+                    <span class="anchor" @click="clickList('locations')">Locations</span>
                     <div class="items">
                         <label class="container" @click="selectAll('locationsSelectAllBtn')">
                             <div class="text">Select All</div>
@@ -44,8 +46,9 @@
 
             <div class="inputSection">
 
-                <div id="resources" class="dropdown-check-list inputContainer inputContainerLeft">
-                    <span class="anchor" @click="clickList('resources')">Select Resources</span>
+                <div id="resources" class="dropdown-check-list inputContainer inputContainerLeft noselect"
+                style="z-index: 1;">
+                    <span class="anchor" @click="clickList('resources')">Resources</span>
                     <div class="items">
                         <label class="container" @click="selectAll('resourcesSelectAllBtn')">
                             <div class="text">Select All</div>
@@ -77,11 +80,25 @@
             </div>
 
 
-
             <!-- Loading Icon -->
             <div class="loadingAnimation" v-if="!reportLoad"></div>
 
             <div v-if="reportLoad">
+
+                <!-- Edit Navbar -->
+                <div class="viewSelector">
+                    <div class='buttonGroup'>
+                        <div class="text" v-if="load" @click="() => viewSelected = 0">Users
+                            <div class="underline" :style="styleUnderline(0)"></div>
+                        </div>
+                        <div class="text" v-if="load" @click="() => viewSelected = 1">Locations
+                            <div class="underline" :style="styleUnderline(1)"></div>
+                        </div>
+                        <div class="text" v-if="load" @click="() => viewSelected = 2">Resources
+                            <div class="underline" :style="styleUnderline(2)"></div>
+                        </div>
+                    </div>
+                </div>
 
                 <!-- 
                     users       (hours rented, most active times, most active location, most active resources)
@@ -89,7 +106,7 @@
                     resources   (hours rented, most active times, most active users, most active locations)
                 -->
 
-                <div class='reportContainer'>
+                <div class='reportContainer' v-if="viewSelected == 0">
                     <div class="topRow">
                         <div class="reportCol">Users</div>
                         <div class="reportCol">Hours Booked</div>
@@ -126,7 +143,7 @@
                 </div>
 
 
-                <div class='reportContainer'>
+                <div class='reportContainer' v-if="viewSelected == 1">
                     <div class="topRow">
                         <div class="reportCol">Locations</div>
                         <div class="reportCol">Hours Booked</div>
@@ -163,7 +180,7 @@
                 </div>
 
 
-                <div class='reportContainer'>
+                <div class='reportContainer' v-if="viewSelected == 2">
                     <div class="topRow">
                         <div class="reportCol">Resources</div>
                         <div class="reportCol">Hours Booked</div>
@@ -219,6 +236,8 @@
     export default {
         data() {
             return {
+                viewSelected: 0,
+
                 load: false,
                 reportLoad: false,
 
@@ -260,19 +279,19 @@
                 var tier1Member = [];
                 var nonMember = [];
                 for (var i = 0; i < users.length; i++) {
-                    if (users[i].privilege == 6)
+                    if (users[i].memberLevel == 6)
                         admin.push(users[i]);
-                    else if (users[i].privilege == 5)
+                    else if (users[i].memberLevel == 5)
                         tier5Member.push(users[i]);
-                    else if (users[i].privilege == 4)
+                    else if (users[i].memberLevel == 4)
                         tier4Member.push(users[i]);
-                    else if (users[i].privilege == 3)
+                    else if (users[i].memberLevel == 3)
                         tier3Member.push(users[i]);
-                    else if (users[i].privilege == 2)
+                    else if (users[i].memberLevel == 2)
                         tier2Member.push(users[i]);
-                    else if (users[i].privilege == 1)
+                    else if (users[i].memberLevel == 1)
                         tier1Member.push(users[i]);
-                    else if (users[i].privilege == 0)
+                    else if (users[i].memberLevel == 0)
                         nonMember.push(users[i]);
                 }
                 users = admin.concat(tier5Member).concat(tier4Member).concat(tier3Member).concat(tier2Member).concat(tier1Member).concat(nonMember);
@@ -360,140 +379,143 @@
 
                 api.admin_RunReport(users, locations, resources, startDate, endDate).then(
                     bookings => {
-                        
-                        for (var j = 0; j < users.length; j++) {
-                            users[j].hours = 0;
-                            users[j].activity = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-                            users[j].locations = [];
-                            users[j].resources = [];
-                        }
-                        for (var jj = 0; jj < locations.length; jj++) {
-                            locations[jj].hours = 0;
-                            locations[jj].activity = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-                            locations[jj].users = [];
-                            locations[jj].resources = [];
-                        }
-                        for (var jjj = 0; jjj < resources.length; jjj++) {
-                            resources[jjj].hours = 0;
-                            resources[jjj].activity = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-                            resources[jjj].users = [];
-                            resources[jjj].locations = [];
-                        }
+                        if (bookings.length != 0) {
 
-                        for (var booking = 0; booking < bookings.length; booking++) {
+                            for (var j = 0; j < users.length; j++) {
+                                users[j].hours = 0;
+                                users[j].activity = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+                                users[j].locations = [];
+                                users[j].resources = [];
+                            }
+                            for (var jj = 0; jj < locations.length; jj++) {
+                                locations[jj].hours = 0;
+                                locations[jj].activity = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+                                locations[jj].users = [];
+                                locations[jj].resources = [];
+                            }
+                            for (var jjj = 0; jjj < resources.length; jjj++) {
+                                resources[jjj].hours = 0;
+                                resources[jjj].activity = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+                                resources[jjj].users = [];
+                                resources[jjj].locations = [];
+                            }
 
-                            var hours = Math.abs(bookings[booking].endTime.split(':')[0] - bookings[booking].startTime.split(':')[0]);
-                            var mins = Math.abs(bookings[booking].endTime.split(':')[1] - bookings[booking].startTime.split(':')[1]);
+                            for (var booking = 0; booking < bookings.length; booking++) {
 
-                            var MIN_HOUR = 7;
-                            var MAX_HOUR = 21;
+                                var hours = Math.abs(bookings[booking].endTime.split(':')[0] - bookings[booking].startTime.split(':')[0]);
+                                var mins = Math.abs(bookings[booking].endTime.split(':')[1] - bookings[booking].startTime.split(':')[1]);
 
-                            for (var user = 0; user < users.length; user++) {
-                                if (bookings[booking].userID == users[user].id) {
-                                    //Hours
-                                    users[user].hours += Math.round( (hours + mins/60) * 100 ) / 100;
-                                    //Activity
-                                    for (var i = 0; i < hours+1; i++) {
-                                        var index = (parseInt(bookings[booking].startTime.split(':')[0], 10) - MIN_HOUR + i);
-                                        var value = users[user].activity[index] + 1;
-                                        if (index < users[user].activity.length)
-                                            users[user].activity[index] = value;
-                                    }
-                                    //Location
-                                    var foundLocation = false;
-                                    for (var ii = 0; ii < users[user].locations.length; ii++) {
-                                        if (users[user].locations[ii].id == bookings[booking].locationID) {
-                                            foundLocation = true;
-                                            users[user].locations[ii].hours += Math.round( (hours + mins/60) * 100 ) / 100;
+                                var MIN_HOUR = 7;
+                                var MAX_HOUR = 21;
+
+                                for (var user = 0; user < users.length; user++) {
+                                    if (bookings[booking].userID == users[user].id) {
+                                        //Hours
+                                        users[user].hours += Math.round( (hours + mins/60) * 100 ) / 100;
+                                        //Activity
+                                        for (var i = 0; i < hours+1; i++) {
+                                            var index = (parseInt(bookings[booking].startTime.split(':')[0], 10) - MIN_HOUR + i);
+                                            var value = users[user].activity[index] + 1;
+                                            if (index < users[user].activity.length)
+                                                users[user].activity[index] = value;
                                         }
-                                    }
-                                    if (!foundLocation)
-                                        users[user].locations[users[user].locations.length] = {id: bookings[booking].locationID, hours: hours};
-                                    //Resources
-                                    var foundResource = false;
-                                    for (var j = 0; j < bookings[booking].resourceID.length; j++) {
-                                        for (var jj = 0; jj < users[user].resources.length; jj++) {
-                                            if (bookings[booking].resourceID[j] == users[user].resources[jj].id) {
-                                                foundResource = true;
-                                                users[user].resources[jj].hours += Math.round( (hours + mins/60) * 100 ) / 100;
+                                        //Location
+                                        var foundLocation = false;
+                                        for (var ii = 0; ii < users[user].locations.length; ii++) {
+                                            if (users[user].locations[ii].id == bookings[booking].locationID) {
+                                                foundLocation = true;
+                                                users[user].locations[ii].hours += Math.round( (hours + mins/60) * 100 ) / 100;
                                             }
                                         }
-                                        if (!foundResource)
-                                            users[user].resources[users[user].resources.length] = {id: bookings[booking].resourceID[j], hours: hours};
-                                    }
-                                }
-                            }
-                            
-                            for (var loc = 0; loc < locations.length; loc++) {
-                                if (bookings[booking].locationID == locations[loc].id) {
-                                    //Hours
-                                    locations[loc].hours += Math.round( (hours + mins/60) * 100 ) / 100;
-                                    //Activity
-                                    for (var i = 0; i < hours+1; i++) {
-                                        var index = (parseInt(bookings[booking].startTime.split(':')[0], 10) - MIN_HOUR + i);
-                                        var value = locations[loc].activity[index] + 1;
-                                        if (index < locations[loc].activity.length)
-                                            locations[loc].activity[index] = value;
-                                    }
-                                    //Users
-                                    var foundUser = false;
-                                    for (var ii = 0; ii < locations[loc].users.length; ii++) {
-                                        if (locations[loc].users[ii].id == bookings[booking].userID) {
-                                            foundUser = true;
-                                            locations[loc].users[ii].hours += Math.round( (hours + mins/60) * 100 ) / 100;
+                                        if (!foundLocation)
+                                            users[user].locations[users[user].locations.length] = {id: bookings[booking].locationID, hours: hours};
+                                        //Resources
+                                        var foundResource = false;
+                                        for (var j = 0; j < bookings[booking].resourceID.length; j++) {
+                                            for (var jj = 0; jj < users[user].resources.length; jj++) {
+                                                if (bookings[booking].resourceID[j] == users[user].resources[jj].id) {
+                                                    foundResource = true;
+                                                    users[user].resources[jj].hours += Math.round( (hours + mins/60) * 100 ) / 100;
+                                                }
+                                            }
+                                            if (!foundResource)
+                                                users[user].resources[users[user].resources.length] = {id: bookings[booking].resourceID[j], hours: hours};
                                         }
                                     }
-                                    if (!foundLocation)
-                                        locations[loc].users[locations[loc].users.length] = {id: bookings[booking].userID, hours: hours};
-                                    //Resources
-                                    var foundResource = false;
-                                    for (var j = 0; j < bookings[booking].resourceID.length; j++) {
-                                        for (var jj = 0; jj < locations[loc].resources.length; jj++) {
-                                            if (bookings[booking].resourceID[j] == locations[loc].resources[jj].id) {
-                                                foundResource = true;
-                                                locations[loc].resources[jj].hours += Math.round( (hours + mins/60) * 100 ) / 100;
+                                }
+                                
+                                for (var loc = 0; loc < locations.length; loc++) {
+                                    if (bookings[booking].locationID == locations[loc].id) {
+                                        //Hours
+                                        locations[loc].hours += Math.round( (hours + mins/60) * 100 ) / 100;
+                                        //Activity
+                                        for (var i = 0; i < hours+1; i++) {
+                                            var index = (parseInt(bookings[booking].startTime.split(':')[0], 10) - MIN_HOUR + i);
+                                            var value = locations[loc].activity[index] + 1;
+                                            if (index < locations[loc].activity.length)
+                                                locations[loc].activity[index] = value;
+                                        }
+                                        //Users
+                                        var foundUser = false;
+                                        for (var ii = 0; ii < locations[loc].users.length; ii++) {
+                                            if (locations[loc].users[ii].id == bookings[booking].userID) {
+                                                foundUser = true;
+                                                locations[loc].users[ii].hours += Math.round( (hours + mins/60) * 100 ) / 100;
                                             }
                                         }
-                                        if (!foundResource)
-                                            locations[loc].resources[locations[loc].resources.length] = {id: bookings[booking].resourceID[j], hours: hours};
+                                        if (!foundLocation)
+                                            locations[loc].users[locations[loc].users.length] = {id: bookings[booking].userID, hours: hours};
+                                        //Resources
+                                        var foundResource = false;
+                                        for (var j = 0; j < bookings[booking].resourceID.length; j++) {
+                                            for (var jj = 0; jj < locations[loc].resources.length; jj++) {
+                                                if (bookings[booking].resourceID[j] == locations[loc].resources[jj].id) {
+                                                    foundResource = true;
+                                                    locations[loc].resources[jj].hours += Math.round( (hours + mins/60) * 100 ) / 100;
+                                                }
+                                            }
+                                            if (!foundResource)
+                                                locations[loc].resources[locations[loc].resources.length] = {id: bookings[booking].resourceID[j], hours: hours};
+                                        }
                                     }
                                 }
+
+                                for (var res = 0; res < resources.length; res++) {
+                                    if (bookings[booking].resourceID == resources[res].id) {
+                                        //Hours
+                                        resources[res].hours += Math.round( (hours + mins/60) * 100 ) / 100;
+                                        //Activity
+                                        for (var i = 0; i < hours+1; i++) {
+                                            var index = (parseInt(bookings[booking].startTime.split(':')[0], 10) - MIN_HOUR + i);
+                                            var value = resources[res].activity[index] + 1;
+                                            if (index < resources[res].activity.length)
+                                                resources[res].activity[index] = value;
+                                        }
+                                        //Users
+                                        var foundUser = false;
+                                        for (var ii = 0; ii < resources[res].users.length; ii++) {
+                                            if (resources[res].users[ii].id == bookings[booking].userID) {
+                                                foundUser = true;
+                                                resources[res].users[ii].hours += Math.round( (hours + mins/60) * 100 ) / 100;
+                                            }
+                                        }
+                                        if (!foundLocation)
+                                            resources[res].users[resources[res].users.length] = {id: bookings[booking].userID, hours: hours};
+                                        //Location
+                                        var foundLocation = false;
+                                        for (var iii = 0; iii < resources[res].locations.length; iii++) {
+                                            if (resources[res].locations[iii].id == bookings[booking].locationID) {
+                                                foundLocation = true;
+                                                resources[res].locations[iii].hours += Math.round( (hours + mins/60) * 100 ) / 100;
+                                            }
+                                        }
+                                        if (!foundLocation)
+                                            resources[res].locations[resources[res].locations.length] = {id: bookings[booking].locationID, hours: hours};
+                                    }
+                                }
+                                
                             }
 
-                            for (var res = 0; res < resources.length; res++) {
-                                if (bookings[booking].resourceID == resources[res].id) {
-                                    //Hours
-                                    resources[res].hours += Math.round( (hours + mins/60) * 100 ) / 100;
-                                    //Activity
-                                    for (var i = 0; i < hours+1; i++) {
-                                        var index = (parseInt(bookings[booking].startTime.split(':')[0], 10) - MIN_HOUR + i);
-                                        var value = resources[res].activity[index] + 1;
-                                        if (index < resources[res].activity.length)
-                                            resources[res].activity[index] = value;
-                                    }
-                                    //Users
-                                    var foundUser = false;
-                                    for (var ii = 0; ii < resources[res].users.length; ii++) {
-                                        if (resources[res].users[ii].id == bookings[booking].userID) {
-                                            foundUser = true;
-                                            resources[res].users[ii].hours += Math.round( (hours + mins/60) * 100 ) / 100;
-                                        }
-                                    }
-                                    if (!foundLocation)
-                                        resources[res].users[resources[res].users.length] = {id: bookings[booking].userID, hours: hours};
-                                    //Location
-                                    var foundLocation = false;
-                                    for (var iii = 0; iii < resources[res].locations.length; iii++) {
-                                        if (resources[res].locations[iii].id == bookings[booking].locationID) {
-                                            foundLocation = true;
-                                            resources[res].locations[iii].hours += Math.round( (hours + mins/60) * 100 ) / 100;
-                                        }
-                                    }
-                                    if (!foundLocation)
-                                        resources[res].locations[resources[res].locations.length] = {id: bookings[booking].locationID, hours: hours};
-                                }
-                            }
-                            
                         }
 
                         this.selectedUsers = users.sort(function(a, b) {
@@ -511,6 +533,13 @@
                         this.reportLoad = true;
                     }
                 );
+            },
+
+            // Style
+            styleUnderline(viewSelected) {
+                if (this.viewSelected == viewSelected)
+                    return 'width: 100%;';
+                return 'width: 0px;';
             },
 
             styleBar(bar, graph) {

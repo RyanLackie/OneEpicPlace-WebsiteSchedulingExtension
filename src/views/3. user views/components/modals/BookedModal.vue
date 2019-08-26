@@ -103,7 +103,7 @@
 
 <style scoped lang="scss">
     //Personal CSS
-    @import "./css/BookedModal.css";
+    
 </style>
 
 <script>
@@ -123,6 +123,16 @@
             openModal(booking) {
                 this.booking = booking;
 
+                //Style Modal
+                if (this.checkFormType() == 'room') {
+                    document.getElementById('BookedModal').style.height = 90+'%';
+                    document.getElementById('BookedModal').style.maxHeight = 750+'px';
+                }
+                else {
+                    document.getElementById('BookedModal').style.height = 90+'%';
+                    document.getElementById('BookedModal').style.maxHeight = 515+'px';
+                }
+
                 //Modal User
                 document.getElementById('BookedModal-User').value = booking.userID;
 
@@ -130,13 +140,16 @@
                 document.getElementById('BookedModal-Location').value = booking.locationID;
 
                 //Modal Meeting Type
-                document.getElementById('BookedModal-MeetingType').value = booking.meetingType;
+                if (document.getElementById('BookedModal-MeetingType'))
+                    document.getElementById('BookedModal-MeetingType').value = booking.meetingType;
 
                 //Modal Title
-                document.getElementById('BookedModal-Title').value = booking.title;
+                if (document.getElementById('BookedModal-Title'))
+                    document.getElementById('BookedModal-Title').value = booking.title;
 
                 //Modal Description
-                document.getElementById('BookedModal-Description').value = booking.description;
+                if (document.getElementById('BookedModal-Description'))
+                    document.getElementById('BookedModal-Description').value = booking.description;
                 
                 //Time
                 var startTime = [
@@ -160,8 +173,10 @@
                 document.getElementById('BookedModal-EndTime').value = endTime[0] + ":" + endTime[1];
                 
                 //Noise Level
-                document.getElementById('BookedModal-NoiseSlider').value = booking.noiseLevel;
-                this.getRangeValue();
+                if (document.getElementById('BookedModal-NoiseSlider') && document.getElementById('BookedModal-NoiseValue')) {
+                    document.getElementById('BookedModal-NoiseSlider').value = booking.noiseLevel;
+                    this.getRangeValue();
+                }
                 
                 //Private
                 if (booking.private)
@@ -216,7 +231,9 @@
                 var startTime = document.getElementById('BookedModal-StartTime').value;
                 var endTime = document.getElementById('BookedModal-EndTime').value;
 
-                var meetingType = document.getElementById('BookedModal-MeetingType').value;
+                var meetingType = -1;
+                if (document.getElementById('BookedModal-MeetingType'))
+                    meetingType = document.getElementById('BookedModal-MeetingType').value;
                 
                 var title = '';
                 if (document.getElementById('BookedModal-Title'))
@@ -300,10 +317,14 @@
 
             //Modal
             checkFormType() {
-                var type = 'room';
-                if (this.location != null && this.location.type != undefined)
-                    type = this.location.type;
-                return type;
+                var type = '';
+                for (var i = 0; i < this.$parent.locations.length; i++) {
+                    if (this.booking.locationID == this.$parent.locations[i].id) {
+                        type = this.$parent.locations[i].type;
+                        return type;
+                    }
+                }
+                return null;
             }, 
 
             getRangeValue() {

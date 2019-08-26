@@ -3,7 +3,9 @@
 
         <form class="form-container" id="profileForm">
 
-            <div class="picture" id='picture'></div>
+            <img class="picture" id='shownImg'>
+            <br/>
+            <input id="picture" type="file" value="" onchange="">
             
             <div class="label-lg">ABOUT</div>
             <div class="leftContainer">
@@ -72,7 +74,8 @@
                         if (user == '404')
                             this.$parent.$refs.Header.logout();
                         else {
-                            //document.getElementById('picture').value = user.picture;
+                            //console.log(user.picture);
+                            //document.getElementById('shownImg').src = user.picture;
                             document.getElementById('firstName').value = user.firstName;
                             document.getElementById('lastName').value = user.lastName;
                             document.getElementById("companyName").value = user.companyName;
@@ -87,7 +90,7 @@
             },
 
             updateProfile(event) {
-                var picture = "";// = document.getElementById('picture').value;
+                var picture = ""//document.getElementById('picture').value;
                 var firstName = document.getElementById('firstName').value;
                 var lastName = document.getElementById('lastName').value;
                 var companyName = document.getElementById("companyName").value;

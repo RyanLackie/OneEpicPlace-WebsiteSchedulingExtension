@@ -19,7 +19,6 @@
 
 .Analysis .date {
     width: 47%;
-    z-index: 0;
 }
 .Analysis .leftDate {
     float: left;
@@ -31,6 +30,7 @@
 
 .Analysis .dropdown-check-list {
     display: inline-block;
+    background: white;
 }
 .Analysis .dropdown-check-list .anchor {
     position: relative;
@@ -39,7 +39,6 @@
     padding: 5px 50px 5px 10px;
     border: 1px solid #ccc;
     cursor: pointer;
-    z-index: 0;
 }
 .Analysis .dropdown-check-list.visible .anchor {
     color: #0094ff;
@@ -72,8 +71,8 @@
     max-height: 200px;
     overflow-y: scroll;
     background: white;
-    z-index: 1;
 }
+
 .Analysis .dropdown-check-list .items::-webkit-scrollbar-track {
 	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
 	border-radius: 3px;
@@ -88,6 +87,7 @@
 	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
     background-color: #555;
 }
+
 .Analysis .dropdown-check-list.visible .items {
     display: block;
 }
@@ -99,10 +99,6 @@
     padding-left: 40px;
     font-size: 22px;
     cursor: pointer;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
     background: white;
     z-index: 1;
 }
@@ -173,25 +169,79 @@
     background: green;
     border: 1px green solid;
     color: white;
+    cursor: pointer;
 }
 
+/*
+    Views Navbar
+*/
+.Analysis .viewSelector {
+    width: 100%;
+    margin-bottom: 20px;
+}
+.Analysis .viewSelector .buttonGroup {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0px auto;
+    text-align: center;
+}
+.Analysis .viewSelector .buttonGroup .text {
+    display: inline-block;
+    padding: 0px 2%;
+    color: black;
+    font-size: 20px;
+    text-decoration: none;
+    cursor: pointer;
+}
+.Analysis .viewSelector .text:hover {
+    color: gray;
+}
+.Analysis .viewSelector .text .underline {
+    width: 0px;
+    border-bottom: 3px orange solid;
+    transition: width 0.3s;
+}
 
-.Analysis .topRow {
+.Analysis .reportContainer {
+    width: 90%;
+    min-width: 500px;
+    margin: 0px auto;
+    overflow-y: hidden;
+    white-space: nowrap;
+}
+.Analysis .reportContainer::-webkit-scrollbar-track {
+	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+	border-radius: 3px;
+    background-color: #F5F5F5;
+}
+.Analysis .reportContainer::-webkit-scrollbar {
+	width: 12px;
+	background-color: #F5F5F5;
+}
+.Analysis .reportContainer::-webkit-scrollbar-thumb {
+	border-radius: 3px;
+	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+	background-color: #555;
+}
+
+.Analysis .reportContainer .topRow {
     width: 100%;
     height: 25px;
     margin: 10px auto 10px auto;
     font-size: 20px;
     font-family: 'Quicksand', sans-serif;
-    border-bottom: 1px black solid;
     pointer-events: none;
 }
+.Analysis .reportContainer .topRow .reportCol {
+    border-bottom: 1px black solid;
+}
 
-.Analysis .reportRow {
+.Analysis .reportContainer .reportRow {
     width: 100%;
     height: 40px;
     margin-bottom: 10px;
 }
-.Analysis .reportCol {
+.Analysis .reportContainer .reportCol {
     display: inline-block;
     width: 20%;
     min-width: 170px;
@@ -199,15 +249,7 @@
     text-align: center;
 }
 
-.Analysis .reportContainer {
-    width: 90%;
-    min-width: 1000px;
-    margin: 0px auto;
-    overflow-y: hidden;
-    white-space: nowrap;
-}
-
-.Analysis .reportCol .selectMenu {
+.Analysis .reportContainer .reportCol .selectMenu {
     width: 70%;
 }
 

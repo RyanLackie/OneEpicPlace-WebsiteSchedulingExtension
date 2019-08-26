@@ -4,7 +4,7 @@
         <!-- Loading Icon -->
         <div class="loadingAnimation" v-if="!load"></div>
 
-        <!-- Edit Navbar -->
+        <!-- Navbar -->
         <div class="viewSelector">
             <div class='buttonGroup'>
                 <div class="text" v-if="load" @click="selectView(0)">Users

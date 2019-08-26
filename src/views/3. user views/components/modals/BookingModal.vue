@@ -102,7 +102,7 @@
 
 <style scoped lang="scss">
     //Personal CSS
-    @import "./css/BookingModal.css";
+    
 </style>
 
 <script>
@@ -125,6 +125,16 @@
                 this.date = date;
                 this.location = location;
                 this.selectedDates = [date];
+
+                //Style Modal
+                if (this.checkFormType() == 'room') {
+                    document.getElementById('BookingModal').style.height = 90+'%';
+                    document.getElementById('BookingModal').style.maxHeight = 730+'px';
+                }
+                else {
+                    document.getElementById('BookingModal').style.height = 90+'%';
+                    document.getElementById('BookingModal').style.maxHeight = 490+'px';
+                }
 
                 //Modal Header
                 document.getElementById('BookingModal-HeaderDate').innerHTML = this.getDayOfTheWeek(this.date)+', '+this.getMonthName(date)+' '+date.getDate()+' '+date.getFullYear();
@@ -155,11 +165,13 @@
 
                 //inputs
                 this.selectedDates = [];
-                document.getElementById('BookingModal-Type').value = 0;
-                document.getElementById('BookingModal-Title').value = '';          
-                document.getElementById('BookingModal-Description').value = '';
-                document.getElementById('BookingModal-NoiseSlider').value = 0;
-                document.getElementById('BookingModal-NoiseValue').innerHTML = 'Quiet';
+                if (this.checkFormType() == 'room') {
+                    document.getElementById('BookingModal-Type').value = 0;
+                    document.getElementById('BookingModal-Title').value = '';  
+                    document.getElementById('BookingModal-Description').value = '';
+                    document.getElementById('BookingModal-NoiseSlider').value = 0;
+                    document.getElementById('BookingModal-NoiseValue').innerHTML = 'Quiet';
+                }
                 document.getElementById('BookingModal-Privacy').checked = false;
             },
             
@@ -184,7 +196,9 @@
                 var startTime = document.getElementById('BookingModal-StartTime').value;
                 var endTime = document.getElementById('BookingModal-EndTime').value;
 
-                var meetingType = document.getElementById('BookingModal-Type').value;
+                var meetingType = '-1';
+                if (document.getElementById('BookingModal-Type'))
+                    var meetingType = document.getElementById('BookingModal-Type').value;
                 
                 var title = '';
                 if (document.getElementById('BookingModal-Title'))

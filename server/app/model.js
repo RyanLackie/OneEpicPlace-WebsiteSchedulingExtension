@@ -1,21 +1,21 @@
 //Required Modules
 const mysql = require('mysql');
 var conn = mysql.createPool({
-    
+    /*
     host: '159.89.238.244', //ip of server
     port: '3306',
 
     database: 'OEP',
     user: 'outsideConnection',
     password: 'outsideConn_OEP-server',
-    /*
+    */
     host: 'localhost',
     port: '3306',
 
-    database: 'oep',
+    database: 'oep_dev',
     user: 'root',
     password: '',
-    */
+    
     connectionLimit: 30
 });
 
@@ -39,6 +39,7 @@ class Model {
         this.checkForUsername(identity, usernameCheckResponse => {
             if (usernameCheckResponse != '404' && password == usernameCheckResponse.password) {
                 var account = this.stripAccount(usernameCheckResponse);
+                console.log(account.picture);
                 return call_back(account);
             }
             return call_back('404');
@@ -46,13 +47,14 @@ class Model {
     }
     
     updateAccount(user_username, user_password, picture, firstName, lastName, companyName, bio, email, phoneNumber, username, password, call_back) {
+        console.log(picture);
         this.getAccount(user_username, user_password, fetchedUser => {
             if (fetchedUser == '404')
                 return call_back('404');
             // eslint-disable-next-line
             this.updateUsername(fetchedUser.id, fetchedUser.username, username, usernameUpdateResult => {
                 //Change other user info
-                this.updateAccountInfo(fetchedUser.id, picture, firstName, lastName, companyName, bio, email, phoneNumber, username, password, infoUpdateResult => {
+                this.updateAccountInfo(fetchedUser.id, picture, firstName, lastName, companyName, bio, email, phoneNumber, password, infoUpdateResult => {
                     var account = this.stripAccount(infoUpdateResult);
                     return call_back(account);
                 });                    
@@ -95,7 +97,7 @@ class Model {
             // eslint-disable-next-line
             this.updateUsername(id, previousUsername, username, usernameUpdateResult => {
                 // eslint-disable-next-line
-                this.updateAccountInfo(id, picture, firstName, lastName, companyName, bio, email, phoneNumber, username, password, infoUpdateResult => {
+                this.updateAccountInfo(id, picture, firstName, lastName, companyName, bio, email, phoneNumber, password, infoUpdateResult => {
                     this.admin_UpdateAccountInfo(id, memberLevel, points, notes, adminInfoUpdateResult => {
                         return call_back(adminInfoUpdateResult);
                     });  
@@ -147,7 +149,7 @@ class Model {
             return usernameUpdateResult('100');
     }
 
-    updateAccountInfo(id, picture, firstName, lastName, companyName, bio, email, phoneNumber, username, password, infoUpdateResult) {
+    updateAccountInfo(id, picture, firstName, lastName, companyName, bio, email, phoneNumber, password, infoUpdateResult) {
         conn.query('Update users SET picture = ' + mysql.escape(picture) +
                                 ', firstName = ' + mysql.escape(firstName) +
                                 ', lastName = ' + mysql.escape(lastName) +
@@ -346,43 +348,13 @@ class Model {
     */////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /*////////////////////////////////////////////////////////////////////////////////////////////////////////
-    //////////////////////////////////           Admin Methods          //////////////////////////////////////
-    */////////////////////////////////////////////////////////////////////////////////////////////////////////
-    admin_CheckAdminPrivilege(user_username, user_password, call_back) {
-        this.getAccount(user_username, user_password, fetchedUser => {
-            if (fetchedUser == '404' || fetchedUser.memberLevel != ADMIN_PRIVILEGE)
-                return call_back('404');
-            else
-                return call_back(fetchedUser);
-        });
-    }
-
-    admin_GetData(user_username, user_password, call_back) {
-        this.admin_CheckAdminPrivilege(user_username, user_password, fetchedUser => {
-            if (fetchedUser == '404')
-                return call_back('404');
-            conn.query('SELECT * FROM users', (err, users) => {
-                if (err) throw err;
-                this.getLocations(locations => {
-                    this.getResources(resources => {
-                        return call_back([users, locations, resources]);
-                    });
-                });
-            });
-        });
-    }
-    /*////////////////////////////////////////////////////////////////////////////////////////////////////////
-    //////////////////////////////////////////////////////////////////////////////////////////////////////////
-    */////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    /*////////////////////////////////////////////////////////////////////////////////////////////////////////
     /////////////////////////////////           Booking Methods          /////////////////////////////////////
     */////////////////////////////////////////////////////////////////////////////////////////////////////////
     getBookingsDate(username, password, startDate, endDate, call_back) {
         this.getAccount(username, password, fetchedUser => {
             if (fetchedUser == '404' || fetchedUser.memberLevel < MIN_MEMBER_PRIVILEGE)
                 return call_back('404');
-
+            
             conn.query('SELECT * FROM bookings WHERE date >= ' + mysql.escape(startDate) + ' and  date <= ' + mysql.escape(endDate), (err, result) => {
                 if (err) throw err;
                 var bookings = result;
@@ -562,24 +534,40 @@ class Model {
     /*////////////////////////////////////////////////////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////////////////////////////////////////////////////
     */////////////////////////////////////////////////////////////////////////////////////////////////////////
-    
-    
-    getCalendarData(call_back) {
-        this.getLocations(fetchedLocations => {
-            this.getResources(fetchedResources => {
-                return call_back([fetchedLocations, fetchedResources]);
+
+    /*////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////           Admin Methods          //////////////////////////////////////
+    */////////////////////////////////////////////////////////////////////////////////////////////////////////
+    admin_CheckAdminPrivilege(user_username, user_password, call_back) {
+        this.getAccount(user_username, user_password, fetchedUser => {
+            if (fetchedUser == '404' || fetchedUser.memberLevel != ADMIN_PRIVILEGE)
+                return call_back('404');
+            else
+                return call_back(fetchedUser);
+        });
+    }
+
+    admin_GetData(user_username, user_password, call_back) {
+        this.admin_CheckAdminPrivilege(user_username, user_password, fetchedUser => {
+            if (fetchedUser == '404')
+                return call_back('404');
+            conn.query('SELECT * FROM users', (err, users) => {
+                if (err) throw err;
+                this.getLocations(locations => {
+                    this.getResources(resources => {
+                        return call_back([users, locations, resources]);
+                    });
+                });
             });
         });
     }
 
-
     admin_RunReport(user_username, user_password, users, locations, resources, startDate, endDate, call_back) {
-        this.getAccount(user_username, user_password, fetchedUser => {
-            if (fetchedUser == '409' || fetchedUser.privilege != ADMIN_PRIVILEGE)
-                return call_back('409');
+        this.admin_CheckAdminPrivilege(user_username, user_password, fetchedUser => {
+            if (fetchedUser == '404') 
+                return call_back('404');
             
-            this.getBookingsDate(startDate, endDate, bookings => {
-
+            this.getBookingsDate(user_username, user_password, startDate, endDate, bookings => {
                 for (var booking = 0; booking < bookings.length; booking++) {
                     //Users
                     var keep = false;
@@ -631,6 +619,19 @@ class Model {
             });
         });
     }
+    /*////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////
+    */////////////////////////////////////////////////////////////////////////////////////////////////////////
+    
+    
+    getCalendarData(call_back) {
+        this.getLocations(fetchedLocations => {
+            this.getResources(fetchedResources => {
+                return call_back([fetchedLocations, fetchedResources]);
+            });
+        });
+    }
+
 }
 
 module.exports = Model;

@@ -19,6 +19,13 @@
     @import url('https://fonts.googleapis.com/css?family=Roboto');
     @import url('https://fonts.googleapis.com/css?family=Playfair+Display');
     @import url('https://fonts.googleapis.com/css?family=Quicksand');
+
+    .noselect {
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+    }
 </style>
 
 <script>

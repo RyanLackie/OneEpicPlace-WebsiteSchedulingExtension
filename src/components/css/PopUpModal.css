@@ -5,15 +5,11 @@
     position: fixed;
     margin: auto;
     top: 0; right: 0; bottom: 0; left: 0;
-    width: 35%;
+    width: 50%;
     min-width: 300px;
+    max-width: 600px;
     padding: 0px 20px;
-    /*
-    left: 50%;
-    -ms-transform: translate(-50%, -50%, 0);
-    transform: translate(-50%, -50%, 0);
-    */
-    
+
     /* Make larger modals scrollable */
     overflow-y: auto;
 
@@ -48,10 +44,15 @@
     display: inline-block;
     width: 100%;
 }
-.PopUpModal .text {
+.PopUpModal .modal-header .text {
     margin-left: -13px;
     font-size: 30px;
     font-weight: bold;
+    font-family: 'Quicksand', sans-serif;
+}
+.PopUpModal .modal-header .date {
+    margin-left: -13px;
+    font-size: 25px;
     font-family: 'Quicksand', sans-serif;
 }
 .PopUpModal .modal-header .close {
@@ -62,9 +63,9 @@
     opacity: 1;
 }
 
-/*
-    Modal Body
-*/
+/*////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////           Modal Body          //////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////*/
 .PopUpModal .label-lg {
     margin: 0px 0px 3px 3px;
     font-size: 20px;
@@ -112,9 +113,179 @@
     margin: 20px 0px;
 }
 
+/*////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////            Bookings           //////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////*/
 /*
-    Modal Footer
+    Noise Selector
 */
+.PopUpModal .sliderContainer {
+    position: relative;
+    display: inline-block;
+    width: 80%;
+    min-width: 100px;
+    margin: 10px 5% 0px 0px;
+}
+.PopUpModal .sliderContainer .value {
+    text-align: center;
+    margin-top: -10px;
+    margin-bottom: 10px;
+}
+.PopUpModal .sliderContainer .slider {
+    width: 100%;
+    height: 20px;
+    background: silver;
+    outline: none;
+    opacity: 0.7;
+    -webkit-appearance: none;
+    -webkit-transition: .2s;
+    transition: opacity .2s;
+}
+.PopUpModal .sliderContainer .slider:hover {
+    opacity: 1;
+}
+.PopUpModal .sliderContainer .slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    background: black;
+    cursor: pointer;
+}
+.PopUpModal .sliderContainer .slider::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    background: black;
+    cursor: pointer;
+}
+
+
+/*
+    Privacy Selector
+*/
+.PopUpModal .privacyContainer {
+    position: relative;
+    display: inline-block;
+    width: 15%;
+    min-width: 30px;
+    margin: 10px 0px 0px 0px;
+}
+.PopUpModal .privacyContainer .checkbox {
+    width: 30px;
+    height: 30px;
+    margin-top: 15px;
+    margin-left: 2px;
+}
+
+/*
+    Advanced
+*/
+.PopUpModal .advancedBtn {
+    width: 100%;
+    height: 25px;
+    margin: 20px 0px 0px 0px;
+    font-size: 13px;
+    line-height: 0px;
+}
+.PopUpModal .advancedOptions {
+    overflow: hidden;
+    height: 0px;
+    transition: 1s;
+}
+
+
+/* 
+    Resources
+*/
+.PopUpModal .resourceContainer {
+    text-align: center;
+}
+.PopUpModal .resourceContainer .resource {
+    display: inline-block;
+    width: 30%;
+    min-width: 150px;
+    margin: 5px 10px;
+    text-align: left;
+}
+.PopUpModal .resourceContainer .resource .checkboxLabel {
+    display: inline-block;
+    font-size: 15px;
+    width: 25%;
+    min-width: 125px;
+}
+.PopUpModal .resourceContainer .resource .checkbox {
+    display: inline-block;
+    width: 5%;
+    min-width: 25px;
+    height: 25px;
+}
+
+/*
+    Calendar
+*/
+.PopUpModal .dateSelector {
+    width: 100%;
+    margin: 10px auto 20px auto;
+    text-align: center;
+    margin-bottom: 30px;
+}
+.PopUpModal .dateSelector .backBtn {
+    display: inline-block;
+    width: 40px;
+    height: 30px;
+    margin: 0px 3% 0px 0px;
+    background-color: black;
+    background-image: url("../../assets/backarrow-white.png");
+    background-size: 50%;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+.PopUpModal .dateSelector .date {
+    position: relative;
+    display: inline-block;
+    top: -7px;
+    min-width: 150px;
+    width: 10%;
+    height: 30px;
+    text-align: center;
+    font-size: 20px;
+}
+.PopUpModal .dateSelector .forwardBtn {
+    display: inline-block;
+    width: 40px;
+    height: 30px;
+    margin: 0px 0px 0px 3%;
+    background-color: black;
+    background-image: url("../../assets/forwardarrow-white.png");
+    background-size: 50%;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+.PopUpModal .calendar {
+    position: relative;
+    width: 99%;
+    margin: 0px auto;
+    overflow: auto;
+    border: 1px blue solid;
+}
+.PopUpModal .calendar .daysOfWeek {
+    float: left;
+    width: 14.28%;
+    font-size: 80%;
+    border: 1px indigo solid;
+}
+.PopUpModal .calendar .day {
+    position: relative;
+    float: left;
+    width: 14.28%;
+    height: 30px;
+    border: 1px blue solid;
+    cursor: pointer;
+}
+
+/*////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////          Modal Footer         //////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////*/
 .PopUpModal .leftBtn {
     display: inline-block;
     width: 45%;

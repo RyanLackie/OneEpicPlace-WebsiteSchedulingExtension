@@ -46,7 +46,7 @@
                             </div>
                             <div v-if="booking.noiseLevel != 0" class="icon" :style='styleIcon(booking)'></div>
                             <div class="textBox" :style='styleBookingText(booking)'>
-                                <div class="text">{{booking.title}}</div>
+                                <div class="text">{{booking.username}}</div>
                             </div>
                         </div>
                     </div>

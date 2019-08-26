@@ -1,8 +1,8 @@
 //Local Production
-//const api_root = "http://localhost:81";
+const api_root = "http://localhost:81";
 
 //Server Deployment
-const api_root = "http://159.89.238.244:81";
+//const api_root = "http://159.89.238.244:81";
 
 var user = null;
 
@@ -152,7 +152,24 @@ export function removeBooking(bookingID, userID, date, startTime) {
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 */////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
+/*////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////           Admin Methods          //////////////////////////////////////
+*/////////////////////////////////////////////////////////////////////////////////////////////////////////
+export function admin_GetData() {
+    var user_username = user.username, user_password = user.password;
+    return myFetch(api_root + "/app/admin_GetData", {
+        user_username, user_password
+    });
+}
+export function admin_RunReport(users, locations, resources, startDate, endDate) {
+    var user_username = user.username, user_password = user.password;
+    return myFetch(api_root + "/app/admin_RunReport", {
+        user_username, user_password, users, locations, resources, startDate, endDate
+    });
+}
+/*////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+*/////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 
@@ -160,22 +177,6 @@ export function getCalendarData() {
     return myFetch(api_root + "/app/getCalendarData", {});
 }
 
-
-//Admin Methods
-export function admin_GetData() {
-    var user_username = user.username, user_password = user.password;
-    return myFetch(api_root + "/app/admin_GetData", {
-        user_username, user_password
-    });
-}
-
-
-export function admin_RunReport(users, locations, resources, startDate, endDate) {
-    var user_username = user.username, user_password = user.password;
-    return myFetch(api_root + "/app/admin_RunReport", {
-        user_username, user_password, users, locations, resources, startDate, endDate
-    });
-}
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////

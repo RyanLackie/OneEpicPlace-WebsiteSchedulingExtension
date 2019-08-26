@@ -13,9 +13,6 @@ app.use(express.urlencoded({extended: true}));
 app.use("/", express.static(__dirname + "/../dist/"));
 
 
-/*
-    Required For App
-*/
 //Methods for App
 const controller = require('./app/controller');
 app.use('/app', controller);
@@ -23,10 +20,10 @@ app.use('/app', controller);
 const port = 81;
 
 //Server Stuff (Local Production)
-//const server = 'localhost';
+const server = 'localhost';
 
 //Server Stuff (Server Deployment)
-const server = '159.89.238.244';
+//const server = '159.89.238.244';
 
 //Port listen and message
 app.listen(port);
