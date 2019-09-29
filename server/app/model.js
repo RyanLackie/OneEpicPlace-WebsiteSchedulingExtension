@@ -1,21 +1,20 @@
 //Required Modules
 const mysql = require('mysql');
 var conn = mysql.createPool({
-    /*
-    host: '159.89.238.244', //ip of server
-    port: '3306',
+    
+    host: '167.99.61.103', //ip of server
 
     database: 'OEP',
     user: 'outsideConnection',
     password: 'outsideConn_OEP-server',
-    */
+    /*
     host: 'localhost',
-    port: '3306',
 
     database: 'oep_dev',
     user: 'root',
     password: '',
-    
+    */
+    port: '3306', 
     connectionLimit: 30
 });
 
