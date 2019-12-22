@@ -1,5 +1,6 @@
 const mysql = require('mysql');
-              require('dotenv').config();
+const dotenv = require('dotenv');
+dotenv.config();
 
 const conn = mysql.createPool({
     host: process.env.MySQL_HOST,
@@ -9,8 +10,9 @@ const conn = mysql.createPool({
     user: process.env.MySQL_USER,
     password: process.env.MySQL_PASS,
     
-    insecureAuth: true,
-    connectionLimit: 30
+    connectionLimit: process.env.CONNECTION_LIMIT
 });
+
+console.log(conn);
 
 module.exports = conn;

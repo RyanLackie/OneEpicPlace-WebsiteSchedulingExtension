@@ -16,7 +16,8 @@
             <label class="label-sm">Member Level
                 <span class="required">*</span>
             </label>
-            <select id="CreateUserModal-MemberLevel" class="form-control" required>
+            <select class="form-control" 
+            v-model="memberLevel" @change="memberLevelChanged()" required>
                 <option value=6>Admin</option>
                 <option value=5>Tier 5 Member</option>
                 <option value=4>Tier 4 Member</option>
@@ -30,22 +31,22 @@
                 <label class="label-sm">Username
                     <span class="required">*</span>
                 </label>
-                <input type="text" class="input-box form-control" id="CreateUserModal-Username" placeholder="User's Username" required>
+                <input type="text" class="input-box form-control" placeholder="User's Username" v-model="username" required>
             </div>
             <div class="rightContainer">
                 <label class="label-sm">Password
                     <span class="required">*</span>
                 </label>
-                <input type="text" class="input-box form-control" id="CreateUserModal-Password" placeholder="User's Password" required>
+                <input type="text" class="input-box form-control" placeholder="User's Password" v-model="password" required>
             </div>
 
             <label class="label-sm">Points
                 <span class="required">*</span>
             </label>
-            <input type="number" min="0" class="input-box form-control" id="CreateUserModal-Points" value="0" required>
+            <input type="number" min="0" class="input-box form-control" v-model="points" required>
 
             <label class="label-sm">Admin Notes</label>
-            <textarea type="textarea" class="input-box form-control" id="CreateUserModal-Notes" placeholder="Notes"></textarea>
+            <textarea type="textarea" class="input-box form-control" placeholder="Notes" v-model="notes"></textarea>
 
 
             <div class="sectionBreak"></div>
@@ -57,24 +58,24 @@
 
             <div class="leftContainer">
                 <label class="label-sm">First Name</label>
-                <input type="text" class="input-box form-control" id="CreateUserModal-FirstName" placeholder="John">
+                <input type="text" class="input-box form-control" placeholder="John" v-model="firstName">
             </div>
             <div class="rightContainer">
                 <label class="label-sm">Last Name</label>
-                <input type="text" class="input-box form-control" id="CreateUserModal-LastName" placeholder="Smith">
+                <input type="text" class="input-box form-control" placeholder="Smith" v-model="lastName">
             </div>
 
             <label class="label-sm">Company Name</label>
-            <input type="text" class="input-box form-control" id="CreateUserModal-CompanyName" placeholder="User's Company Name">
+            <input type="text" class="input-box form-control" placeholder="User's Company Name" v-model="companyName">
 
             <label class="label-sm">Bio</label>
-            <textarea type="textarea" class="input-box form-control" id="CreateUserModal-Bio" placeholder="User's Bio"></textarea>
+            <textarea type="textarea" class="input-box form-control" placeholder="User's Bio" v-model="bio"></textarea>
 
             <label class="label-sm">Email</label>
-            <input type="text" class="input-box form-control" id="CreateUserModal-Email" placeholder="exmaple@domain.com">
+            <input type="text" class="input-box form-control" placeholder="exmaple@domain.com" v-model="email">
 
             <label class="label-sm">Phone Number</label>
-            <input type="tel" class="input-box form-control" id="CreateUserModal-PhoneNumber" placeholder="111-222-3333">
+            <input type="tel" class="input-box form-control" placeholder="111-222-3333" v-model="phoneNumber">
 
             <button class="btn btn-success leftBtn" type="submit">Submit</button>
             <button class="btn btn-secondary rightBtn" type="button" @click="close()">Cancel</button>
@@ -94,26 +95,24 @@
     export default {
         data() {
             return {
-                
+                memberLevel: 0,
+                username: '',
+                password: '',
+                points: 0,
+                notes: '',
+
+                picture: '',
+                firstName: '',
+                lastName: '',
+                companyName: '',
+                bio: '',
+                email: '',
+                phoneNumber: ''
             }
         },
 
         methods: {
             openModal() {
-                document.getElementById("CreateUserModal-MemberLevel").value = 0;
-                document.getElementById("CreateUserModal-Username").value = '';
-                document.getElementById("CreateUserModal-Password").value = '';
-                document.getElementById("CreateUserModal-Points").value = 0;
-                document.getElementById("CreateUserModal-Notes").value = '';
-
-                //document.getElementById("CreateUserModal-Picture").value = '';
-                document.getElementById("CreateUserModal-FirstName").value = '';
-                document.getElementById("CreateUserModal-LastName").value = '';
-                document.getElementById("CreateUserModal-CompanyName").value = '';
-                document.getElementById("CreateUserModal-Bio").value = '';
-                document.getElementById("CreateUserModal-Email").value = '';
-                document.getElementById("CreateUserModal-PhoneNumber").value = '';
-
                 //Scroll
                 document.getElementById('CreateUserModal').scrollTo(0, 0);
 
@@ -130,33 +129,46 @@
             },
             
             createUser(event) {
-                var memberLevel = document.getElementById("CreateUserModal-MemberLevel").value;
-                var username = document.getElementById("CreateUserModal-Username").value;
-                var password = document.getElementById("CreateUserModal-Password").value;
-                var points = document.getElementById("CreateUserModal-Points").value;
-                var notes = document.getElementById("CreateUserModal-Notes").value;
-
-                var picture = "";//document.getElementById("CreateUserModal-Picture").value;
-                var firstName = document.getElementById("CreateUserModal-FirstName").value;
-                var lastName = document.getElementById("CreateUserModal-LastName").value;
-                var companyName = document.getElementById("CreateUserModal-CompanyName").value;
-                var bio = document.getElementById("CreateUserModal-Bio").value;
-                var email = document.getElementById("CreateUserModal-Email").value;
-                var phoneNumber = document.getElementById("CreateUserModal-PhoneNumber").value;
-                
-                api.admin_CreateAccount(memberLevel, username, password, points, notes, picture, firstName, lastName, companyName, bio, email, phoneNumber).then(createResult => {
-                    if (createResult == '100') {
-                        this.close();
-                        this.$parent.updateUsers();
+                api.admin_CreateAccount(this.memberLevel, this.username, this.password, this.points, this.notes, this.picture, 
+                                        this.firstName, this.lastName, this.companyName, this.bio, this.email, this.phoneNumber)
+                    .then(createResult => {
+                        if (createResult == '100') {
+                            this.close();
+                            this.$parent.updateUsers();
+                        }
+                        if (createResult == '404') {
+                            this.$parent.$refs.Header.logout();
+                        }
+                        else if (createResult == '405') {
+                            alert('Username is taken');
+                        }
                     }
-                    if (createResult == '404') 
-                        this.$parent.$refs.Header.logout();
-                    else if (createResult == '405') 
-                        alert('Username is taken');
-                });
+                );
                 
                 //Prevent submit refresh
                 event.preventDefault();
+            },
+
+            memberLevelChanged() {
+                switch(parseInt(this.memberLevel, 10)) {
+                    case 0:
+                        break;
+                    case 1:
+                        this.points = 100;
+                        break;
+                    case 2:
+                        this.points = 200;
+                        break;
+                    case 3:
+                        this.points = 300;
+                        break;
+                    case 4:
+                        this.points = 500;
+                        break;
+                    case 5:
+                        this.points = 700;
+                        break;
+                }
             }
         },
 

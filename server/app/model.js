@@ -1,34 +1,47 @@
 //Required Modules
 const mysql = require('mysql');
+const dotenv = require('dotenv');
+dotenv.config();
+
 var conn = mysql.createPool({
+    host: process.env.MySQL_HOST,
+    port: process.env.MySQL_PORT,
     
-    // host: '167.99.61.103', //ip of server
-
-    // database: 'OEP',
-    // user: 'outsideConnection',
-    // password: 'outsideConn_OEP-server',
+    database: process.env.MySQL_DB,
+    user: process.env.MySQL_USER,
+    password: process.env.MySQL_PASS,
     
-    host: 'localhost',
-
-    database: 'oep_dev',
-    user: 'root',
-    password: '',
-    
-    port: '3306', 
-    connectionLimit: 30
+    connectionLimit: process.env.CONNECTION_LIMIT
 });
 
 const ADMIN_PRIVILEGE = 6, MIN_MEMBER_PRIVILEGE = 1;
 
 /*
     100 => Method was sucessful
+
     404 => Method search results in an element not being found / Admin method being called without finding matching credentials
     405 => Username is already taken
     406 => Name is already taken
 */
 
 class Model {
-    constructor() {}
+    constructor() {
+        this.test();
+    }
+
+    /*////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////        Transaction Methods        //////////////////////////////////////////
+    */////////////////////////////////////////////////////////////////////////////////////////////////////////
+    test() {
+        conn.query('SELECT * FROM users', (err, result) => {
+            if (err) throw err;
+
+            result.forEach(user => {
+                console.log(user);
+            });
+        });
+    }
+
 
     /*////////////////////////////////////////////////////////////////////////////////////////////////////////
     /////////////////////////////////        Account Methods        //////////////////////////////////////////
@@ -38,7 +51,7 @@ class Model {
         this.checkForUsername(identity, usernameCheckResponse => {
             if (usernameCheckResponse != '404' && password == usernameCheckResponse.password) {
                 var account = this.stripAccount(usernameCheckResponse);
-                console.log(account.picture);
+                // console.log(account.picture);
                 return call_back(account);
             }
             return call_back('404');
@@ -391,12 +404,12 @@ class Model {
             if (error == '405' || error == '406' || error == '407')
                 return call_back([error, null]);
 
-            //Check For Booking Overlaps
+            // Check For Booking Overlaps
             this.checkForOverlap(null, insertStartTime, insertEndTime, date, locationID, noiseLevel, checkCallBack => {
                 if (checkCallBack[0] == '408' || checkCallBack[0] == '409' || checkCallBack[0] == '410')
                     return call_back(checkCallBack);
 
-                //Insert Bookings If No Overlaps
+                // Insert Bookings If No Overlaps
                 for (var i = 0; i < date.length; i++) {
                     var sql = "INSERT INTO bookings (userID, locationID, resourceID, date, startTime, endTime, meetingType, title, description, noiseLevel, private)"+
                     "VALUES ('"+fetchedUser.id+"', '"+locationID+"', '"+resourceID+"', '"+date[i]+"', '"+startTime+"', '"+endTime+"', '"+meetingType+"', '"+title+"', '"+description+"', '"+noiseLevel+"', '"+privacy+"')";
@@ -413,7 +426,7 @@ class Model {
             if (fetchedUser == '404' || fetchedUser.memberLevel < MIN_MEMBER_PRIVILEGE)
                 return call_back(['404', null]);
 
-            //Ensure Creator or Admin is Editing
+            // Ensure Creator or Admin is Editing
             this.checkForCapability(bookingID, fetchedUser.id, fetchedUser.memberLevel, capabilityResult => {
                 if (capabilityResult == '404')
                     call_back(['404', null]);
@@ -427,7 +440,7 @@ class Model {
                 if (error == '405' || error == '406' || error == '407')
                     return call_back([error, null]);
 
-                //Check For Booking Overlaps
+                // Check For Booking Overlaps
                 this.checkForOverlap(bookingID, insertStartTime, insertEndTime, date, locationID, noiseLevel, checkCallBack => {
                     if (checkCallBack[0] == '408' || checkCallBack[0] == '409' || checkCallBack[0] == '410')
                         return call_back(checkCallBack);
@@ -455,7 +468,12 @@ class Model {
         if (memberLevel == ADMIN_PRIVILEGE)
             return capabilityResult('100');
         conn.query('SELECT * FROM bookings WHERE id = ' + mysql.escape(bookingID), (err, result) => {
+            // Not the user that created the booking
             if (result.userID != userID)
+                return capabilityResult('404');
+            // Not 22 hours before booking
+            bookingDate.setHours(result.startTime.split(':')[0], result.startTime.split(':')[1]);
+            if (this.booking.userID == api.getLocalUser().id && (bookingDate - new Date())/(1000*60*60) > 22)
                 return capabilityResult('404');
             return capabilityResult('100');
         });

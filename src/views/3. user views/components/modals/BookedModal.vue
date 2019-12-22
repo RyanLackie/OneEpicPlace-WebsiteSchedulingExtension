@@ -301,6 +301,7 @@
                 if (api.getLocalUser().memberLevel == 6)
                     return false;
 
+                // Not 22 hours before booking
                 if (this.booking.date != '' && this.booking.startTime != '') {
                     var bookingDate = new Date(this.booking.date);
                     bookingDate.setHours(this.booking.startTime.split(':')[0], this.booking.startTime.split(':')[1]);
