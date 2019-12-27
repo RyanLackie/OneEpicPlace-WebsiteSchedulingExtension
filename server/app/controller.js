@@ -36,7 +36,7 @@ app.post('/admin_CreateAccount', (req, res) => {
     model.admin_CreateAccount(
         req.body.user_username, req.body.user_password,
         req.body.memberLevel, req.body.username, req.body.password,
-        req.body.points, req.body.notes, req.body.picture,
+        req.body.points_1, req.body.points_2, req.body.points_3, req.body.pointsLastUpdated, req.body.notes, req.body.picture,
         req.body.firstName, req.body.lastName, req.body.companyName,
         req.body.bio, req.body.email, req.body.phoneNumber,
         createResult => res.send(createResult)
@@ -46,7 +46,7 @@ app.post('/admin_UpdateAccount', (req, res) => {
     model.admin_UpdateAccount(
         req.body.user_username, req.body.user_password, req.body.id,
         req.body.memberLevel, req.body.previousUsername, req.body.username, req.body.password,
-        req.body.points, req.body.notes, req.body.picture,
+        req.body.points_1, req.body.points_2, req.body.points_3, req.body.pointsLastUpdated, req.body.notes, req.body.picture,
         req.body.firstName, req.body.lastName, req.body.companyName,
         req.body.bio, req.body.email, req.body.phoneNumber,
         updateResult => res.send(updateResult)

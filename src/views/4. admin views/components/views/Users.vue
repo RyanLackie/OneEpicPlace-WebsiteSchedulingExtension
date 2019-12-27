@@ -1,46 +1,61 @@
 <template>
     <div class="Data">
 
-        <div class="dataContainer" v-for='(array, index) in this.users' :key="'array:'+index">
-            <div v-if='index === 0 && array.length > 0'      class="label">Admins</div>
-            <div v-else-if='index === 1 && array.length > 0' class="label">Tier 5 Members</div>
-            <div v-else-if='index === 2 && array.length > 0' class="label">Tier 4 Members</div>
-            <div v-else-if='index === 3 && array.length > 0' class="label">Tier 3 Members</div>
-            <div v-else-if='index === 4 && array.length > 0' class="label">Tier 2 Members</div>
-            <div v-else-if='index === 5 && array.length > 0' class="label">Tier 1 Members</div>
-            <div v-else-if='index === 6 && array.length > 0' class="label">Non-Members</div>
+        <div class="container" v-for='(array, index) in this.users' :key="'array:'+index">
 
-            <div v-if='array.length > 0' class="nameRow">
-                <div class="dataCol-4">Email</div>
-                <div class="dataCol-4">Username</div>
-                <div class="dataCol-4">First Name</div>
-                <div class="dataCol-4">Last Name</div>
-                <div class="dataBtnCol">Actions</div>
+            <div v-if='array.length > 0' class="row">
+                <div v-if='index === 0 && array.length > 0'      class="col label">Admins</div>
+                <div v-else-if='index === 1 && array.length > 0' class="col label">Tier 5 Members</div>
+                <div v-else-if='index === 2 && array.length > 0' class="col label">Tier 4 Members</div>
+                <div v-else-if='index === 3 && array.length > 0' class="col label">Tier 3 Members</div>
+                <div v-else-if='index === 4 && array.length > 0' class="col label">Tier 2 Members</div>
+                <div v-else-if='index === 5 && array.length > 0' class="col label">Tier 1 Members</div>
+                <div v-else-if='index === 6 && array.length > 0' class="col label">Non-Members</div>
             </div>
 
-            <div class="dataRow" v-for='(user, index) in array' :key="'user:'+user.id" :style="$parent.styleRow(index)">
-                <div class="dataCol-4">
+            <div v-if='array.length > 0' class="row" style='text-align: center;'>
+                <div class="col">Email</div>
+                <div class="col">Username</div>
+                <div class="col">First Name</div>
+                <div class="col">Last Name</div>
+                <div class="col">Actions</div>
+            </div>
+
+            <div class="row" style='text-align: center;'
+            v-for='(user, index) in array' :key="'user:'+user.id" :style="$parent.styleRow(index)">
+                <div class="col" style='position: relative;'>
                     <div class="text">{{user.email}}</div>
                 </div>
-                <div class="dataCol-4">
+                <div class="col" style='position: relative;'>
                     <div class="text">{{user.username}}</div>
                 </div>
-                <div class="dataCol-4">
+                <div class="col" style='position: relative;'>
                     <div class="text">{{user.firstName}}</div>
                 </div>
-                <div class="dataCol-4">
+                <div class="col" style='position: relative;'>
                     <div class="text">{{user.lastName}}</div>
                 </div>
-                <div class="dataBtnCol">
-                    <button class="btn btn-primary actionBtn editBtn" v-on:click="openUserModal(user)"></button>
-                    <button class="btn btn-dark actionBtn deleteBtn" v-on:click="removeUser(user)"></button>
+                <div class="col">
+                    <div class="container">
+                        <div class="row justify-content-center">
+                            <!-- <div class="col-1"></div> -->
+                            <div class="col-5">
+                                <button class="btn btn-primary btn-lg editBtn" v-on:click="openUserModal(user)"></button>
+                            </div>
+                            <div class="col-5">
+                                <button class="btn btn-dark btn-lg deleteBtn" v-on:click="removeUser(user)"></button>
+                            </div>
+                            <!-- <div class="col-1"></div> -->
+                        </div>
+                    </div>
                 </div>
             </div>
 
             <div class="space" v-if='array.length > 0'></div>
         </div>
 
-        <button class="btn btn-success actionBtn createBtn" v-on:click="openUserModal()"></button>
+        <button class="btn btn-success btn-lg btn-block createBtn" v-on:click="openUserModal()"></button>
+
 
         <!-- Modals -->
         <UserModal ref="UserModal"></UserModal>
@@ -52,14 +67,62 @@
 </template>
 
 <style scoped lang="scss">
+    .Data {
+        .lg-label {
+            font-size: 25px;
+            font-weight: bold;
+            font-family: 'Quicksand', sans-serif;
+            text-transform: uppercase;
+            pointer-events: none;
+        }
+        .text {
+            position: absolute;
+            left: 0;
+            width: 100%;
+            padding: 0px 5px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            pointer-events: none;
+        }
 
+        .editBtn {
+            width: 100%;
+            height: 90%;
+            margin-top: -5px;
+            background-image: url("../../../../assets/edit-white.png");
+            background-size: 18px;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+        .deleteBtn {
+            width: 100%;
+            height: 90%;
+            margin-top: -5px;
+            background-image: url("../../../../assets/delete-white.png");
+            background-size: 18px;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+        .createBtn {
+            background-image: url("../../../../assets/add-white.png");
+            background-size: 30px;
+            background-repeat: no-repeat;
+            background-position: center;    
+            margin-bottom: 20px;
+        }
+
+        .space {
+            margin-bottom: 40px;
+        }
+    }
 </style>
 
 <script>
     import * as api from '@/services/api_access';
 
     //Modals
-    import UserModal from '../modals/users/UserModal.vue';
+    import UserModal from './UserModal.vue';
 
     //Dimmer
     import Dimmer from '../modals/components/Dimmer';

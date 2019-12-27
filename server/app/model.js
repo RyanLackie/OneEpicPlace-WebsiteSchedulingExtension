@@ -26,20 +26,125 @@ const ADMIN_PRIVILEGE = 6, MIN_MEMBER_PRIVILEGE = 1;
 
 class Model {
     constructor() {
-        this.test();
+        this.managePointsLoop();
     }
 
     /*////////////////////////////////////////////////////////////////////////////////////////////////////////
     /////////////////////////////////        Transaction Methods        //////////////////////////////////////////
     */////////////////////////////////////////////////////////////////////////////////////////////////////////
-    test() {
+    managePointsLoop() {
+        this.managePoints();
+        const THIS = this;
+        setInterval(function() {
+            THIS.managePoints();
+        }, 18000);
+    }
+
+    managePoints() {
+        let date = new Date();
+        date.setHours(0, 0, 0, 0);
+        let currentMonth = parseInt(date.getMonth(), 10);
+
+        // Update each user's points
         conn.query('SELECT * FROM users', (err, result) => {
             if (err) throw err;
-
             result.forEach(user => {
-                console.log(user);
+                let updatedLast = parseInt(user.pointsLastUpdated.split('-')[1], 10);
+
+                if (updatedLast !== currentMonth) {
+                    conn.query('Update users SET ' + 
+                                'points_1 = ' + mysql.escape(this.memberLevelToPoints(user.memberLevel)) +
+                                ', points_2 = ' + mysql.escape(user.points_2) +
+                                ', points_3 = ' + mysql.escape(user.points_3) +
+                                ', pointsLastUpdated = ' + mysql.escape(date) +
+                                ' WHERE id = ' + mysql.escape(user.id), (err) => {
+                        if (err) throw err;
+                    });
+                }
+            });
+
+            // Deduct points for bookings that were made a month a head of time
+            let startDate = date.getFullYear()+'-'+(date.getMonth()+1)+'-'+1;
+            let endDateDay = new Date(date.getFullYear(), date.getMonth()+1, 0).getDate();
+            let endDate = date.getFullYear()+'-'+(date.getMonth()+1)+'-'+endDateDay;
+            console.log(startDate, endDate);
+            this.getBookingsDate('admin', 'admin', startDate, endDate, bookings => {
+                console.log(bookings);
+                bookings.forEach(booking => {
+                    console.log(booking.id);
+                    console.log(booking.paid);
+                    if (booking.paid === 0) {
+                        console.log('not paid');
+                        let cost = 1;
+                        this.payBookingCost(booking.userID, booking.id, cost);
+                    }
+                    else {
+                        console.log('paid');
+                    }
+                });
             });
         });
+    }
+
+    payBookingCost(userID, bookingID, cost) {
+        conn.query('SELECT * FROM users WHERE id = ' + mysql.escape(userID), (err, result) => {
+            let user = result[0];
+            console.log(user.points_1 - cost);
+            // points_1
+            if (user.points_1 >= cost) {
+                user.points_1 -= cost;
+            }
+            else {
+                if (user.points_1 > 0) {
+                    user.points_1 = 0;
+                }
+
+                // points_2
+                if (user.points_2 >= cost) {
+                    user.points_2 -= cost;
+                }
+                else {
+                    if (user.points_2 > 0) {
+                        user.points_2 = 0;
+                    }
+
+                    // points_3
+                    if (user.points_3 >= cost) {
+                        user.points_3 -= cost;
+                    }
+                    else {
+                        if (user.points_3 > 0) {
+                            user.points_3 = 0;
+                        }
+                        
+                        // points_1
+                        user.points_1 -= cost;
+                    }
+                }
+            }
+
+            conn.query('Update bookings SET paid = ' + mysql.escape(1) +
+                        ' WHERE id = ' + mysql.escape(bookingID), (err) => {
+                if (err) throw err;
+            });
+        });
+    }
+
+    memberLevelToPoints(memberLevel) {
+        switch(parseInt(memberLevel, 10)) {
+            case 0:
+                return 0;
+            case 1:
+                return 100;
+            case 2:
+                return 200;
+            case 3:
+                return 300;
+            case 4:
+                return 500;
+            case 5:
+                return 700;
+        }
     }
 
 
@@ -86,15 +191,16 @@ class Model {
         });
     }
 
-    admin_CreateAccount(user_username, user_password, memberLevel, username, password, points, notes, picture, firstName, lastName, companyName, bio, email, phoneNumber, call_back) {
+    admin_CreateAccount(user_username, user_password, memberLevel, username, password, points_1, points_2, points_3, pointsLastUpdated, notes, 
+                        picture, firstName, lastName, companyName, bio, email, phoneNumber, call_back) {
         this.admin_CheckAdminPrivilege(user_username, user_password, fetchedUser => {
             if (fetchedUser == '404')
                 return call_back('404');
             this.checkForUsername(username, usernameCheckResponse => {
                 if (usernameCheckResponse != '404')
                     return call_back('405');
-                conn.query("INSERT INTO users (memberLevel, username, password, points, notes, picture, firstName, lastName, companyName, bio, email, phoneNumber) VALUES " +
-                "('"+memberLevel+"', '"+username+"', '"+password+"', '"+points+"', '"+notes+"', '"+picture+"', '"+firstName+"', '"+lastName+"', '"+companyName+"', '"+bio+"', '"+email+"', '"+phoneNumber+"')", (err) => {
+                conn.query("INSERT INTO users (memberLevel, username, password, points_1, points_2, points_3, pointsLastUpdated, notes, picture, firstName, lastName, companyName, bio, email, phoneNumber) VALUES " +
+                "('"+memberLevel+"', '"+username+"', '"+password+"', '"+points_1+"', '"+points_2+"', '"+points_3+"', '"+pointsLastUpdated+"', '"+notes+"', '"+picture+"', '"+firstName+"', '"+lastName+"', '"+companyName+"', '"+bio+"', '"+email+"', '"+phoneNumber+"')", (err) => {
                     if (err) throw err;
                     return call_back('100');
                 });
@@ -102,7 +208,8 @@ class Model {
         });
     }
 
-    admin_UpdateAccount(user_username, user_password, id, memberLevel, previousUsername, username, password, points, notes, picture, firstName, lastName, companyName, bio, email, phoneNumber, call_back) {
+    admin_UpdateAccount(user_username, user_password, id, memberLevel, previousUsername, username, password, points_1, points_2, points_3, pointsLastUpdated,
+                        notes, picture, firstName, lastName, companyName, bio, email, phoneNumber, call_back) {
         this.admin_CheckAdminPrivilege(user_username, user_password, fetchedUser => {
             if (fetchedUser == '404')
                 return call_back('404');
@@ -110,7 +217,7 @@ class Model {
             this.updateUsername(id, previousUsername, username, usernameUpdateResult => {
                 // eslint-disable-next-line
                 this.updateAccountInfo(id, picture, firstName, lastName, companyName, bio, email, phoneNumber, password, infoUpdateResult => {
-                    this.admin_UpdateAccountInfo(id, memberLevel, points, notes, adminInfoUpdateResult => {
+                    this.admin_UpdateAccountInfo(id, memberLevel, points_1, points_2, points_3, pointsLastUpdated, notes, adminInfoUpdateResult => {
                         return call_back(adminInfoUpdateResult);
                     });  
                 });             
@@ -131,7 +238,10 @@ class Model {
 
     //Utility Methods
     stripAccount(account) {
-        delete account.points;
+        delete account.points_1;
+        delete account.points_2;
+        delete account.points_3;
+        delete account.pointsLastUpdated;
         delete account.notes;
         return account;
     }
@@ -178,10 +288,12 @@ class Model {
             });
         });
     }
-    admin_UpdateAccountInfo(id, memberLevel, points, notes, adminInfoUpdateResult) {
-        
+    admin_UpdateAccountInfo(id, memberLevel, points_1, points_2, points_3, pointsLastUpdated, notes, adminInfoUpdateResult) {
         conn.query('Update users SET memberLevel = ' + mysql.escape(memberLevel) +
-                                ', points = ' + mysql.escape(points) +
+                                ', points_1 = ' + mysql.escape(points_1) +
+                                ', points_2 = ' + mysql.escape(points_2) +
+                                ', points_3 = ' + mysql.escape(points_3) +
+                                ', pointsLastUpdated = ' + mysql.escape(pointsLastUpdated) +
                                 ', notes = ' + mysql.escape(notes) +
                                 ' WHERE id = ' + mysql.escape(id), (err) => {
             if (err) throw err;
@@ -194,6 +306,7 @@ class Model {
     /*////////////////////////////////////////////////////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////////////////////////////////////////////////////
     */////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
     /*////////////////////////////////////////////////////////////////////////////////////////////////////////
     /////////////////////////////////           Location Methods         /////////////////////////////////////
@@ -277,6 +390,7 @@ class Model {
     //////////////////////////////////////////////////////////////////////////////////////////////////////////
     */////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+
     /*////////////////////////////////////////////////////////////////////////////////////////////////////////
     /////////////////////////////////          Resource Methods          /////////////////////////////////////
     */////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -359,6 +473,7 @@ class Model {
     //////////////////////////////////////////////////////////////////////////////////////////////////////////
     */////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+
     /*////////////////////////////////////////////////////////////////////////////////////////////////////////
     /////////////////////////////////           Booking Methods          /////////////////////////////////////
     */////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -411,11 +526,24 @@ class Model {
 
                 // Insert Bookings If No Overlaps
                 for (var i = 0; i < date.length; i++) {
-                    var sql = "INSERT INTO bookings (userID, locationID, resourceID, date, startTime, endTime, meetingType, title, description, noiseLevel, private)"+
-                    "VALUES ('"+fetchedUser.id+"', '"+locationID+"', '"+resourceID+"', '"+date[i]+"', '"+startTime+"', '"+endTime+"', '"+meetingType+"', '"+title+"', '"+description+"', '"+noiseLevel+"', '"+privacy+"')";
+                    let bookingID = null;
+                    let sql = 
+                    "INSERT INTO bookings (userID, locationID, resourceID, date, startTime, endTime, meetingType, title, description, noiseLevel, private)"+
+                    "VALUES ('"+fetchedUser.id+"', '"+locationID+"', '"+resourceID+"', '"+date[i]+"', '"+startTime+"', '"+endTime+"', '"+meetingType+"', '"+title+
+                    "', '"+description+"', '"+noiseLevel+"', '"+privacy+"')";
                     conn.query(sql, function(err, result) {
                         if (err) throw err;
+                        bookingID = result[0].id;
                     });
+
+                    // Calculate cost and subtract from points if current month
+                    // 2019-12-27
+                    const currentMonth = new Date().getMonth();
+                    const month = date[i].split('-')[1];
+                    if (currentMonth === month) {
+                        const cost = 1;
+                        this.payBookingCost(fetchedUser.id, bookingID, cost);
+                    }
                 }
                 return call_back(['100', null]);
             });

@@ -41,16 +41,16 @@ export function admin_GetAllUsers() {
     });
 }
 
-export function admin_CreateAccount(memberLevel, username, password, points, notes, picture, firstName, lastName, companyName, bio, email, phoneNumber) {
+export function admin_CreateAccount(memberLevel, username, password, points_1, points_2, points_3, pointsLastUpdated, notes, picture, firstName, lastName, companyName, bio, email, phoneNumber) {
     var user_username = user.username, user_password = user.password;
     return myFetch(api_root + "/app/admin_CreateAccount", {
-        user_username, user_password, memberLevel, username, password, points, notes, picture, firstName, lastName, companyName, bio, email, phoneNumber
+        user_username, user_password, memberLevel, username, password, points_1, points_2, points_3, pointsLastUpdated, notes, picture, firstName, lastName, companyName, bio, email, phoneNumber
     });
 }
-export function admin_UpdateAccount(id, memberLevel, previousUsername, username, password, points, notes, picture, firstName, lastName, companyName, bio, email, phoneNumber) {
+export function admin_UpdateAccount(id, memberLevel, previousUsername, username, password, points_1, points_2, points_3, pointsLastUpdated, notes, picture, firstName, lastName, companyName, bio, email, phoneNumber) {
     var user_username = user.username, user_password = user.password;
     return myFetch(api_root + "/app/admin_UpdateAccount", {
-        user_username, user_password, id, memberLevel, previousUsername, username, password, points, notes, picture, firstName, lastName, companyName, bio, email, phoneNumber
+        user_username, user_password, id, memberLevel, previousUsername, username, password, points_1, points_2, points_3, pointsLastUpdated, notes, picture, firstName, lastName, companyName, bio, email, phoneNumber
     });
 }
 export function admin_RemoveAccount(id) {

@@ -41,10 +41,35 @@
                 <input type="text" class="input-box form-control" placeholder="User's Password" v-model="password" required>
             </div>
 
-            <label class="label-sm">Points
-                <span class="required">*</span>
-            </label>
-            <input type="number" min="0" class="input-box form-control" v-model="points" required>
+            <div class="leftContainer">
+                <label class="label-sm">This Month's Points
+                    <span class="required">*</span>
+                </label>
+                <input type="number" min="0" class="input-box form-control" v-model="points_1" required>
+            </div>
+            <div class="rightContainer">
+                <div class="label-sm">{{getMonthName(pointsLastUpdated.split('-')[1], 0)}}</div>
+            </div>
+
+            <div class="leftContainer">
+                <label class="label-sm">1 Month Old Points
+                    <span class="required">*</span>
+                </label>
+                <input type="number" min="0" class="input-box form-control" v-model="points_2" required>
+            </div>
+            <div class="rightContainer">
+                <div class="label-sm">{{getMonthName(pointsLastUpdated.split('-')[1], -1)}}</div>
+            </div>
+
+            <div class="leftContainer">
+                <label class="label-sm">2 Month Old Points
+                    <span class="required">*</span>
+                </label>
+                <input type="number" min="0" class="input-box form-control" v-model="points_3" required>
+            </div>
+            <div class="rightContainer">
+                <div class="label-sm">{{getMonthName(pointsLastUpdated.split('-')[1], -2)}}</div>
+            </div>
 
             <label class="label-sm">Admin Notes</label>
             <textarea type="textarea" class="input-box form-control" placeholder="Notes" v-model="notes"></textarea>
@@ -105,16 +130,19 @@
                 previousUsername: null,  // For update
                 username: null,
                 password: null,
-                points: null,
-                notes: null,
+                points_1: 0,
+                points_2: 0,
+                points_3: 0,
+                pointsLastUpdated: new Date().getFullYear()+'-'+new Date().getMonth()+'-'+new Date().getDate(),
+                notes: '',
 
-                picture: null,
-                firstName: null,
-                lastName: null,
-                companyName: null,
-                bio: null,
-                email: null,
-                phoneNumber: null
+                picture: '',
+                firstName: '',
+                lastName: '',
+                companyName: '',
+                bio: '',
+                email: '',
+                phoneNumber: ''
             }
         },
 
@@ -129,7 +157,10 @@
                     this.previousUsername = user.username;
                     this.username = user.username;
                     this.password = user.password;
-                    this.points = user.points;
+                    this.points_1 = user.points_1;
+                    this.points_2 = user.points_2;
+                    this.points_3 = user.points_3;
+                    this.pointsLastUpdated = user.pointsLastUpdated;
                     this.notes = user.notes;
 
                     this.picture = user.picture;
@@ -140,22 +171,24 @@
                     this.email = user.email;
                     this.phoneNumber = user.phoneNumber;
                 }
+                // For create
                 else {
-                    this.id = null;
                     this.memberLevel = null;
-                    this.previousUsername = null;
                     this.username = null;
                     this.password = null;
-                    this.points = null;
-                    this.notes = null;
+                    this.points_1 = 0;
+                    this.points_2 = 0;
+                    this.points_3 = 0;
+                    this.pointsLastUpdated = new Date().getFullYear()+'-'+new Date().getMonth()+'-'+new Date().getDate();
+                    this.notes = '';
 
-                    this.picture = null;
-                    this.firstName = null;
-                    this.lastName = null;
-                    this.companyName = null;
-                    this.bio = null;
-                    this.email = null;
-                    this.phoneNumber = null;
+                    this.picture = '';
+                    this.firstName = '';
+                    this.lastName = '';
+                    this.companyName = '';
+                    this.bio = '';
+                    this.email = '';
+                    this.phoneNumber = '';
                 }
 
                 //Scroll
@@ -186,8 +219,9 @@
             },
             
             createUser() {
-                api.admin_CreateAccount(this.memberLevel, this.username, this.password, this.points, this.notes, this.picture, 
-                                        this.firstName, this.lastName, this.companyName, this.bio, this.email, this.phoneNumber)
+                api.admin_CreateAccount(this.memberLevel, this.username, this.password, this.points_1, this.points_2, this.points_3, this.pointsLastUpdated,
+                                        this.notes, this.picture, this.firstName, this.lastName, this.companyName, this.bio, this.email, 
+                                        this.phoneNumber)
                 .then(
                     createResult => {
                         if (createResult == '100') {
@@ -205,8 +239,8 @@
             },
 
             updateAccount() {
-                api.admin_UpdateAccount(this.id, this.memberLevel, this.previousUsername, this.username, this.password, this.points, this.notes, 
-                                        this.picture, this.firstName, this.lastName, this.companyName, this.bio, this.email, this.phoneNumber)
+                api.admin_UpdateAccount(this.id, this.memberLevel, this.previousUsername, this.username, this.password, this.points_1, this.points_2, this.points_3, this.pointsLastUpdated,
+                                        this.notes, this.picture, this.firstName, this.lastName, this.companyName, this.bio, this.email, this.phoneNumber)
                 .then(
                     updateResult => {
                         if (updateResult == '404') 
@@ -229,22 +263,41 @@
                     case 0:
                         break;
                     case 1:
-                        this.points = 100;
+                        this.points_1 = 100;
                         break;
                     case 2:
-                        this.points = 200;
+                        this.points_1 = 200;
                         break;
                     case 3:
-                        this.points = 300;
+                        this.points_1 = 300;
                         break;
                     case 4:
-                        this.points = 500;
+                        this.points_1 = 500;
                         break;
                     case 5:
-                        this.points = 700;
+                        this.points_1 = 700;
                         break;
                 }
-            }
+            },
+
+            getMonthName(month, offset) {
+                switch(parseInt(month, 10) + parseInt(offset, 10)) {
+                    case -2: return 'November';
+                    case -1: return 'December';
+                    case 0: return 'January';
+                    case 1: return 'February';
+                    case 2: return 'March';
+                    case 3: return 'April';
+                    case 4: return 'May';
+                    case 5: return 'June';
+                    case 6: return 'July';
+                    case 7: return 'August';
+                    case 8: return 'September';
+                    case 9: return 'October';
+                    case 10: return 'November';
+                    case 11: return 'December';
+                }
+            },
         },
 
         mounted() {
