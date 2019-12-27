@@ -151,7 +151,6 @@
             },
             
             updateAccount(event) {
-                
                 api.admin_UpdateAccount(this.id, this.memberLevel, this.previousUsername, this.username, this.password, this.points, this.notes, 
                                         this.picture, this.firstName, this.lastName, this.companyName, this.bio, this.email, this.phoneNumber)
                 .then(

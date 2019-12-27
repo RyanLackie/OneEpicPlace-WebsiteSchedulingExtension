@@ -32,7 +32,7 @@
                     <div class="text">{{user.lastName}}</div>
                 </div>
                 <div class="dataBtnCol">
-                    <button class="btn btn-primary actionBtn editBtn" v-on:click="openViewUserModal(user)"></button>
+                    <button class="btn btn-primary actionBtn editBtn" v-on:click="openUserModal(user)"></button>
                     <button class="btn btn-dark actionBtn deleteBtn" v-on:click="removeUser(user)"></button>
                 </div>
             </div>
@@ -40,11 +40,12 @@
             <div class="space" v-if='array.length > 0'></div>
         </div>
 
-        <button class="btn btn-success actionBtn createBtn" v-on:click="openCreateUserModal()"></button>
+        <button class="btn btn-success actionBtn createBtn" v-on:click="openUserModal()"></button>
 
         <!-- Modals -->
-        <ViewUserModal ref="ViewUserModal"></ViewUserModal>
-        <CreateUserModal ref="CreateUserModal"></CreateUserModal>
+        <!-- <ViewUserModal ref="ViewUserModal"></ViewUserModal>
+        <CreateUserModal ref="CreateUserModal"></CreateUserModal> -->
+        <UserModal ref="UserModal"></UserModal>
 
         <!-- Dimmer -->
         <Dimmer ref="Dimmer"></Dimmer>
@@ -60,19 +61,21 @@
     import * as api from '@/services/api_access';
 
     //Modals
-    import ViewUserModal from '../modals/users/ViewUserModal.vue';
-    import CreateUserModal from '../modals/users/CreateUserModal.vue';
+    // import ViewUserModal from '../modals/users/ViewUserModal.vue';
+    // import CreateUserModal from '../modals/users/CreateUserModal.vue';
+    import UserModal from '../modals/users/UserModal.vue';
 
     //Dimmer
     import Dimmer from '../modals/components/Dimmer';
 
     export default {
         components: {
-            //Modals
-            ViewUserModal,
-            CreateUserModal,
+            // Modals
+            // ViewUserModal,
+            // CreateUserModal,
+            UserModal,
 
-            //Dimmer
+            // Dimmer
             Dimmer
         },
 
@@ -101,19 +104,18 @@
                 }
             },
 
-            openViewUserModal(user) {
+            openUserModal(user=null) {
                 this.closeModals();
-                this.$refs.ViewUserModal.openModal(user);
-                this.$refs.Dimmer.openDimmer();
-            },
-            openCreateUserModal() {
-                this.closeModals();
-                this.$refs.CreateUserModal.openModal();
+                if (user === null) {
+                    this.$refs.UserModal.openModal('create', user);
+                }
+                else if (user !== null) {
+                    this.$refs.UserModal.openModal('update', user);
+                }
                 this.$refs.Dimmer.openDimmer();
             },
             closeModals() {
-                this.$refs.ViewUserModal.closeModal()
-                this.$refs.CreateUserModal.closeModal();
+                this.$refs.UserModal.closeModal();
             },
             closeDimmer() {
                 this.$refs.Dimmer.closeDimmer();

@@ -59,7 +59,7 @@ class Model {
     }
     
     updateAccount(user_username, user_password, picture, firstName, lastName, companyName, bio, email, phoneNumber, username, password, call_back) {
-        console.log(picture);
+        // console.log(picture);
         this.getAccount(user_username, user_password, fetchedUser => {
             if (fetchedUser == '404')
                 return call_back('404');
