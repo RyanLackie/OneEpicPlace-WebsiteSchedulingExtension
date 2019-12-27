@@ -43,8 +43,6 @@
         <button class="btn btn-success actionBtn createBtn" v-on:click="openUserModal()"></button>
 
         <!-- Modals -->
-        <!-- <ViewUserModal ref="ViewUserModal"></ViewUserModal>
-        <CreateUserModal ref="CreateUserModal"></CreateUserModal> -->
         <UserModal ref="UserModal"></UserModal>
 
         <!-- Dimmer -->
@@ -61,8 +59,6 @@
     import * as api from '@/services/api_access';
 
     //Modals
-    // import ViewUserModal from '../modals/users/ViewUserModal.vue';
-    // import CreateUserModal from '../modals/users/CreateUserModal.vue';
     import UserModal from '../modals/users/UserModal.vue';
 
     //Dimmer
@@ -71,8 +67,6 @@
     export default {
         components: {
             // Modals
-            // ViewUserModal,
-            // CreateUserModal,
             UserModal,
 
             // Dimmer

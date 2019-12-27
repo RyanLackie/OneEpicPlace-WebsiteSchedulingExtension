@@ -86,8 +86,10 @@
 </template>
 
 <style scoped lang="scss">
-    //Personal CSS
-    @import "./UserModals.css";
+    .userModal {
+        height: 90%;
+        max-height: 1040px;
+    }
 </style>
 
 <script>
