@@ -43,7 +43,7 @@ class Model {
     managePoints() {
         let date = new Date();
         date.setHours(0, 0, 0, 0);
-        let currentMonth = parseInt(date.getMonth(), 10);
+        let currentMonth = parseInt(date.getMonth()+1, 10);
 
         // Update each user's points
         conn.query('SELECT * FROM users', (err, result) => {
@@ -51,9 +51,31 @@ class Model {
             result.forEach(user => {
                 let updatedLast = parseInt(user.pointsLastUpdated.split('-')[1], 10);
 
+                let points = 0
+                switch(parseInt(user.memberLevel, 10)) {
+                    case 1:
+                        points = 100;
+                        break;
+                    case 2:
+                        points = 200;
+                        break;
+                    case 3:
+                        points = 300;
+                        break;
+                    case 4:
+                        points = 500;
+                        break;
+                    case 5:
+                        points = 700;
+                        break;
+                    default:
+                        points = 0;
+                        break;
+                }
+
                 if (updatedLast !== currentMonth) {
                     conn.query('Update users SET ' + 
-                                'points_1 = ' + mysql.escape(this.memberLevelToPoints(user.memberLevel)) +
+                                'points_1 = ' + mysql.escape(points) +
                                 ', points_2 = ' + mysql.escape(user.points_2) +
                                 ', points_3 = ' + mysql.escape(user.points_3) +
                                 ', pointsLastUpdated = ' + mysql.escape(date) +
@@ -69,84 +91,148 @@ class Model {
             let endDate = date.getFullYear()+'-'+(date.getMonth()+1)+'-'+endDateDay;
             console.log(startDate, endDate);
             this.getBookingsDate('admin', 'admin', startDate, endDate, bookings => {
-                console.log(bookings);
                 bookings.forEach(booking => {
-                    console.log(booking.id);
-                    console.log(booking.paid);
                     if (booking.paid === 0) {
-                        console.log('not paid');
-                        let cost = 1;
-                        this.payBookingCost(booking.userID, booking.id, cost);
-                    }
-                    else {
-                        console.log('paid');
+                        this.payBookingCost(booking.userID, booking, payReturn => {
+                            // console.log('payBookingCost complete');
+                        });
                     }
                 });
             });
         });
     }
 
-    payBookingCost(userID, bookingID, cost) {
+    payBookingCost(userID, booking, call_back) {
         conn.query('SELECT * FROM users WHERE id = ' + mysql.escape(userID), (err, result) => {
-            let user = result[0];
-            console.log(user.points_1 - cost);
-            // points_1
-            if (user.points_1 >= cost) {
-                user.points_1 -= cost;
-            }
-            else {
-                if (user.points_1 > 0) {
-                    user.points_1 = 0;
-                }
+            if (err) throw err;
 
-                // points_2
-                if (user.points_2 >= cost) {
-                    user.points_2 -= cost;
-                }
-                else {
-                    if (user.points_2 > 0) {
-                        user.points_2 = 0;
+            const user = result[0];
+            let originalPoints = [user.points_1, user.points_2, user.points_3];
+            let newPoints = [user.points_1, user.points_2, user.points_3];
+            this.calculatePointCost(user, booking, cost => {
+                for (let i = 0; i < 3; i++) {
+                    if (newPoints[i] >= cost) {
+                        newPoints[i] -= cost;
+                        break;
                     }
-
-                    // points_3
-                    if (user.points_3 >= cost) {
-                        user.points_3 -= cost;
-                    }
-                    else {
-                        if (user.points_3 > 0) {
-                            user.points_3 = 0;
-                        }
-                        
-                        // points_1
-                        user.points_1 -= cost;
+                    else if (newPoints[i] > 0) {
+                        cost -= newPoints[i];
+                        newPoints[i] = 0;
                     }
                 }
-            }
+                if (cost !== 0) {
+                    newPoints[0] -= cost;
+                }
 
-            conn.query('Update bookings SET paid = ' + mysql.escape(1) +
-                        ' WHERE id = ' + mysql.escape(bookingID), (err) => {
-                if (err) throw err;
+                conn.query('Update users SET ' + 
+                            'points_1 = ' + mysql.escape(newPoints[0]) +
+                            ', points_2 = ' + mysql.escape(newPoints[1]) +
+                            ', points_3 = ' + mysql.escape(newPoints[2]) +
+                            ' WHERE id = ' + mysql.escape(user.id), (err) => {
+                    if (err) throw err;
+
+                    conn.query('Update bookings SET ' +
+                            'points_1_cost = ' + mysql.escape(originalPoints[0] - newPoints[0]) +
+                            ', points_2_cost = ' + mysql.escape(originalPoints[1] - newPoints[1]) +
+                            ', points_3_cost = ' + mysql.escape(originalPoints[2] - newPoints[2]) +
+                            ', paid = ' + mysql.escape(1) +
+                            ' WHERE id = ' + mysql.escape(booking.id), (err) => {
+                        if (err) throw err;
+
+                        return call_back(100);
+                    });
+                });
             });
         });
     }
+    calculatePointCost(user, booking, call_back) {
+        conn.query('SELECT * FROM locations WHERE id = ' + mysql.escape(booking.locationID), (err, result) => {
+            if (err) throw err;
 
-    memberLevelToPoints(memberLevel) {
-        switch(parseInt(memberLevel, 10)) {
-            case 0:
-                return 0;
-            case 1:
-                return 100;
-            case 2:
-                return 200;
-            case 3:
-                return 300;
-            case 4:
-                return 500;
-            case 5:
-                return 700;
-        }
+            let location = result[0];
+            const hours = parseInt(booking.endTime.split(":")[0]) - parseInt(booking.startTime.split(":")[0]);
+            const minutes = parseInt(booking.endTime.split(":")[1]) - parseInt(booking.startTime.split(":")[1]);
+
+            const percent = hours + Math.round(minutes/60 * 100) / 100;
+
+            const roomNames = ['DaVinci Room', 'Green Room', 'Sunshine Room', 'Zen Room', 'Studio'];
+
+            if (location.type === 'desk') {
+                return call_back(percent * 2.5);
+            }
+            else if (location.type === 'room') {
+                if (roomNames.includes(location.name)) {
+                    return call_back(percent * 10);
+                }
+                else if (location.name === 'Loft') {
+                    let rate = 0;
+                    switch(user.memberLevel) {
+                        case 1:
+                            rate = 25;
+                            break;
+                        case 2:
+                            rate = 27.27;
+                            break;
+                        case 3:
+                            rate = 30;
+                            break;
+                        case 4:
+                            rate = 37.5;
+                            break;
+                        case 5:
+                            rate = 42.86;
+                            break;
+                        default:
+                            rate = 0;
+                            break;
+                    }
+                    return call_back(percent * rate);
+                }
+                else {
+                    console.log('unknown cost');
+                    return call_back(1);
+                }
+            }
+        });
     }
 
+    refundPointCost(userID, oldBooking, newBooking, call_back) {
+        conn.query('SELECT * FROM users WHERE id = ' + mysql.escape(userID), (err, result) => {
+            let user = result[0];
+
+            let currentDate = new Date().getFullYear()+'-'+(new Date().getMonth()+1)+'-'+new Date().getDate();
+            currentDate = currentDate.split('-');
+            let bookingDate = oldBooking.date;
+            bookingDate = bookingDate.toJSON().slice(0, 10).split('-');
+
+            // Make sure we only refund points if they were spent in the first place
+            if (currentDate[0] === bookingDate[0] && currentDate[1] === bookingDate[1]) {
+                // console.log('refund');
+                conn.query('Update users SET ' + 
+                        'points_1 = ' + mysql.escape(user.points_1 + newBooking.points_1_cost) +
+                        ', points_2 = ' + mysql.escape(user.points_2 + newBooking.points_2_cost) +
+                        ', points_3 = ' + mysql.escape(user.points_3 + newBooking.points_3_cost) +
+                        ' WHERE id = ' + mysql.escape(user.id), (err) => {
+                    if (err) throw err;
+
+                    conn.query('Update bookings SET ' +
+                            'points_1_cost = ' + mysql.escape(0) +
+                            ', points_2_cost = ' + mysql.escape(0) +
+                            ', points_3_cost = ' + mysql.escape(0) +
+                            ', paid = ' + mysql.escape(0) +
+                            ' WHERE id = ' + mysql.escape(newBooking.id), (err) => {
+                        if (err) throw err;
+
+                        return call_back(100);
+                    });
+                });
+            }
+            else {
+                // console.log('no refund');
+                return call_back(101);
+            }
+        });
+    }
 
     /*////////////////////////////////////////////////////////////////////////////////////////////////////////
     /////////////////////////////////        Account Methods        //////////////////////////////////////////
@@ -525,27 +611,32 @@ class Model {
                     return call_back(checkCallBack);
 
                 // Insert Bookings If No Overlaps
+                const THIS = this;
                 for (var i = 0; i < date.length; i++) {
-                    let bookingID = null;
                     let sql = 
                     "INSERT INTO bookings (userID, locationID, resourceID, date, startTime, endTime, meetingType, title, description, noiseLevel, private)"+
                     "VALUES ('"+fetchedUser.id+"', '"+locationID+"', '"+resourceID+"', '"+date[i]+"', '"+startTime+"', '"+endTime+"', '"+meetingType+"', '"+title+
                     "', '"+description+"', '"+noiseLevel+"', '"+privacy+"')";
                     conn.query(sql, function(err, result) {
                         if (err) throw err;
-                        bookingID = result[0].id;
-                    });
+                        
+                        conn.query('SELECT * FROM bookings WHERE id = ' + mysql.escape(result.insertId), (err, result) => {
+                            if (err) throw err;
+                            
+                            // Calculate cost and subtract from points if current month
+                            let currentDate = new Date().getFullYear()+'-'+(new Date().getMonth()+1)+'-'+new Date().getDate();
+                            currentDate = currentDate.split('-');
+                            let bookingDate = result[0].date.toJSON().slice(0, 10).split('-');
 
-                    // Calculate cost and subtract from points if current month
-                    // 2019-12-27
-                    const currentMonth = new Date().getMonth();
-                    const month = date[i].split('-')[1];
-                    if (currentMonth === month) {
-                        const cost = 1;
-                        this.payBookingCost(fetchedUser.id, bookingID, cost);
-                    }
+                            if (currentDate[0] === bookingDate[0] && currentDate[1] === bookingDate[1]) {
+                                THIS.payBookingCost(result[0].userID, result[0], payReturn => {
+                                    // console.log('payBookingCost complete');
+                                });
+                            }
+                            return call_back(['100', null]);
+                        });
+                    });
                 }
-                return call_back(['100', null]);
             });
         });
     }
@@ -557,7 +648,7 @@ class Model {
             // Ensure Creator or Admin is Editing
             this.checkForCapability(bookingID, fetchedUser.id, fetchedUser.memberLevel, capabilityResult => {
                 if (capabilityResult == '404')
-                    call_back(['404', null]);
+                    return call_back(['404', null]);
             
                 var insertStartTime = new Date();
                 insertStartTime.setHours(parseInt(startTime.split(":")[0]), parseInt(startTime.split(":")[1]), 0, 0);
@@ -565,15 +656,24 @@ class Model {
                 insertEndTime.setHours(parseInt(endTime.split(":")[0]), parseInt(endTime.split(":")[1]), 0, 0);
 
                 var error = this.checkTimeFormating(startTime, endTime, insertStartTime, insertEndTime);
-                if (error == '405' || error == '406' || error == '407')
+                if (error == '405' || error == '406' || error == '407') {
+                    // console.log('time error');
                     return call_back([error, null]);
+                }
 
                 // Check For Booking Overlaps
                 this.checkForOverlap(bookingID, insertStartTime, insertEndTime, date, locationID, noiseLevel, checkCallBack => {
-                    if (checkCallBack[0] == '408' || checkCallBack[0] == '409' || checkCallBack[0] == '410')
+                    if (checkCallBack[0] == '408' || checkCallBack[0] == '409' || checkCallBack[0] == '410') {
+                        // console.log('overlap error');
                         return call_back(checkCallBack);
+                    }
 
-                    conn.query('Update bookings SET userID = ' + mysql.escape(userID) +
+                    // const THIS = this;
+                    conn.query('SELECT * FROM bookings WHERE id = ' + mysql.escape(bookingID), (err, oldBooking) => {
+                        if (err) throw err;
+                    
+                        conn.query('Update bookings SET ' +
+                                    'userID = ' + mysql.escape(userID) +
                                     ', locationID = ' + mysql.escape(locationID) +
                                     ', resourceID = ' + mysql.escape(resourceID) +
                                     ', date = ' + mysql.escape(date) +
@@ -585,8 +685,32 @@ class Model {
                                     ', noiseLevel = ' + mysql.escape(noiseLevel) +
                                     ', private = ' + mysql.escape(privacy) +
                                     ' WHERE id = ' + mysql.escape(bookingID), (err) => {
-                        if (err) throw err;
-                            return call_back(['100', null]);
+                            if (err) throw err;
+
+                            conn.query('SELECT * FROM bookings WHERE id = ' + mysql.escape(bookingID), (err, newBooking) => {
+                                if (err) throw err;
+                            
+                                this.refundPointCost(newBooking[0].userID, oldBooking[0], newBooking[0], refundReturn => {
+                                    // if (refundReturn === 100) {
+                                    //     console.log('refundPointCost complete');
+                                    // }
+
+                                    // Calculate cost and subtract from points if current month
+                                    let currentDate = new Date().getFullYear()+'-'+(new Date().getMonth()+1)+'-'+new Date().getDate();
+                                    currentDate = currentDate.split('-');
+                                    let bookingDate = newBooking[0].date.toJSON().slice(0, 10).split('-');
+
+                                    if (currentDate[0] === bookingDate[0] && currentDate[1] === bookingDate[1]) {
+                                        this.payBookingCost(newBooking[0].userID, newBooking[0], payReturn => {
+                                            return call_back(['100', null]);
+                                        });
+                                    }
+                                    else {
+                                        return call_back(['100', null]);
+                                    }
+                                });
+                            });
+                        });
                     });
                 });
             });
