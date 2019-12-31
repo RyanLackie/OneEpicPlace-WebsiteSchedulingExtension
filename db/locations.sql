@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 31, 2019 at 04:20 AM
--- Server version: 10.3.16-MariaDB
--- PHP Version: 7.3.7
+-- Generation Time: Dec 31, 2019 at 11:01 PM
+-- Server version: 10.4.6-MariaDB
+-- PHP Version: 7.3.9
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET AUTOCOMMIT = 0;
@@ -31,7 +31,8 @@ SET time_zone = "+00:00";
 CREATE TABLE `locations` (
   `id` int(10) NOT NULL,
   `name` varchar(30) NOT NULL,
-  `cost` int(4) NOT NULL,
+  `lowerCost` decimal(4,2) NOT NULL DEFAULT 0.00,
+  `higherCost` decimal(4,2) NOT NULL DEFAULT 0.00,
   `type` varchar(10) NOT NULL,
   `color` varchar(15) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -40,30 +41,29 @@ CREATE TABLE `locations` (
 -- Dumping data for table `locations`
 --
 
-INSERT INTO `locations` (`id`, `name`, `cost`, `type`, `color`) VALUES
-(1, 'DaVinci Room', 10, 'room', 'Aqua'),
-(2, 'Green Room', 7, 'room', 'Green'),
-(3, 'Sunshine Room', 7, 'room', 'Yellow'),
-(4, 'Zen Room', 6, 'room', 'Indigo'),
-(5, 'Studio', 13, 'room', 'Teal'),
-(6, 'EPIC Room', 17, 'room', 'MediumOrchid'),
-(7, 'Carriage House Treatment Room', 15, 'room', 'Red'),
-(8, 'Business Hub', 10, 'room', 'Cyan'),
-(9, 'Loft', 10, 'room', 'LightPink'),
-(10, 'Porch', 5, 'room', 'DarkGoldenRod'),
-(11, 'Lawn', 5, 'room', 'DarkGreen'),
-(12, 'Hot Desk 1', 5, 'desk', 'Aqua'),
-(13, 'Hot Desk 2', 5, 'desk', 'Green'),
-(14, 'Hot Desk 3', 5, 'desk', 'Yellow'),
-(15, 'Hot Desk 4', 5, 'desk', 'Indigo'),
-(16, 'Hot Desk 5', 5, 'desk', 'Teal'),
-(17, 'Hot Desk 6', 5, 'desk', 'MediumOrchid'),
-(18, 'Hot Desk 7', 5, 'desk', 'Red'),
-(19, 'Hot Desk 8', 5, 'desk', 'Cyan'),
-(20, 'Hot Desk 9', 5, 'desk', 'LightPink'),
-(21, 'Hot Desk 10', 5, 'desk', 'DarkGoldenRod'),
-(22, 'Hot Desk 11', 5, 'desk', 'Aqua'),
-(23, 'Hot Desk 12', 5, 'desk', 'DarkGreen');
+INSERT INTO `locations` (`id`, `name`, `lowerCost`, `higherCost`, `type`, `color`) VALUES
+(1, 'DaVinci Room', '10.00', '15.00', 'room', 'Aqua'),
+(2, 'Green Room', '10.00', '15.00', 'room', 'Green'),
+(3, 'Sunshine Room', '10.00', '15.00', 'room', 'Yellow'),
+(4, 'Zen Room', '10.00', '15.00', 'room', 'Indigo'),
+(5, 'Studio', '10.00', '15.00', 'room', 'Teal'),
+(6, 'Carriage House Downstairs', '10.00', '15.00', 'room', 'MediumOrchid'),
+(7, 'EPIC Room', '30.00', '40.00', 'room', 'Red'),
+(9, 'Loft', '10.00', '15.00', 'room', 'LightPink'),
+(10, 'Porch', '10.00', '15.00', 'room', 'DarkGoldenRod'),
+(11, 'Lawn', '10.00', '15.00', 'room', 'DarkGreen'),
+(12, 'Hot Desk 1', '2.50', '2.50', 'desk', 'Aqua'),
+(13, 'Hot Desk 2', '2.50', '2.50', 'desk', 'Green'),
+(14, 'Hot Desk 3', '2.50', '2.50', 'desk', 'Yellow'),
+(15, 'Hot Desk 4', '2.50', '2.50', 'desk', 'Indigo'),
+(16, 'Hot Desk 5', '2.50', '2.50', 'desk', 'Teal'),
+(17, 'Hot Desk 6', '2.50', '2.50', 'desk', 'MediumOrchid'),
+(18, 'Hot Desk 7', '2.50', '2.50', 'desk', 'Red'),
+(19, 'Hot Desk 8', '2.50', '2.50', 'desk', 'Cyan'),
+(20, 'Hot Desk 9', '2.50', '2.50', 'desk', 'LightPink'),
+(21, 'Hot Desk 10', '2.50', '2.50', 'desk', 'DarkGoldenRod'),
+(22, 'Hot Desk 11', '2.50', '2.50', 'desk', 'Aqua'),
+(23, 'Hot Desk 12', '2.50', '2.50', 'desk', 'DarkGreen');
 
 --
 -- Indexes for dumped tables
