@@ -2,11 +2,18 @@
     <div class="MonthlyViewCalendar"> 
 
         <!-- Container for date selector -->
-        <div class="dateSelector">
-            <button id="dateSelectorPreviousBtn" class="btn backBtn" type="button" @click="decMonth()"></button>
-            <input id="dateSelectorDate" class="date" :value="getMonthName(firstDay) + ' ' + firstDay.getFullYear()" disabled>
-            <button id="dateSelectorCalendar" class="btn calendarBtn" type="button"></button>
-            <button id="dateSelectorPreviousBtn" class="btn forwardBtn" type="button" @click="incMonth()"></button>
+        <div class="container" style='margin-bottom: 10px'>
+            <div class="row justify-content-center">
+                <div class="col-2">
+                    <button class="btn backBtn" type="button" @click="decMonth()"></button>
+                </div>
+                <div class="col-4">
+                    <span class="dateSelectorDate">{{getMonthName(firstDay) + ' ' + firstDay.getFullYear()}}</span>
+                </div>
+                <div class="col-2">
+                    <button class="btn forwardBtn" type="button" @click="incMonth()"></button>
+                </div>
+            </div>
         </div>
 
         <!-- Calendar -->
@@ -102,11 +109,6 @@
                     temp.setHours(0, 0, 0, 0);
                     this.days[this.days.length] = temp;
                 }
-                /*
-                for (var i = 0; i < this.days.length; i++) {
-                    console.log(i + ' / ' + this.days[i]);
-                }
-                */
             },
             decMonth: function() {
                 this.getMonth(new Date(this.days[0].setDate(this.days[0].getDate() - 1)));

@@ -89,7 +89,7 @@ class Model {
             let startDate = date.getFullYear()+'-'+(date.getMonth()+1)+'-'+1;
             let endDateDay = new Date(date.getFullYear(), date.getMonth()+1, 0).getDate();
             let endDate = date.getFullYear()+'-'+(date.getMonth()+1)+'-'+endDateDay;
-            console.log(startDate, endDate);
+            // console.log(startDate, endDate);
             this.getBookingsDate('admin', 'admin', startDate, endDate, bookings => {
                 bookings.forEach(booking => {
                     if (booking.paid === 0) {

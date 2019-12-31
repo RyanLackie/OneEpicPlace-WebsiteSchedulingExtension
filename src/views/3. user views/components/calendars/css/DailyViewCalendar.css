@@ -1,45 +1,29 @@
 /*
     Date Selector 
 */
-.DailyViewCalendar .dateSelector {
+.DailyViewCalendar {
     width: 100%;
     margin: 0px auto;
     text-align: center;
     margin-bottom: 30px;
 }
-.DailyViewCalendar .dateSelector .backBtn {
+.DailyViewCalendar .backBtn {
     width: 70px;
     height: 40px;
-    margin: -15px 3% 0px 0px;
     background-color: black;
     background-image: url("../../../../../assets/backarrow-white.png");
     background-size: 50%;
     background-repeat: no-repeat;
     background-position: center;
 }
-.DailyViewCalendar .dateSelector .date {
-    width: 150px;
-    height: 40px;
+.DailyViewCalendar .dateSelectorDate {
     text-align: center;
-    background: transparent;
-    border: 0;
-    border-radius: 3px;
     font-size: 30px;
+    cursor: default;
 }
-.DailyViewCalendar .dateSelector .calendarBtn {
-    width: 50px;
-    height: 40px;
-    margin-top: -15px;
-    background-color: lightgray;
-    background-image: url("../../../../../assets/calendar-white.png");
-    background-size: 60%;
-    background-repeat: no-repeat;
-    background-position: center;
-}
-.DailyViewCalendar .dateSelector .forwardBtn {
+.DailyViewCalendar .forwardBtn {
     width: 70px;
     height: 40px;
-    margin: -15px 0px 0px 4%;
     background-color: black;
     background-image: url("../../../../../assets/forwardarrow-white.png");
     background-size: 50%;

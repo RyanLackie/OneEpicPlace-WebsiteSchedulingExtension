@@ -1,67 +1,10 @@
 /*
     Views Navbar
 */
-.Data .viewSelector {
-    width: 100%;
-    margin-bottom: 20px;
-}
-.Data .viewSelector .buttonGroup {
-    width: 100%;
-    max-width: 1200px;
-    margin: 0px auto;
-    text-align: center;
-}
-.Data .viewSelector .buttonGroup .text {
-    display: inline-block;
-    padding: 0px 2%;
-    color: black;
-    font-size: 20px;
-    text-decoration: none;
-    cursor: pointer;
-}
-.Data .viewSelector .text:hover {
-    color: gray;
-}
-.Data .viewSelector .text .underline {
-    width: 0px;
-    border-bottom: 3px orange solid;
-    transition: width 0.3s;
-}
 
-.Data .loadingAnimation {
-    width: 200px;
-    height: 200px;
-    margin: 0px auto;
-    background-image: url("../../../assets/logo.png");
-    background-size: 70%;
-    background-repeat: no-repeat;
-    background-position: center;
-
-    -webkit-animation: spin 3s infinite linear;
-    animation: spin 3s infinite linear;
-}
-@-webkit-keyframes spin {
-    100% { -webkit-transform: rotate(360deg); }
-}
-@-moz-keyframes spin {
-    100% { -moz-transform: rotate(360deg); }
-}
-@keyframes spin {
-    100% {
-        -moz-transform:rotate(360deg);
-        -o-transform:rotate(360deg);
-        transform:rotate(360deg);
-    }
-}
 /*
     Children
 */
-.Data .dataContainer {
-    width: 90%;
-    margin: 0px auto;
-    overflow-y: hidden;
-    white-space: nowrap;
-}
 .Data .dataContainer::-webkit-scrollbar-track {
 	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
 	border-radius: 3px;
@@ -84,89 +27,6 @@
     outline: 1px black solid;
 }
 
-.Data .label {
-    font-size: 25px;
-    font-weight: bold;
-    font-family: 'Quicksand', sans-serif;
-    text-transform: uppercase;
-}
-
-.Data .nameRow {
-    height: 25px;
-    margin-bottom: 10px;
-    font-size: 20px;
-    font-family: 'Quicksand', sans-serif;
-    border-bottom: 1px black solid;
-    pointer-events: none;
-}
-.Data .dataRow {
-    height: 25px;
-    margin-bottom: 2px;
-}
-
-.Data .dataCol-3 {
-    display: inline-block;
-    width: 30%;
-    min-width: 170px;
-    height: 100%;
-    text-align: center;  
-}
-.Data .dataCol-4 {
-    display: inline-block;
-    width: 22.5%;
-    min-width: 170px;
-    height: 100%;
-    text-align: center; 
-}
-.Data .dataRow .text {
-    position: relative;
-    width: 100%;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    pointer-events: none; 
-}
-
-.Data .dataBtnCol {
-    display: inline-block;
-    width: 10%;
-    min-width: 100px;
-    height: 100%;
-    text-align: center;
-}
-.Data .dataRow .dataBtnCol .actionBtn {
-    width: 49%;
-    height: 100%;
-    background-size: 30%;
-    background-repeat: no-repeat;
-    background-position: center;  
-}
-.Data .dataRow .dataBtnCol .editBtn {
-    margin: -15px 2% 0px 0px;
-    background-image: url("../../../assets/edit-white.png");
-}
-.Data .dataRow .dataBtnCol .deleteBtn {
-    margin: -15px 0px 0px 0px;
-    background-image: url("../../../assets/delete-white.png");
-}
-
-.Data .space {
-    margin-bottom: 40px;
-}
-
-.Data .createBtn {
-    position: absolute;
-    left: 0;
-    right: 0;
-    margin: 0px auto;
-    width: 30%;
-    height: 30px;
-    background-image: url("../../../assets/add-white.png");
-    background-size: 30px;
-    background-repeat: no-repeat;
-    background-position: center;    
-    margin-bottom: 20px;
-}
 /*
     Dimmer
 */

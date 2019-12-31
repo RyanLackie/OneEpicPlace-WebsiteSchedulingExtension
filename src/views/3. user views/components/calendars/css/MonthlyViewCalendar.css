@@ -1,43 +1,36 @@
 /*
     Date Selector 
 */
-.MonthlyViewCalendar .dateSelector {
+.MonthlyViewCalendar {
     width: 100%;
     margin: 0px auto;
     text-align: center;
     margin-bottom: 30px;
 }
-.MonthlyViewCalendar .dateSelector .backBtn {
+.MonthlyViewCalendar .backBtn {
     width: 70px;
     height: 40px;
-    margin: -15px 3% 0px 0px;
     background-color: black;
     background-image: url("../../../../../assets/backarrow-white.png");
     background-size: 50%;
     background-repeat: no-repeat;
     background-position: center;
 }
-.MonthlyViewCalendar .dateSelector .date {
-    min-width: 200px;
-    width: 10%;
-    height: 40px;
+.MonthlyViewCalendar .dateSelectorDate {
     text-align: center;
-    background: transparent;
-    border: 0;
-    border-radius: 3px;
     font-size: 30px;
+    cursor: default;
 }
-.MonthlyViewCalendar .dateSelector .calendarBtn {
+.MonthlyViewCalendar .calendarBtn {
     width: 50px;
     height: 40px;
-    margin-top: -15px;
     background-color: lightgray;
     background-image: url("../../../../../assets/calendar-white.png");
     background-size: 60%;
     background-repeat: no-repeat;
     background-position: center;
 }
-.MonthlyViewCalendar .dateSelector .forwardBtn {
+.MonthlyViewCalendar .forwardBtn {
     display: inline-block;
     width: 70px;
     height: 40px;

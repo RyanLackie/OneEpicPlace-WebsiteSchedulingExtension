@@ -1,39 +1,51 @@
 <template>
-    <div class="Data">
+    <div>
 
-        <div class="dataContainer">
+        <div class="container">
 
-            <div class="nameRow">
-                <div class="dataCol-3">Name</div>
-                <div class="dataCol-3">Point Cost</div>
-                <div class="dataCol-3">Quantity</div>
-                <div class="dataBtnCol">Actions</div>
+            <div class="row" style='text-align: center;'>
+                <div class="col">Name</div>
+                <div class="col">Point Cost</div>
+                <div class="col">Quantity</div>
+                <div class="col">Actions</div>
             </div>
 
-            <div class="dataRow" v-for='(resource, index) in this.resources' :key="'res:'+resource.id" :style="$parent.styleRow(index)">
-                <div class="dataCol-3">
-                    <div class="text">{{resource.name}}</div>
+            <div class="row" style='text-align: center;'
+            v-for='(resource, index) in this.resources' :key="'res:'+resource.id" :style="$parent.styleRow(index)">
+                <div class="col" style='position: relative;'>
+                    <div class="col-text">{{resource.name}}</div>
                 </div>
-                <div class="dataCol-3">
-                    <div class="text">{{resource.cost}}</div>
+                <div class="col" style='position: relative;'>
+                    <div class="col-text">{{resource.cost}}</div>
                 </div>
-                <div class="dataCol-3">
-                    <div class="text">{{resource.quantity}}</div>
+                <div class="col" style='position: relative;'>
+                    <div class="col-text">{{resource.quantity}}</div>
                 </div>
-                <div class="dataBtnCol">
-                    <button class="btn btn-primary actionBtn editBtn" v-on:click="openViewResourceModal(resource)"></button>
-                    <button class="btn btn-dark actionBtn deleteBtn" v-on:click="removeResource(resource)"></button>
+                <div class="col">
+                    <div class="container">
+                        <div class="row justify-content-center">
+                            <div class="col-4">
+                                <button class="btn btn-primary btn-lg editBtn" v-on:click="openResourceModal(resource)"></button>
+                            </div>
+                            <div class="col-4">
+                                <button class="btn btn-dark btn-lg deleteBtn" v-on:click="removeResource(resource)"></button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
 
         <div class="space"></div>
 
-        <button class="btn btn-success actionBtn createBtn" v-on:click="openCreateResourceModal()"></button>
+        <div class="container">
+            <div class="row justify-content-center">
+                <button class="col-6 btn btn-success btn-lg btn-block createBtn" v-on:click="openResourceModal()"></button>
+            </div>
+        </div>
 
         <!-- Modals -->
-        <ViewResourceModal ref="ViewResourceModal"></ViewResourceModal>
-        <CreateResourceModal ref="CreateResourceModal"></CreateResourceModal>
+        <ResourceModal ref="ResourceModal"></ResourceModal>
 
         <!-- Dimmer -->
         <Dimmer ref="Dimmer"></Dimmer>
@@ -41,16 +53,16 @@
     </div>
 </template>
 
-<style scoped lang="scss">
 
+<style lang="scss">
 </style>
+
 
 <script>
     import * as api from '@/services/api_access';
 
     //Modals
-    import ViewResourceModal from '../modals/resources/ViewResourceModal.vue';
-    import CreateResourceModal from '../modals/resources/CreateResourceModal.vue';
+    import ResourceModal from './ResourceModal.vue';
 
     //Dimmer
     import Dimmer from '../modals/components/Dimmer';
@@ -58,8 +70,7 @@
     export default {
         components: {
             //Modals
-            ViewResourceModal,
-            CreateResourceModal,
+            ResourceModal,
 
             //Dimmer
             Dimmer
@@ -90,19 +101,18 @@
                 }
             },
 
-            openViewResourceModal(resource) {
+            openResourceModal(resource=null) {
                 this.closeModals();
-                this.$refs.ViewResourceModal.openModal(resource);
-                this.$refs.Dimmer.openDimmer();
-            },
-            openCreateResourceModal() {
-                this.closeModals();
-                this.$refs.CreateResourceModal.openModal();
+                if (resource === null) {
+                    this.$refs.ResourceModal.openModal('create', resource);
+                }
+                else if (resource !== null) {
+                    this.$refs.ResourceModal.openModal('update', resource);
+                }
                 this.$refs.Dimmer.openDimmer();
             },
             closeModals() {
-                this.$refs.ViewResourceModal.closeModal();
-                this.$refs.CreateResourceModal.closeModal();
+                this.$refs.ResourceModal.closeModal();
             },
             closeDimmer() {
                 this.$refs.Dimmer.closeDimmer();

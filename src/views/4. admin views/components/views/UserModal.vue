@@ -179,7 +179,7 @@
                     this.points_1 = 0;
                     this.points_2 = 0;
                     this.points_3 = 0;
-                    this.pointsLastUpdated = new Date().getFullYear()+'-'+new Date().getMonth()+'-'+new Date().getDate();
+                    this.pointsLastUpdated = new Date().getFullYear()+'-'+(new Date().getMonth()+1)+'-'+new Date().getDate();
                     this.notes = '';
 
                     this.picture = '';
@@ -282,20 +282,21 @@
 
             getMonthName(month, offset) {
                 switch(parseInt(month, 10) + parseInt(offset, 10)) {
-                    case -2: return 'November';
-                    case -1: return 'December';
-                    case 0: return 'January';
-                    case 1: return 'February';
-                    case 2: return 'March';
-                    case 3: return 'April';
-                    case 4: return 'May';
-                    case 5: return 'June';
-                    case 6: return 'July';
-                    case 7: return 'August';
-                    case 8: return 'September';
-                    case 9: return 'October';
-                    case 10: return 'November';
-                    case 11: return 'December';
+                    case -2: return 'October';
+                    case -1: return 'November';
+                    case 0: return 'December';
+                    case 1: return 'January';
+                    case 2: return 'February';
+                    case 3: return 'March';
+                    case 4: return 'April';
+                    case 5: return 'May';
+                    case 6: return 'June';
+                    case 7: return 'July';
+                    case 8: return 'August';
+                    case 9: return 'September';
+                    case 10: return 'October';
+                    case 11: return 'November';
+                    case 12: return 'December';
                 }
             },
         },

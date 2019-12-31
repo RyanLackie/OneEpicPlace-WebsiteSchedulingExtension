@@ -2,13 +2,20 @@
     <div class="WeeklyViewCalendar"> 
 
         <!-- Container for date selector -->
-        <div class="dateSelector">
-            <button id="dateSelectorPreviousBtn" class="btn backBtn" type="button" @click="decWeek()"></button>
-            <input id="dateSelectorDate" class="date" :value="week[0].getMonth()+1+'/'+week[0].getDate()+'/'+week[0].getFullYear()" disabled>
-            <div class="hyphen">-</div>
-            <input id="dateSelectorDate" class="date" :value="week[6].getMonth()+1+'/'+week[6].getDate()+'/'+week[6].getFullYear()" disabled>
-            <!--button id="dateSelectorCalendar" class="btn calendarBtn" type="button"></button-->
-            <button id="dateSelectorPreviousBtn" class="btn forwardBtn" type="button" @click="incWeek()"></button>
+        <div class="container" style='margin-bottom: 10px'>
+            <div class="row justify-content-center">
+                <div class="col-2">
+                    <button class="btn backBtn" type="button" @click="decDate()"></button>
+                </div>
+                <div class="col-4">
+                    <span class="dateSelectorDate">{{week[0].getMonth()+1+'/'+week[0].getDate()+'/'+week[0].getFullYear()}}</span>
+                    <span class="hyphen">-</span>
+                    <span class="dateSelectorDate">{{week[6].getMonth()+1+'/'+week[6].getDate()+'/'+week[6].getFullYear()}}</span>
+                </div>
+                <div class="col-2">
+                    <button class="btn forwardBtn" type="button" @click="incDate()"></button>
+                </div>
+            </div>
         </div>
 
         <!-- Calendar -->

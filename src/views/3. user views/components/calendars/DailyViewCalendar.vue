@@ -2,11 +2,18 @@
     <div class="DailyViewCalendar"> 
 
         <!-- Container for date selector -->
-        <div class="dateSelector">
-            <button id="dateSelectorPreviousBtn" class="btn backBtn" type="button" @click="decDate()"></button>
-            <input id="dateSelectorDate" class="date" :value="date.getMonth()+1+'/'+date.getDate()+'/'+date.getFullYear()" disabled>
-            <button id="dateSelectorCalendar" class="btn calendarBtn" type="button"></button>
-            <button id="dateSelectorPreviousBtn" class="btn forwardBtn" type="button" @click="incDate()"></button>
+        <div class="container" style='margin-bottom: 10px'>
+            <div class="row justify-content-center">
+                <div class="col-2">
+                    <button id="dateSelectorPreviousBtn" class="btn backBtn" type="button" @click="decDate()"></button>
+                </div>
+                <div class="col-4">
+                    <span class="dateSelectorDate">{{date.getMonth()+1+'/'+date.getDate()+'/'+date.getFullYear()}}</span>
+                </div>
+                <div class="col-2">
+                    <button id="dateSelectorPreviousBtn" class="btn forwardBtn" type="button" @click="incDate()"></button>
+                </div>
+            </div>
         </div>
 
         <!-- Calendar -->

@@ -5,7 +5,7 @@
         <div class="loadingAnimation" v-if="!load"></div>
 
         <!-- Navbar -->
-        <div class="viewSelector">
+        <div class="container" style='margin-bottom: 20px;'>
             <div class='buttonGroup'>
                 <div class="text" v-if="load" @click="selectView(0)">Users
                     <div class="underline" :style="styleUnderline(0)"></div>
@@ -27,9 +27,108 @@
     </div>
 </template>
 
-<style scoped lang="scss">
+<style lang="scss">
     //Personal CSS
     @import "./css/Data.css";
+    .Data {
+        .buttonGroup {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0px auto;
+            text-align: center;
+
+            .text {
+                display: inline-block;
+                padding: 0px 2%;
+                font-size: 20px;
+                text-decoration: none;
+                cursor: pointer;
+            }
+            text:hover {
+                color: gray;
+            }
+
+            .underline {
+                width: 0px;
+                border-bottom: 3px orange solid;
+                transition: width 0.3s;
+            }
+        }
+
+        .loadingAnimation {
+            width: 200px;
+            height: 200px;
+            margin: 0px auto;
+            background-image: url("../../assets/logo.png");
+            background-size: 70%;
+            background-repeat: no-repeat;
+            background-position: center;
+
+            -webkit-animation: spin 3s infinite linear;
+            animation: spin 3s infinite linear;
+        }
+        @-webkit-keyframes spin {
+            100% { -webkit-transform: rotate(360deg); }
+        }
+        @-moz-keyframes spin {
+            100% { -moz-transform: rotate(360deg); }
+        }
+        @keyframes spin {
+            100% {
+                -moz-transform:rotate(360deg);
+                -o-transform:rotate(360deg);
+                transform:rotate(360deg);
+            }
+        }
+
+        .label {
+            font-size: 25px;
+            font-weight: bold;
+            font-family: 'Quicksand', sans-serif;
+            text-transform: uppercase;
+        }
+        .col-text {
+            position: absolute;
+            left: 0;
+            width: 100%;
+            padding: 0px 5px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            pointer-events: none;
+        }
+
+        .editBtn {
+            width: 100%;
+            height: 90%;
+            margin-top: -5px;
+            background-image: url("../../assets/edit-white.png");
+            background-size: 18px;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+        .deleteBtn {
+            width: 100%;
+            height: 90%;
+            margin-top: -5px;
+            background-image: url("../../assets/delete-white.png");
+            background-size: 18px;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+        .createBtn {
+            height: 30px;
+            background-image: url("../../assets/add-white.png");
+            background-size: 30px;
+            background-repeat: no-repeat;
+            background-position: center;    
+            margin-bottom: 20px;
+        }
+
+        .space {
+            margin-bottom: 40px;
+        }
+    }
 </style>
 
 <script>
