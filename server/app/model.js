@@ -404,7 +404,7 @@ class Model {
         });
     }
     //Admin Methods
-    admin_CreateLocation(user_username, user_password, name, cost, type, color, call_back) {
+    admin_CreateLocation(user_username, user_password, name, lowerCost, higherCost, type, color, call_back) {
         this.admin_CheckAdminPrivilege(user_username, user_password, fetchedUser => {
             if (fetchedUser == '404')
                 return call_back('404');
@@ -413,7 +413,8 @@ class Model {
                     if (locations[i].name == name)
                         return call_back('406');
                 }
-                conn.query("INSERT INTO locations (name, cost, type, color) VALUES ('"+name+"', '"+cost+"', '"+type+"', '"+color+"')", (err) => {
+                conn.query("INSERT INTO locations (name, lowerCost, higherCost, type, color) VALUES " + 
+                "('"+name+"', '"+lowerCost+"', '"+higherCost+"', '"+type+"', '"+color+"')", (err) => {
                     if (err) throw err;
                     return call_back('100');
                 });
@@ -421,13 +422,13 @@ class Model {
         });
     }
 
-    admin_UpdateLocation(user_username, user_password, id, previousName, name, cost, type, color, call_back) {
+    admin_UpdateLocation(user_username, user_password, id, previousName, name, lowerCost, higherCost, type, color, call_back) {
         this.admin_CheckAdminPrivilege(user_username, user_password, fetchedUser => {
             if (fetchedUser == '404')
                 return call_back('404');
             // eslint-disable-next-line
             this.admin_UpdateLocationName(id, previousName, name, nameUpdateResult => {
-                this.admin_UpdateLocationInfo(id, cost, type, color, infoUpdateResult => {
+                this.admin_UpdateLocationInfo(id, lowerCost, higherCost, type, color, infoUpdateResult => {
                     return call_back(infoUpdateResult);
                 });                    
             });
@@ -437,8 +438,9 @@ class Model {
         if (previousName != name) {
             this.getLocations(locations => {
                 for (var i = 0; i < locations.length; i++) {
-                    if (locations[i].name == name)
+                    if (locations[i].name == name) {
                         return nameUpdateResult('406');
+                    }
                 }
                 conn.query('Update locations SET name = ' + mysql.escape(name) + ' WHERE id = ' + mysql.escape(id), (err) => {
                     if (err) throw err;
@@ -449,11 +451,13 @@ class Model {
         else
             return nameUpdateResult('100');
     }
-    admin_UpdateLocationInfo(id, cost, type, color, infoUpdateResult) {
-        conn.query('Update locations SET cost = ' + mysql.escape(cost) +
-                                        ', type = ' + mysql.escape(type) +
-                                        ', color = ' + mysql.escape(color) +
-                                        ' WHERE id = ' + mysql.escape(id), (err) => {
+    admin_UpdateLocationInfo(id, lowerCost, higherCost, type, color, infoUpdateResult) {
+        conn.query('Update locations SET '+
+                    'lowerCost = ' + mysql.escape(lowerCost) +
+                    ', higherCost = ' + mysql.escape(higherCost) +
+                    ', type = ' + mysql.escape(type) +
+                    ', color = ' + mysql.escape(color) +
+                    ' WHERE id = ' + mysql.escape(id), (err) => {
             if (err) throw err;
             conn.query('SELECT * FROM locations WHERE id = ' + mysql.escape(id), (err, result) => {
                 if (err) throw err;

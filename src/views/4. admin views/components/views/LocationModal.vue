@@ -15,8 +15,11 @@
             <label class="label-sm">Name</label>
             <input type="text" class="input-box form-control" placeholder="Location's Name" v-model="name" required>
 
-            <label class="label-sm">Point Cost</label>
-            <input type="number" class="input-box form-control" placeholder="Location's Point Cost" v-model="cost" required>
+            <label class="label-sm">Lower Point Cost</label>
+            <input type="decimal" class="input-box form-control" placeholder="Location's Point Cost" v-model="lowerCost" required>
+
+            <label class="label-sm">Higher Point Cost</label>
+            <input type="decimal" class="input-box form-control" placeholder="Location's Point Cost" v-model="higherCost" required>
 
             <label class="label-sm">Type</label>
             <select class="form-control" v-model="type" required>
@@ -49,7 +52,7 @@
 <style scoped lang="scss">
     .LocationModal {
         height: 90%;
-        max-height: 460px;
+        max-height: 520px;
     }
 </style>
 
@@ -65,7 +68,8 @@
                 previousName: null, // For update
 
                 name: null,
-                cost: null,
+                lowerCost: null,
+                higherCost: null,
                 type: null,
                 color: null
             }
@@ -80,14 +84,16 @@
                     this.id = location.id;
                     this.previousName = location.name;
                     this.name = location.name;
-                    this.cost = location.cost;
+                    this.lowerCost = location.lowerCost;
+                    this.higherCost = location.higherCost;
                     this.type = location.type;
                     this.color = location.color;
                 }
                 // For create
                 else {
                     this.name = '';
-                    this.cost = 0;
+                    this.lowerCost = 0;
+                    this.higherCost = 0;
                     this.type = 'room';
                     this.color = 'Aqua';
                 }
@@ -120,12 +126,13 @@
             },
             
             createLocation() {
-                var name = document.getElementById("LocationModal-Name").value;
-                var cost = document.getElementById("LocationModal-Cost").value;
-                var type = document.getElementById("LocationModal-Type").value;
-                var color = document.getElementById("LocationModal-Color").value;
+                var name = this.name;
+                var lowerCost = this.lowerCost;
+                var higherCost = this.higherCost;
+                var type = this.type;
+                var color = this.color;
                 
-                api.admin_CreateLocation(name, cost, type, color).then(createResult => {
+                api.admin_CreateLocation(name, lowerCost, higherCost, type, color).then(createResult => {
                     if (createResult == '100') {
                         this.close();
                         this.$parent.updateLocations();
@@ -139,13 +146,14 @@
 
             updateLocation() {
                 var id = this.id;
-                var previousName = this.name;
+                var previousName = this.previousName;
                 var name = this.name;
-                var cost = this.cost;
+                var lowerCost = this.lowerCost;
+                var higherCost = this.higherCost;
                 var type = this.type;
                 var color = this.color;
                 
-                api.admin_UpdateLocation(id, previousName, name, cost, type, color).then(
+                api.admin_UpdateLocation(id, previousName, name, lowerCost, higherCost, type, color).then(
                     updateResult => {
                         if (updateResult == '404') 
                             this.$parent.$refs.Header.logout();

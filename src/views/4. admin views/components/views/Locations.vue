@@ -7,7 +7,8 @@
 
             <div v-if='array.length > 0' class="row" style='text-align: center;'>
                 <div class="col">Name</div>
-                <div class="col">Point Cost</div>
+                <div class="col">Lower Point Cost</div>
+                <div class="col">Higher Point Cost</div>
                 <div class="col">Color</div>
                 <div class="col">Actions</div>
             </div>
@@ -18,7 +19,10 @@
                     <div class="col-text">{{location.name}}</div>
                 </div>
                 <div class="col" style='position: relative;'>
-                    <div class="col-text">{{location.cost}}</div>
+                    <div class="col-text">{{location.lowerCost}}</div>
+                </div>
+                <div class="col" style='position: relative;'>
+                    <div class="col-text">{{location.higherCost}}</div>
                 </div>
                 <div class="col" style='position: relative;'>
                     <div class="col-text">{{location.color}}</div>

@@ -74,7 +74,7 @@ app.post('/getLocations', (req, res) => {
 app.post('/admin_CreateLocation', (req, res) => {
     model.admin_CreateLocation(
         req.body.user_username, req.body.user_password,
-        req.body.name, req.body.cost, req.body.type, req.body.color,
+        req.body.name, req.body.lowerCost, req.body.higherCost, req.body.type, req.body.color,
         updateResult => res.send(updateResult)
     );
 })
@@ -82,7 +82,7 @@ app.post('/admin_UpdateLocation', (req, res) => {
     model.admin_UpdateLocation(
         req.body.user_username, req.body.user_password,
         req.body.id, req.body.previousName, req.body.name,
-        req.body.cost, req.body.type, req.body.color,
+        req.body.lowerCost, req.body.higherCost, req.body.type, req.body.color,
         updateResult => res.send(updateResult)
     );
 })

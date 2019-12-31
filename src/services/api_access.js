@@ -70,16 +70,16 @@ export function getLocations() {
     return myFetch(api_root + "/app/getLocations", {});
 }
 
-export function admin_CreateLocation(name, cost, type, color) {
+export function admin_CreateLocation(name, lowerCost, higherCost, type, color) {
     var user_username = user.username, user_password = user.password;
     return myFetch(api_root + "/app/admin_CreateLocation", {
-        user_username, user_password, name, cost, type, color
+        user_username, user_password, name, lowerCost, higherCost, type, color
     });
 }
-export function admin_UpdateLocation(id, previousName, name, cost, type, color) {
+export function admin_UpdateLocation(id, previousName, name, lowerCost, higherCost, type, color) {
     var user_username = user.username, user_password = user.password;
     return myFetch(api_root + "/app/admin_UpdateLocation", {
-        user_username, user_password, id, previousName, name, cost, type, color
+        user_username, user_password, id, previousName, name, lowerCost, higherCost, type, color
     });
 }
 export function admin_RemoveLocation(id) {

@@ -38,10 +38,10 @@
                 <div class="col">
                     <div class="container">
                         <div class="row justify-content-center">
-                            <div class="col-5">
+                            <div class="col-4">
                                 <button class="btn btn-primary btn-lg editBtn" v-on:click="openUserModal(user)"></button>
                             </div>
-                            <div class="col-5">
+                            <div class="col-4">
                                 <button class="btn btn-dark btn-lg deleteBtn" v-on:click="removeUser(user)"></button>
                             </div>
                         </div>
