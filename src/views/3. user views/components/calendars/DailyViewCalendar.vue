@@ -7,8 +7,10 @@
                 <div class="col-2">
                     <button id="dateSelectorPreviousBtn" class="btn backBtn" type="button" @click="decDate()"></button>
                 </div>
-                <div class="col-4">
-                    <span class="dateSelectorDate">{{date.getMonth()+1+'/'+date.getDate()+'/'+date.getFullYear()}}</span>
+                <div class="col-4" @click="$parent.$refs.DateSelector.openModal()">
+                    <span class="dateSelectorDate">
+                        {{$parent.date.getMonth()+1+'/'+$parent.date.getDate()+'/'+$parent.date.getFullYear()}}
+                    </span>
                 </div>
                 <div class="col-2">
                     <button id="dateSelectorPreviousBtn" class="btn forwardBtn" type="button" @click="incDate()"></button>
@@ -80,9 +82,6 @@
     export default {
         data() {
             return {
-                //Date for calender
-                date: null,
-
                 //locations include: id, name, type
                 locations: this.$parent.locations,
                 //hours include: id, time
@@ -104,25 +103,21 @@
         },
 
         methods: {
-            /* Date Functions */
             getDate() {
-                var date = new Date();
-                date.setHours(0, 0, 0, 0);
-                this.date = date;
-            },
-            decDate: function() {
-                this.date = new Date(this.date.setDate(this.date.getDate() - 1));
+                this.checkBookings();
                 clearTimeout(this.timeHighlighterTimeout);
                 this.timeHighlighterDelay = 0;
                 this.styleTimeHighlighterLoop();
-                this.checkBookings();
+            },
+
+            /* Date Functions */
+            decDate: function() {
+                let date = this.$parent.date;
+                date = new Date(date.setDate(date.getDate() - 1));
             },
             incDate: function() {
-                this.date = new Date(this.date.setDate(this.date.getDate() + 1));
-                clearTimeout(this.timeHighlighterTimeout);
-                this.timeHighlighterDelay = 0;
-                this.styleTimeHighlighterLoop();
-                this.checkBookings();
+                let date = this.$parent.date;
+                date = new Date(date.setDate(date.getDate() + 1));
             },
 
             /* JavaScript Styling */
@@ -219,10 +214,10 @@
                 var THIS = this;
                 this.checkBookingsTimeout = setTimeout(function() {
                     THIS.bookingsDelay = 5000;
-                    var date = THIS.date.toJSON().slice(0, 10);
-                    var refDate = THIS.date;
+                    var date = THIS.$parent.date.toJSON().slice(0, 10);
+                    var refDate = THIS.$parent.date;
                     api.getBookingsDate(date, date).then(bookingsResult => {
-                        if (refDate != THIS.date)
+                        if (refDate != THIS.$parent.date)
                             return;
                         THIS.bookings = bookingsResult;
                         THIS.checkBookingsLoop();
@@ -286,7 +281,7 @@
                     endTime[1] = '0'+endTime[1];
                 
                 this.$parent.closeModals();
-                this.$parent.$refs.BookingModal.openModal(this.date, location, startTime[0]+':'+startTime[1], endTime[0]+':'+endTime[1]);
+                this.$parent.$refs.BookingModal.openModal(this.$parent.date, location, startTime[0]+':'+startTime[1], endTime[0]+':'+endTime[1]);
             },
 
             bookingClicked(booking) {
@@ -295,16 +290,9 @@
             }
         },
         
-        beforeMount() {
-            //console.log('beforeMount');
-            this.getDate();
-        },
         mounted() {
             //console.log('mounted');
-            //Start check booking loop
-            this.checkBookingsLoop();
-            //Start time highlighter loop
-            this.styleTimeHighlighterLoop();
+            this.getDate();
             //Start page scroll listener
             window.addEventListener('scroll', this.handlePageScroll);
         },

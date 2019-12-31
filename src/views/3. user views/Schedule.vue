@@ -29,6 +29,8 @@
         <BookingModal ref="BookingModal"></BookingModal>
         <BookedModal ref="BookedModal"></BookedModal>
 
+        <DateSelector ref="DateSelector"></DateSelector>
+
     </div>
 </template>
 
@@ -49,6 +51,8 @@
     import BookedDayModal from './components/modals/BookedDayModal.vue';
     import BookingModal from './components/modals/BookingModal.vue';
     import BookedModal from './components/modals/BookedModal.vue';
+
+    import DateSelector from './components/modals/DateSelector.vue';
     
     export default {
         components: {
@@ -60,11 +64,15 @@
             //Modals
             BookedDayModal,
             BookingModal,
-            BookedModal
+            BookedModal,
+
+            DateSelector
         },
 
         data() {
             return {
+                date: new Date(),
+
                 viewSelected: 0,
 
                 locations: [],
@@ -114,10 +122,25 @@
                 }
             },
 
+            updateCalender() {
+                switch(this.viewSelected) {
+                    case 0:
+                        this.$refs.DailyViewCalendar.getDate();
+                        break;
+                    case 1:
+                        this.$refs.WeeklyViewCalendar.getWeek();
+                        break;
+                    case 2:
+                        this.$refs.MonthlyViewCalendar.getMonth();
+                        break;
+                }
+            },
+
             closeModals() {
                 this.$refs.BookingModal.closeModal();
                 this.$refs.BookedModal.closeModal();
                 this.$refs.BookedDayModal.closeModal();
+                this.$refs.DateSelector.closeModal();
             },
 
             styleUnderline(viewSelected) {

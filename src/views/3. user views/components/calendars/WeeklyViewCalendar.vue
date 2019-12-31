@@ -5,15 +5,15 @@
         <div class="container" style='margin-bottom: 10px'>
             <div class="row justify-content-center">
                 <div class="col-2">
-                    <button class="btn backBtn" type="button" @click="decDate()"></button>
+                    <button class="btn backBtn" type="button" @click="decWeek()"></button>
                 </div>
-                <div class="col-4">
+                <div class="col-4" @click="$parent.$refs.DateSelector.openModal()">
                     <span class="dateSelectorDate">{{week[0].getMonth()+1+'/'+week[0].getDate()+'/'+week[0].getFullYear()}}</span>
                     <span class="hyphen">-</span>
                     <span class="dateSelectorDate">{{week[6].getMonth()+1+'/'+week[6].getDate()+'/'+week[6].getFullYear()}}</span>
                 </div>
                 <div class="col-2">
-                    <button class="btn forwardBtn" type="button" @click="incDate()"></button>
+                    <button class="btn forwardBtn" type="button" @click="incWeek()"></button>
                 </div>
             </div>
         </div>
@@ -101,8 +101,8 @@
 
         methods: {
             /* Date Functions */
-            getWeek(day) {
-                this.week[0] = new Date(day.setDate(day.getDate() - (day.getDay())));
+            getWeek() {
+                this.week[0] = new Date(this.$parent.date.setDate(this.$parent.date.getDate() - (this.$parent.date.getDay())));
                 this.week[0].setHours(0, 0, 0, 0);
                 var previous = new Date(this.week[0]);
                 for (var i = 1; i < 7; i++) {
@@ -110,14 +110,15 @@
                     this.week[i].setHours(0, 0, 0, 0);
                     previous = new Date(this.week[i]);
                 }
+                this.checkBookings();
             },
             decWeek: function() {
-                this.getWeek(new Date(this.week[0].setDate(this.week[0].getDate() - 1)));
-                this.checkBookings();
+                this.$parent.date = new Date(this.week[0].setDate(this.week[0].getDate() - 1));
+                this.getWeek();
             },
             incWeek: function() {
-                this.getWeek(new Date(this.week[this.week.length-1].setDate(this.week[this.week.length-1].getDate() + 1)));
-                this.checkBookings();
+                this.$parent.date = new Date(this.week[this.week.length-1].setDate(this.week[this.week.length-1].getDate() + 1));
+                this.getWeek();
             },
 
             /* JavaScript Styling */
@@ -262,7 +263,7 @@
         
         beforeMount() {
             //console.log('beforeMount');
-            this.getWeek(new Date());
+            this.getWeek();
         },
         mounted() {
             //console.log('mounted');

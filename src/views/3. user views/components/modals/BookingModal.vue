@@ -87,7 +87,9 @@
 
                     <div class="calendar">
                         <div class="daysOfWeek" v-for="day in 7" :key='"day"+day'>{{getDayOfWeek(day)}}</div>
-                        <div class="day" v-for="date in getDaysInRange(date)" :key='"date"+date' :style="styleDate(date)" @click="addDate(date)">{{date.getDate()}}</div>
+                        <div class="day" v-for="date in getDaysInRange(date)" :key='"date"+date' :style="styleDate(date)" @click="addDate(date)">
+                            {{date.getDate()}}
+                        </div>
                     </div>
                 </div>
 
@@ -101,8 +103,7 @@
 </template>
 
 <style scoped lang="scss">
-    //Personal CSS
-    
+
 </style>
 
 <script>
@@ -198,7 +199,7 @@
 
                 var meetingType = '-1';
                 if (document.getElementById('BookingModal-Type'))
-                    var meetingType = document.getElementById('BookingModal-Type').value;
+                    meetingType = document.getElementById('BookingModal-Type').value;
                 
                 var title = '';
                 if (document.getElementById('BookingModal-Title'))
@@ -220,6 +221,8 @@
                 
                 api.insertBooking(locationID, resourceID, date, startTime, endTime, meetingType, title, description, noiseLevel, privacy).then(
                     bookingResult => {
+                        var messageDate;
+
                         if (bookingResult[0] == '100') {
                             this.closeModal();
                             this.$parent.checkBookings();
@@ -233,16 +236,17 @@
                             alert('Start Time must be before End Time');
                         else if (bookingResult[0] == '407')
                             alert('Time is not within a 5 minoute interval');
+                        
                         else if (bookingResult[0] == '408') {
-                            var messageDate = bookingResult[1].split('-');
+                            messageDate = bookingResult[1].split('-');
                             alert('Time Overlap on ' + messageDate[1]+'/'+messageDate[2]+'/'+messageDate[0]);
                         }
                         else if (bookingResult[0] == '409') {
-                            var messageDate = bookingResult[1].split('-');
+                            messageDate = bookingResult[1].split('-');
                             alert('A Silent Reservation Has Already Been Made On ' + messageDate[1]+'/'+messageDate[2]+'/'+messageDate[0] + ' During This Time');
                         }
                         else if (bookingResult[0] == '410') {
-                            var messageDate = bookingResult[1].split('-');
+                            messageDate = bookingResult[1].split('-');
                             alert('A Loud Reservation Has Already Been Made On ' + messageDate[1]+'/'+messageDate[2]+'/'+messageDate[0] + ' During This Time');
                         }
                     }

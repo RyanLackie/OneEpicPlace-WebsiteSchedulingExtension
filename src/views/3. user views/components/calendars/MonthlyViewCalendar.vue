@@ -7,7 +7,7 @@
                 <div class="col-2">
                     <button class="btn backBtn" type="button" @click="decMonth()"></button>
                 </div>
-                <div class="col-4">
+                <div class="col-4" @click="$parent.$refs.DateSelector.openModal()">
                     <span class="dateSelectorDate">{{getMonthName(firstDay) + ' ' + firstDay.getFullYear()}}</span>
                 </div>
                 <div class="col-2">
@@ -92,8 +92,9 @@
 
         methods: {
             /* Date Functions */
-            getMonth(day) {
+            getMonth() {
                 //Get first day of the month for date selector
+                let day = this.$parent.date;
                 this.firstDay = new Date(day.setDate(1));
 
                 //Reset days
@@ -109,14 +110,15 @@
                     temp.setHours(0, 0, 0, 0);
                     this.days[this.days.length] = temp;
                 }
+                this.checkBookings();
             },
             decMonth: function() {
-                this.getMonth(new Date(this.days[0].setDate(this.days[0].getDate() - 1)));
-                this.checkBookings();
+                this.$parent.date = new Date(this.days[0].setDate(this.days[0].getDate() - 1));
+                this.getMonth();
             },
             incMonth: function() {
-                this.getMonth(new Date(this.days[this.days.length-1].setDate(this.days[this.days.length-1].getDate() + 1)));
-                this.checkBookings();
+                this.$parent.date = new Date(this.days[this.days.length-1].setDate(this.days[this.days.length-1].getDate() + 1));
+                this.getMonth();
             },
 
             getDayOfTheWeek(index) {
@@ -150,10 +152,12 @@
             /* JavaScript Styling */
             styleCurrentDay(week, day) {
                 var date = this.days[(7*(week-1) + day) - 1];
-                if (date.getDate() == new Date().getDate() && date.getMonth() == new Date().getMonth())
+                if (date.getDate() == new Date().getDate() && date.getMonth() == new Date().getMonth()) {
                     return 'background-color: Gainsboro;';
-                else    //Done to reset yestday on DOM lifecycle refresh
+                }
+                else {
                     return 'background-color: white;';
+                }
             },
             sortBookingsFor(week, day) {
                 var date = this.days[(7*(week-1) + day) - 1];
@@ -281,7 +285,7 @@
         
         beforeMount() {
             //console.log('beforeMount');
-            this.getMonth(new Date());
+            this.getMonth();
         },
         mounted() {
             //console.log('mounted');

@@ -223,6 +223,9 @@
 /*
     Calendar
 */
+.DateSelectorModal {
+    height: 330px;
+}
 .PopUpModal .dateSelector {
     width: 100%;
     margin: 10px auto 20px auto;
@@ -250,6 +253,9 @@
     text-align: center;
     font-size: 20px;
 }
+.PopUpModal .dateSelector .day:hover {
+    background: white;
+}
 .PopUpModal .dateSelector .forwardBtn {
     display: inline-block;
     width: 40px;
@@ -273,6 +279,7 @@
     width: 14.28%;
     font-size: 80%;
     border: 1px indigo solid;
+    text-align: center;
 }
 .PopUpModal .calendar .day {
     position: relative;
@@ -281,6 +288,7 @@
     height: 30px;
     border: 1px blue solid;
     cursor: pointer;
+    text-align: center;
 }
 
 /*////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -33,6 +33,19 @@
     background-position: center;
 }
 
+.PopUpModal .booking .line .icon {
+    float: left;
+    width: 25px;
+    height: 25px;
+    margin-top: 1px;
+    margin-left: 2px;
+    border: none;
+    text-decoration: none;
+    background-size: 50%;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
 .BookedDayModal .centerBtn {
     margin-top: 10px;
 }
