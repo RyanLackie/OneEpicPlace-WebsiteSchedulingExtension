@@ -88,13 +88,16 @@
                 <!-- Edit Navbar -->
                 <div class="viewSelector">
                     <div class='buttonGroup'>
-                        <div class="text" v-if="load" @click="() => viewSelected = 0">Users
+                        <div class="text" v-if="load" @click="() => viewSelected = 0">
+                            Users
                             <div class="underline" :style="styleUnderline(0)"></div>
                         </div>
-                        <div class="text" v-if="load" @click="() => viewSelected = 1">Locations
+                        <div class="text" v-if="load" @click="() => viewSelected = 1">
+                            Locations
                             <div class="underline" :style="styleUnderline(1)"></div>
                         </div>
-                        <div class="text" v-if="load" @click="() => viewSelected = 2">Resources
+                        <div class="text" v-if="load" @click="() => viewSelected = 2">
+                            Resources
                             <div class="underline" :style="styleUnderline(2)"></div>
                         </div>
                     </div>

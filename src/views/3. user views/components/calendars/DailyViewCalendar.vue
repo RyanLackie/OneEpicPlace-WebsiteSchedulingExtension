@@ -24,7 +24,7 @@
             <!-- locations -->
             <div class="locationCol">
                 <div class="firstLocationPlaceHolder"></div>
-                <div class="locationContainer" v-for="location in locations" :key="'locCon'+location.id" :style='styleDeskElements(location)'>
+                <div class="locationContainer" v-for="location in locations" :key="'locationContainer'+location.id" :style='styleDeskElements(location)'>
                     <div class="location">
                         <div class="text">{{location.name}}</div>
                     </div>
@@ -48,11 +48,27 @@
                 <div class="calendarRow" v-for="(location, row) in locations" :key="'row'+row" :style='styleDeskElements(location)'>
                     
                     <!-- Booking Blocks -->
-                    <div class="booking" v-for="booking in bookings" :key="'booking'+booking.id" :style='styleBooking(location, booking)' @click='bookingClicked(booking)'>
-                        <div v-if="location.type == 'room'" class="title" :style='styleTitle(booking)'>{{booking.title}}</div>
-                        <div v-if="location.type == 'room' && booking.noiseLevel != 0" class="noiseIcon" :style='styleIcon(booking)'></div>
-                        <div v-if="location.type == 'room'" class="name">{{booking.username}}</div>
-                        <div v-if="location.type == 'desk'" class="centerText">{{booking.username}}</div>
+                    <div class="booking" v-for="booking in bookings" :key="'booking'+booking.id" 
+                    :style='styleBooking(location, booking)' @click='bookingClicked(booking)'>
+                        <div class="container-fluid">
+                            <div v-if="location.type == 'room'" class="row">
+                                <div class="title col-9">
+                                    {{booking.title}}
+                                </div>
+                                <div class="noiseIcon col-2"
+                                :style='booking.noiseLevel > 0 ? volume : booking.noiseLevel < 0 ? silent : null'></div>
+                            </div>
+                            <div v-if="location.type == 'room'" class="row">
+                                <div class="name col-12">
+                                    {{booking.username}}
+                                </div>
+                            </div>
+                            <div v-if="location.type == 'desk'" class="row">
+                                <div class="centerText col-12">
+                                    {{booking.username}}
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     <!-- Time Slots -->
@@ -98,7 +114,10 @@
                 timeHighlighterDelay: 0,
 
                 //Time slot hover highlighting
-                previousTimeSlotColor: ''
+                previousTimeSlotColor: '',
+
+                volume: 'background-image: url('+require('../../../../assets/volumeOn-white.png')+');',
+                silent: 'background-image: url('+require('../../../../assets/volumeOff-white.png')+');',
             }
         },
 
@@ -111,13 +130,15 @@
             },
 
             /* Date Functions */
-            decDate: function() {
+            decDate() {
                 let date = this.$parent.date;
                 date = new Date(date.setDate(date.getDate() - 1));
+                this.getDate();
             },
-            incDate: function() {
+            incDate() {
                 let date = this.$parent.date;
                 date = new Date(date.setDate(date.getDate() + 1));
+                this.getDate();
             },
 
             /* JavaScript Styling */
@@ -174,7 +195,7 @@
                 }, this.timeHighlighterDelay)
             },
             styleBooking(location, booking) {
-                if (location.id == booking.locationID) {
+                if (location.id === booking.locationID) {
                     var startTime = booking.startTime;
                     var startTimeHour = parseInt(startTime.split(':')[0], 10);
                     var startTimeMin = parseInt(startTime.split(':')[1], 10);
@@ -195,18 +216,6 @@
                     return 'left:'+left+'px; width:'+width+'px;background-color:'+location.color+';';
                 }
                 return 'left: 0px; width: 0px; height: 0px; display: none;';
-            },
-            styleIcon(booking) {
-                var volumeOn = require('../../../../assets/volumeOn-white.png');
-                var volumeOff = require('../../../../assets/volumeOff-white.png');
-                if (booking.noiseLevel > 0)
-                    return 'background-image: url('+volumeOn+');';
-                else if (booking.noiseLevel < 0)
-                    return 'background-image: url('+volumeOff+');';
-            },
-            styleTitle(booking) {
-                if (booking.noiseLevel != 0)
-                    return 'width: calc(100% - 27px);';
             },
 
             /* Data Update */

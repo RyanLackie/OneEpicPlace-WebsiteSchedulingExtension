@@ -12,97 +12,105 @@
         <div class="leftContainer-sm">
             <div class="sectionLabel">User</div>
 
-            <input type="text" class="form-control" id='BookedModal-User' :value="booking.username" :disabled='true' v-if='getMemberLevel() != 6'>
+            <input v-if='getMemberLevel() !== 6' type="text" class="form-control" v-model="username" :disabled='true'>
 
-            <select id="BookedModal-User" class="form-control" v-if='getMemberLevel() == 6' required>
-                <option v-for="user in $parent.users" :key='user.id' :id="'user'+user.id" :value='user.id'>{{user.username}}</option>
+            <select v-if='getMemberLevel() === 6' class="form-control" v-model="userID" required>
+                <option v-for="user in $parent.users" :key='user.id' :value='user.id'>{{user.username}}</option>
             </select>
         </div>
         
         <div class="rightContainer-sm">
             <div class="sectionLabel">Date</div>
-            <input type="date" class="form-control" id='BookedModal-Date' :value='booking.date.slice(0, 10)' :disabled='inputDisabled()'>
+            <input type="date" class="form-control" v-model='date' :disabled='disableFields'>
         </div>
 
         <div class="label-sm">Location
             <span class="required">*</span>
         </div>
-        <select id="BookedModal-Location" class="form-control" :disabled='inputDisabled()' required>
-            <option v-for="location in $parent.locations" :key='location.id' :id="'loc'+location.id" :value='location.id'>{{location.name}}</option>
+        <select class="form-control" v-model='locationID' :disabled='disableFields' required>
+            <option v-for="location in $parent.locations" :key='location.id' :value='location.id'>
+                {{location.name}}
+            </option>
         </select>
 
-        <div v-if='checkFormType() == "room"'>
+        <div v-if='locationType === "room"'>
             <div class="label-sm">Meeting Type
                 <span class="required">*</span>
             </div>
-            <select id="BookedModal-MeetingType" class="form-control" :disabled='inputDisabled()' required>
+            <select class="form-control" v-model='meetingType' :disabled='disableFields' required>
                 <option v-for="type in $parent.types" :key='type.id' :value='type.id'>{{type.type}}</option>
             </select>
         </div>
             
-        <div v-if='checkFormType() == "room"'>
+        <div v-if='locationType === "room"'>
             <div class="label-sm">Title</div>
-            <input type="text" id="BookedModal-Title" class="input-box form-control" placeholder="Title of your booking..." :disabled='inputDisabled()' autofocus>
+            <input type="text" class="input-box form-control" placeholder="Title of your booking..." v-model='title' :disabled='disableFields'>
         </div>
 
-        <div v-if='checkFormType() == "room"'>
+        <div v-if='locationType === "room"'>
             <div class="label-sm">Description</div>
-            <textarea type="text" id="BookedModal-Description" class="input-box form-control" placeholder="Describe your booking..." :disabled='inputDisabled()'></textarea>
+            <textarea type="text" class="input-box form-control" placeholder="Describe your booking..." v-model='description' :disabled='disableFields'></textarea>
         </div>
 
         <div class="leftContainer-sm">
             <div class="label-sm">Start Time
                 <span class="required">*</span>
             </div>
-            <input type="time" min="7:00" max="22:00" step="300" id="BookedModal-StartTime" class="input-box form-control" :disabled='inputDisabled()' required>
+            <input type="time" min="7:00" max="22:00" step="300" class="input-box form-control" v-model='startTime' :disabled='disableFields' required>
         </div>
         
         <div class="rightContainer-sm">
             <div class="label-sm">End Time
                 <span class="required">*</span>
             </div>
-            <input type="time" min="7:00" max="22:00" step="300" id="BookedModal-EndTime" class="input-box form-control" :disabled='inputDisabled()' required>
+            <input type="time" min="7:00" max="22:00" step="300" class="input-box form-control" v-model='endTime' :disabled='disableFields' required>
         </div>
         
-        <div class="sliderContainer" v-if='checkFormType() == "room"'>
+        <div class="sliderContainer" v-if='locationType === "room"'>
             <div class="label-sm">Noise Level
                 <span class="required">*</span>
             </div>
-            <div class="value" id="BookedModal-NoiseValue">Quite</div>
-            <input type="range" min="-1" max="1" value="0" class="slider" id="BookedModal-NoiseSlider" @input="getRangeValue()" :disabled='inputDisabled()'>
+            <div class="value">
+                {{parseInt(noiseLevel) === -1 ? 'Requires Quiet' : parseInt(noiseLevel) === 0 ? 'Quiet' : parseInt(noiseLevel) === 1 ? 'Loud' : 'Error'}}
+            </div>
+            <input type="range" min="-1" max="1" value="0" class="slider" v-model="noiseLevel" :disabled='disableFields'>
         </div>
 
         <div class="privacyContainer">
             <div class="label-sm">Private</div>
-            <input class='checkbox' id='BookedModal-Privacy' type="checkbox" :disabled='inputDisabled()'>
+            <input class='checkbox' type="checkbox" v-model='privacy' :disabled='disableFields'>
         </div>
 
 
         <!-- Advanced Options -->            
-        <button class="btn btn-outline-secondary advancedBtn" type="button" @click="changeOptions()">{{showMoreText}}</button>
+        <button class="btn btn-outline-secondary advancedBtn" type="button" @click="showMore = !showMore">
+            {{showMore ? 'Show More' : 'Show Less'}}
+        </button>
 
-        <div class='advancedOptions' id="BookedModal-AdvancedOptions">
+        <div class='advancedOptions' :style="showMore ? 'height: auto;' : 'height: 0px;'">
 
             <div class="label-lg" style="margin-top: 10px;">Resources</div>
             <div class="resourceContainer">
                 <div class="resource" v-for="resource in $parent.resources" :key='resource.id'>
                     <div class="checkboxLabel">{{resource.name}}</div>
-                    <input type="checkbox" class="checkbox" :id="'res'+resource.id">
+                    <input type="checkbox" class="checkbox"
+                    :checked="resourceCheck(resource.id)"
+                    v-on:input="toggleResource(resource.id)"
+                    :disabled='disableFields'>
                 </div>
             </div>
 
         </div>
 
-        <button v-if='!inputDisabled()' class="btn btn-success leftBtn" @click="updateBooking()">Update</button>
-        <button v-if='!inputDisabled()' class="btn btn-danger rightBtn" @click="removeBooking()">Delete</button>
+        <button v-if='!disableFields' class="btn btn-success leftBtn" @click="updateBooking()">Update</button>
+        <button v-if='!disableFields' class="btn btn-danger rightBtn" @click="removeBooking()">Delete</button>
 
-        <button v-if='inputDisabled()' class="btn btn-secondary centerBtn" @click="closeModal()">Close</button>
+        <button v-if='disableFields' class="btn btn-secondary centerBtn" @click="closeModal()">Close</button>
 
     </div>
 </template>
 
 <style scoped lang="scss">
-    //Personal CSS
     
 </style>
 
@@ -112,92 +120,105 @@
     export default {
         data() {
             return {
-                //Values are pre entered to avoid error message
-                booking: {username: '', date: '', title: '', description: ''},
+                bookingID: null,
+                userID: null,
+                username: null,
+                date: new Date(),
+                locationID: null,
+                resourceID: [],
+                meetingType: null,
+                title: null,
+                description: null,
+                startTime: null,
+                endTime: null,
+                noiseLevel: null,
+                privacy: null,
 
-                showMoreText: 'Show More',
-                showMore: false
+                showMore: false,
+
+                disableFields: false,
+
+                locationType: null,
             }
         },
         methods: {
-            openModal(booking) {
-                this.booking = booking;
+            openModal(booking) {    
+                // Data
+                this.bookingID = booking.id;
+                this.userID = booking.userID;
+                this.username = booking.username;
+                this.date = booking.date.slice(0, 10);
+                this.locationID = booking.locationID;
+
+                this.resourceID = booking.resourceID;
+                this.resourceID = this.resourceID.replace('[', '');
+                this.resourceID = this.resourceID.replace(']', '');
+                this.resourceID = this.resourceID.split(',');
+                let THIS = this;
+                for (let i = 0; i < this.resourceID.length; i++) {
+                    this.resourceID[i] = parseInt(this.resourceID[i]);
+                }
+
+                this.meetingType = booking.meetingType;
+                this.title = booking.title;
+                this.description = booking.description;
+
+                this.startTime = [
+                    parseInt(booking.startTime.split(':')[0]),
+                    parseInt(booking.startTime.split(':')[1])
+                ];
+                if (this.startTime[0] < 10)
+                    this.startTime[0] = '0'+this.startTime[0];
+                if (this.startTime[1] < 10)
+                    this.startTime[1] = '0'+this.startTime[1];
+                this.startTime = this.startTime[0] + ":" + this.startTime[1];
+                
+                this.endTime = [
+                    parseInt(booking.endTime.split(':')[0]),
+                    parseInt(booking.endTime.split(':')[1])
+                ];
+                if (this.endTime[0] < 10)
+                    this.endTime[0] = '0'+this.endTime[0];
+                if (this.endTime[1] < 10)
+                    this.endTime[1] = '0'+this.endTime[1];
+                this.endTime = this.endTime[0] + ":" + this.endTime[1];
+
+                this.noiseLevel = booking.noiseLevel;
+                this.privacy = booking.private;
+                this.showMore = false;
+
+                // Are fields disabled
+                if (api.getLocalUser().memberLevel == 6) {
+                    this.disableFields = false;
+                }
+                // Can not edit if time is 22 hours before booking
+                else {
+                    var bookingDate = new Date(this.date);
+                    bookingDate.setHours(this.startTime.split(':')[0], this.startTime.split(':')[1]);
+                    if (this.userID === api.getLocalUser().id && (bookingDate - new Date())/(1000*60*60) > 22) {
+                        this.disableFields = false;
+                    }
+                    else {
+                        this.disableFields = true;
+                    }
+                }
+
+                // Location type - What fields to show
+                for (let i = 0; i < this.$parent.locations.length; i++) {
+                    if (this.$parent.locations[i].id === booking.locationID) {
+                        this.locationType = this.$parent.locations[i].type;
+                        break;
+                    }
+                }
 
                 //Style Modal
-                if (this.checkFormType() == 'room') {
+                if (this.locationType === 'room') {
                     document.getElementById('BookedModal').style.height = 90+'%';
                     document.getElementById('BookedModal').style.maxHeight = 750+'px';
                 }
                 else {
                     document.getElementById('BookedModal').style.height = 90+'%';
                     document.getElementById('BookedModal').style.maxHeight = 515+'px';
-                }
-
-                //Modal User
-                document.getElementById('BookedModal-User').value = booking.userID;
-
-                //Modal Location
-                document.getElementById('BookedModal-Location').value = booking.locationID;
-
-                //Modal Meeting Type
-                if (document.getElementById('BookedModal-MeetingType'))
-                    document.getElementById('BookedModal-MeetingType').value = booking.meetingType;
-
-                //Modal Title
-                if (document.getElementById('BookedModal-Title'))
-                    document.getElementById('BookedModal-Title').value = booking.title;
-
-                //Modal Description
-                if (document.getElementById('BookedModal-Description'))
-                    document.getElementById('BookedModal-Description').value = booking.description;
-                
-                //Time
-                var startTime = [
-                    parseInt(booking.startTime.split(':')[0]),
-                    parseInt(booking.startTime.split(':')[1])
-                ];
-                if (startTime[0] < 10)
-                    startTime[0] = '0'+startTime[0];
-                if (startTime[1] < 10)
-                    startTime[1] = '0'+startTime[1];
-                document.getElementById('BookedModal-StartTime').value = startTime[0] + ":" + startTime[1];
-
-                var endTime = [
-                    parseInt(booking.endTime.split(':')[0]),
-                    parseInt(booking.endTime.split(':')[1])
-                ];
-                if (endTime[0] < 10)
-                    endTime[0] = '0'+endTime[0];
-                if (endTime[1] < 10)
-                    endTime[1] = '0'+endTime[1];
-                document.getElementById('BookedModal-EndTime').value = endTime[0] + ":" + endTime[1];
-                
-                //Noise Level
-                if (document.getElementById('BookedModal-NoiseSlider') && document.getElementById('BookedModal-NoiseValue')) {
-                    document.getElementById('BookedModal-NoiseSlider').value = booking.noiseLevel;
-                    this.getRangeValue();
-                }
-                
-                //Private
-                if (booking.private)
-                    document.getElementById('BookedModal-Privacy').checked = true;
-                else
-                    document.getElementById('BookedModal-Privacy').checked = false;
-
-                //Advanced Options
-                this.showMoreText = 'Show More';
-                this.showMore = false;
-                document.getElementById('BookedModal-AdvancedOptions').style.height = '0px';
-
-                //Resources
-                for (var i = 0; i < this.$parent.resources.length; i++) {
-                    document.getElementById('res'+this.$parent.resources[i].id).checked = false;
-                }
-                var resources = this.booking.resourceID.split(',');
-                if (resources != '0') {
-                    for (var i = 0; i < resources.length; i++) {
-                        document.getElementById('res'+resources[i]).checked = true;
-                    }
                 }
 
                 //Scroll
@@ -211,50 +232,48 @@
                 document.getElementById("BookedModal").style.visibility = "hidden";
             },
 
-            updateBooking() {
-                var userID = document.getElementById('BookedModal-User').value;
+            getMemberLevel() { return api.getLocalUser().memberLevel; },
 
-                var locationID = document.getElementById('BookedModal-Location').value;
-                
-                var resourceID = '';
-                for (var i = 0; i < this.$parent.resources.length; i++) {
-                    if (document.getElementById('res'+this.$parent.resources[i].id) != null && document.getElementById('res'+this.$parent.resources[i].id).checked)
-                        resourceID += this.$parent.resources[i].id + ',';
+            resourceCheck(id) {
+                for (var i = 0; i < this.resourceID.length; i++) {
+                    if (this.resourceID[i] === id) {
+                        return true;
+                    }
                 }
-                if (resourceID == '')
-                    resourceID = '0';
-                else
-                    resourceID = resourceID.substring(0, resourceID.length - 1);
+                return false;
+            },
+            toggleResource(id) {
+                let removed = false;
+                this.resourceID = this.resourceID.filter(function(indexedID) {
+                    if (indexedID === id) {
+                        removed = true;
+                        return false;
+                    }
+                    return true;
+                });
+                if (!removed) {
+                    this.resourceID.push(id);
+                }
+            },
 
-                var date = [document.getElementById('BookedModal-Date').value];
+            updateBooking() {
+                var bookingID = this.bookingID;
+                var userID = this.userID;
+                var locationID = this.locationID;
+                var resourceID = this.resourceID;
+                var date = [this.date];
+                var startTime = this.startTime;
+                var endTime = this.endTime;
+                var meetingType = this.meetingType;
+                var title = this.title
+                var description = this.description;
+                var noiseLevel = this.noiseLevel;
+                var privacy = this.privacy;
 
-                var startTime = document.getElementById('BookedModal-StartTime').value;
-                var endTime = document.getElementById('BookedModal-EndTime').value;
-
-                var meetingType = -1;
-                if (document.getElementById('BookedModal-MeetingType'))
-                    meetingType = document.getElementById('BookedModal-MeetingType').value;
-                
-                var title = '';
-                if (document.getElementById('BookedModal-Title'))
-                    title = document.getElementById('BookedModal-Title').value;
-
-                var description = '';
-                if (document.getElementById('BookedModal-Description'))
-                    description = document.getElementById('BookedModal-Description').value;
-                
-                var noiseLevel = 0;
-                if (document.getElementById('BookedModal-NoiseSlider'))
-                    noiseLevel = document.getElementById('BookedModal-NoiseSlider').value;
-
-                var privacy = document.getElementById('BookedModal-Privacy').checked;
-                if (privacy)
-                    privacy = 1;
-                else
-                    privacy = 0;
-
-                api.updateBooking(this.booking.id, userID, locationID, resourceID, date, startTime, endTime, meetingType, title, description, noiseLevel, privacy).then(
+                api.updateBooking(bookingID, userID, locationID, resourceID, date, startTime, endTime, meetingType, title, description, noiseLevel, privacy).then(
                     updateResponce => {
+                        var messageDate;
+
                         if (updateResponce[0] == '100') {
                             this.$parent.closeModals();
                             this.$parent.checkBookings();
@@ -269,15 +288,15 @@
                         else if (updateResponce[0] == '407')
                             alert('Time is not within a 5 minoute interval');
                         else if (updateResponce[0] == '408') {
-                            var messageDate = updateResponce[1].split('-');
+                            messageDate = updateResponce[1].split('-');
                             alert('Time Overlap on ' + messageDate[1]+'/'+messageDate[2]+'/'+messageDate[0]);
                         }
                         else if (updateResponce[0] == '409') {
-                            var messageDate = updateResponce[1].split('-');
+                            messageDate = updateResponce[1].split('-');
                             alert('A Silent Reservation Has Already Been Made On ' + messageDate[1]+'/'+messageDate[2]+'/'+messageDate[0] + ' During This Time');
                         }
                         else if (updateResponce[0] == '410') {
-                            var messageDate = updateResponce[1].split('-');
+                            messageDate = updateResponce[1].split('-');
                             alert('A Loud Reservation Has Already Been Made On ' + messageDate[1]+'/'+messageDate[2]+'/'+messageDate[0] + ' During This Time');
                         }
                     }
@@ -285,67 +304,14 @@
             },
             
             removeBooking() {
-                var responce = confirm("Are you sure you want to delete this booking by - " + this.booking.username);
+                var responce = confirm("Are you sure you want to delete this booking by - " + this.username);
                 if (responce) {
-                    api.removeBooking(this.booking.id, this.booking.userID, this.booking.date, this.booking.startTime).then(
+                    api.removeBooking(this.id, this.userID, this.date, this.startTime).then(
                         removeResponce => {
                             this.$parent.closeModals();
                             this.$parent.checkBookings();
                         }
                     );
-                }
-            },
-            
-            //BookedModal
-            inputDisabled() {
-                if (api.getLocalUser().memberLevel == 6)
-                    return false;
-
-                // Not 22 hours before booking
-                if (this.booking.date != '' && this.booking.startTime != '') {
-                    var bookingDate = new Date(this.booking.date);
-                    bookingDate.setHours(this.booking.startTime.split(':')[0], this.booking.startTime.split(':')[1]);
-                    if (this.booking.userID == api.getLocalUser().id && (bookingDate - new Date())/(1000*60*60) > 22)
-                        return false;
-                }
-
-                return true;
-            },
-            
-            getMemberLevel() {
-                return api.getLocalUser().memberLevel;
-            },
-
-            //Modal
-            checkFormType() {
-                var type = '';
-                for (var i = 0; i < this.$parent.locations.length; i++) {
-                    if (this.booking.locationID == this.$parent.locations[i].id) {
-                        type = this.$parent.locations[i].type;
-                        return type;
-                    }
-                }
-                return null;
-            }, 
-
-            getRangeValue() {
-                if (document.getElementById('BookedModal-NoiseSlider').value == -1)
-                    document.getElementById('BookedModal-NoiseValue').innerHTML = 'Requires Quiet';
-                else if (document.getElementById('BookedModal-NoiseSlider').value == 0)
-                    document.getElementById('BookedModal-NoiseValue').innerHTML = 'Quiet';
-                else if (document.getElementById('BookedModal-NoiseSlider').value == 1)
-                    document.getElementById('BookedModal-NoiseValue').innerHTML = 'Loud';
-            },
-
-            changeOptions() {
-                this.showMore = !this.showMore;
-                if (this.showMore) {
-                    this.showMoreText = 'Show Less';
-                    document.getElementById('BookedModal-AdvancedOptions').style.height = 'auto';
-                }
-                else {
-                    this.showMoreText = 'Show More';
-                    document.getElementById('BookedModal-AdvancedOptions').style.height = '0px';
                 }
             }
         }

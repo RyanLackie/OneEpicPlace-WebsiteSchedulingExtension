@@ -79,7 +79,7 @@
     import UserModal from './UserModal.vue';
 
     //Dimmer
-    import Dimmer from '../modals/components/Dimmer';
+    import Dimmer from './Dimmer.vue';
 
     export default {
         components: {

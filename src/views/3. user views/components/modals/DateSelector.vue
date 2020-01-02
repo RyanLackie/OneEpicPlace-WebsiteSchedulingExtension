@@ -100,13 +100,13 @@
                 return days;
             },
             styleDate(date) {
-                if (date.getMonth() != this.date.getMonth()) {
-                    return "background: gainsboro;";
-                }
-                else if (date.getDate() === new Date().getDate() && 
+                if (date.getDate() === new Date().getDate() && 
                         date.getMonth() == new Date().getMonth() && 
                         date.getFullYear() == new Date().getFullYear()) {
                     return "background: blue; color: white;";
+                }
+                else if (date.getMonth() != this.date.getMonth()) {
+                    return "background: gainsboro;";
                 }
             },
             selectDate(date) {

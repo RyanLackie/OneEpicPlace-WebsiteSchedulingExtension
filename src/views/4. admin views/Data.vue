@@ -135,9 +135,9 @@
     import * as api from '@/services/api_access';
 
     //Views
-    import Users from './components/views/Users.vue';
-    import Locations from './components/views/Locations.vue';
-    import Resources from './components/views/Resources.vue';
+    import Users from './dataComponents/Users.vue';
+    import Locations from './dataComponents/Locations.vue';
+    import Resources from './dataComponents/Resources.vue';
 
     export default {
         components: {

@@ -52,12 +52,19 @@
                         
                         <!-- Bookings -->
                         <div class="booking" v-for="booking in sortBookingsFor(day, location)" :key="'booking'+booking.id" @click='viewBookings(day, location)'>
-                            <div class="timeBox" :style='"background-color:"+location.color'>
-                                <div class="time">{{fillBookingStartTime(booking)}}</div>
-                            </div>
-                            <div v-if='booking.noiseLevel != 0' class="icon" :style='styleIcon(booking)'></div>
-                            <div class="textBox" :style='styleBookingText(booking)'>
-                                <div class="text">{{booking.username}}</div>
+                            <div class="container-fluid">
+                                <div class="row">
+                                    <div class="timeBox col-5" :style='"background-color:"+location.color'>
+                                        {{fillBookingStartTime(booking)}}
+                                    </div>
+                                    <div class="col-1" v-if='booking.noiseLevel !== 0'>
+                                        <div class="icon" :style='booking.noiseLevel > 0 ? volume : booking.noiseLevel < 0 ? silent : null'></div>
+                                    </div>
+                                    
+                                    <div :class="'textBox col-' + booking.noiseLevel === 0 ? 6 : 5">
+                                        <div class="text">{{booking.username}}</div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
@@ -77,6 +84,38 @@
 <style scoped lang="scss">
     //Personal CSS
     @import "./css/WeeklyViewCalendar.css";
+    .calendar {
+        .booking {
+            padding: 1%;
+            cursor: pointer;
+            .timeBox {
+                padding: 0;
+                position: relative;
+                text-align: center;
+                color: white;
+            }
+            .icon {
+                position: absolute;
+                left: 0;
+                right: 0;
+                margin: auto;
+                width: 100%;
+                height: 23px;
+                text-decoration: none;
+                background-size: 60%;
+                background-repeat: no-repeat;
+                background-position: center;
+            }
+            .text {
+                position: absolute;
+                text-align: left;
+                width: 100%;
+                padding: 0px 5px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+        }
+    }
 </style>
 
 <script>
@@ -96,6 +135,9 @@
                 //Interval to check the server for bookings
                 checkBookingsTimeout: null,
                 bookingDelays: 0,
+
+                volume: 'background-image: url('+require('../../../../assets/volumeOn-black.png')+');',
+                silent: 'background-image: url('+require('../../../../assets/volumeOff-black.png')+');',
             }
         },
 
@@ -190,16 +232,6 @@
                     return booking.startTime + ' pm';
                 else
                     return booking.startTime.split(':')[0] - 12 + ':' + booking.startTime.split(':')[1] + ' pm';
-            },
-            styleIcon(booking) {
-                if (booking.noiseLevel > 0)
-                    return 'background-image: url('+require('../../../../assets/volumeOn-black.png')+');';
-                else if (booking.noiseLevel < 0)
-                    return 'background-image: url('+require('../../../../assets/volumeOff-black.png')+');';
-            },
-            styleBookingText(booking) {
-                if (booking.noiseLevel != 0)
-                    return 'width: calc(98% - 90px);';
             },
 
             /* Data Update */

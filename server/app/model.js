@@ -2,6 +2,7 @@
 const mysql = require('mysql');
 const dotenv = require('dotenv');
 dotenv.config();
+var async = require("async");
 
 var conn = mysql.createPool({
     host: process.env.MySQL_HOST,
@@ -579,8 +580,14 @@ class Model {
                     if (err) throw err;
                     var users = result;
                     for (var i = 0; i < bookings.length; i++) {
-                        if (fetchedUser.id != bookings[i].userID && bookings[i].private)
+                        if (fetchedUser.id !== bookings[i].userID && bookings[i].private && fetchedUser.memberLevel !== ADMIN_PRIVILEGE) {
+                            bookings[i].userID = null;
                             bookings[i].username = 'Private Booking';
+                            bookings[i].meetingType = '';
+                            bookings[i].title = 'Private Booking';
+                            bookings[i].description = 'Private Booking';
+                            bookings[i].resourceID = '[]';
+                        }
                         else {
                             for (var j = 0; j < users.length; j++) {
                                 if (bookings[i].userID == users[j].id) {
@@ -615,18 +622,18 @@ class Model {
                     return call_back(checkCallBack);
 
                 // Insert Bookings If No Overlaps
-                const THIS = this;
-                for (var i = 0; i < date.length; i++) {
+                let THIS = this;
+                async.forEachOf(date, function (indexedDate, i, inner_call_back) {
                     let sql = 
                     "INSERT INTO bookings (userID, locationID, resourceID, date, startTime, endTime, meetingType, title, description, noiseLevel, private)"+
-                    "VALUES ('"+fetchedUser.id+"', '"+locationID+"', '"+resourceID+"', '"+date[i]+"', '"+startTime+"', '"+endTime+"', '"+meetingType+"', '"+title+
+                    "VALUES ('"+fetchedUser.id+"', '"+locationID+"', '"+resourceID+"', '"+indexedDate+"', '"+startTime+"', '"+endTime+"', '"+meetingType+"', '"+title+
                     "', '"+description+"', '"+noiseLevel+"', '"+privacy+"')";
                     conn.query(sql, function(err, result) {
                         if (err) throw err;
                         
                         conn.query('SELECT * FROM bookings WHERE id = ' + mysql.escape(result.insertId), (err, result) => {
                             if (err) throw err;
-                            
+                                                    
                             // Calculate cost and subtract from points if current month
                             let currentDate = new Date().getFullYear()+'-'+(new Date().getMonth()+1)+'-'+new Date().getDate();
                             currentDate = currentDate.split('-');
@@ -635,12 +642,18 @@ class Model {
                             if (currentDate[0] === bookingDate[0] && currentDate[1] === bookingDate[1]) {
                                 THIS.payBookingCost(result[0].userID, result[0], payReturn => {
                                     // console.log('payBookingCost complete');
+                                    inner_call_back(['100', null]);
                                 });
                             }
-                            return call_back(['100', null]);
+                            else {
+                                inner_call_back(['100', null]);
+                            }
                         });
                     });
-                }
+                }, (result) => {
+                    return call_back(['100', null]);
+                });
+
             });
         });
     }
@@ -679,7 +692,7 @@ class Model {
                         conn.query('Update bookings SET ' +
                                     'userID = ' + mysql.escape(userID) +
                                     ', locationID = ' + mysql.escape(locationID) +
-                                    ', resourceID = ' + mysql.escape(resourceID) +
+                                    ', resourceID = ' + mysql.escape(JSON.stringify(resourceID)) +
                                     ', date = ' + mysql.escape(date) +
                                     ', startTime = ' + mysql.escape(startTime) +
                                     ', endTime = ' + mysql.escape(endTime) +
