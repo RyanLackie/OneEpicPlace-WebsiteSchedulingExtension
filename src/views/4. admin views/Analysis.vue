@@ -88,17 +88,17 @@
                 <!-- Edit Navbar -->
                 <div class="viewSelector">
                     <div class='buttonGroup'>
-                        <div class="text" v-if="load" @click="() => viewSelected = 0">
+                        <div class="text" v-if="load" @click="viewSelected = 0">
                             Users
-                            <div class="underline" :style="styleUnderline(0)"></div>
+                            <div class="underline" :style="viewSelected === 0 ? 'width: 100%' : null"></div>
                         </div>
-                        <div class="text" v-if="load" @click="() => viewSelected = 1">
+                        <div class="text" v-if="load" @click="viewSelected = 1">
                             Locations
-                            <div class="underline" :style="styleUnderline(1)"></div>
+                            <div class="underline" :style="viewSelected === 1 ? 'width: 100%' : null"></div>
                         </div>
-                        <div class="text" v-if="load" @click="() => viewSelected = 2">
+                        <div class="text" v-if="load" @click="viewSelected = 2">
                             Resources
-                            <div class="underline" :style="styleUnderline(2)"></div>
+                            <div class="underline" :style="viewSelected === 2 ? 'width: 100%' : null"></div>
                         </div>
                     </div>
                 </div>
@@ -109,115 +109,12 @@
                     resources   (hours rented, most active times, most active users, most active locations)
                 -->
 
-                <div class='reportContainer' v-if="viewSelected == 0">
-                    <div class="topRow">
-                        <div class="reportCol">Users</div>
-                        <div class="reportCol">Hours Booked</div>
-                        <div class="reportCol">Activity</div>
-                        <div class="reportCol">Locations</div>
-                        <div class="reportCol">Resources</div>
-                    </div>
+                <!-- <Users v-if="viewSelected === 0"/> -->
+                <AnalysisView viewType='Users' v-if="viewSelected === 0"/>
 
-                    <div class="reportRow" v-for="user in this.selectedUsers" :key="'user:'+user.id">
-                        <div class="reportCol">
-                            <div class="colText">{{user.username}}</div>
-                        </div>
-                        <div class="reportCol">
-                            <div class="colText">{{user.hours}}</div>
-                        </div>
-                        <div class="reportCol">
-                            <div class="barGraph" :style="styleBar(bar, user.activity)" v-for="(bar, index) in user.activity" :key="'bar1:'+index"></div>
-                        </div>
-                        <div class="reportCol">
-                            <select class='selectMenu'>
-                                <option class="colText" v-for="location in user.locations" :key="'loc1:'+location.id">
-                                    {{getLocationName(location.id) + '   |   hours: ' + location.hours}}
-                                </option>
-                            </select>
-                        </div>
-                        <div class="reportCol">
-                            <select class='selectMenu'>
-                                <option class="colText" v-for="(resource, index) in user.resources" :key="'res1:'+index">
-                                    {{getResourceName(resource.id) + '   |   hours: ' + resource.hours}}
-                                </option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
+                <AnalysisView viewType='Locations' v-if="viewSelected === 1"/>
 
-
-                <div class='reportContainer' v-if="viewSelected == 1">
-                    <div class="topRow">
-                        <div class="reportCol">Locations</div>
-                        <div class="reportCol">Hours Booked</div>
-                        <div class="reportCol">Activity</div>
-                        <div class="reportCol">Users</div>
-                        <div class="reportCol">Resources</div>
-                    </div>
-
-                    <div class="reportRow" v-for="location in this.selectedLocations" :key="'location:'+location.id">
-                        <div class="reportCol">
-                            <div class="colText">{{location.name}}</div>
-                        </div>
-                        <div class="reportCol">
-                            <div class="colText">{{location.hours}}</div>
-                        </div>
-                        <div class="reportCol">
-                            <div class="barGraph" :style="styleBar(bar, location.activity)" v-for="(bar, index) in location.activity" :key="'bar2:'+index"></div>
-                        </div>
-                        <div class="reportCol">
-                            <select class='selectMenu'>
-                                <option class="colText" v-for="user in location.users" :key="'use2:'+user.id">
-                                    {{getUserName(user.id) + '   |   hours: ' + location.hours}}
-                                </option>
-                            </select>
-                        </div>
-                        <div class="reportCol">
-                            <select class='selectMenu'>
-                                <option class="colText" v-for="(resource, index) in location.resources" :key="'res2'+index">
-                                    {{getResourceName(resource.id) + '   |   hours: ' + resource.hours}}
-                                </option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-
-
-                <div class='reportContainer' v-if="viewSelected == 2">
-                    <div class="topRow">
-                        <div class="reportCol">Resources</div>
-                        <div class="reportCol">Hours Booked</div>
-                        <div class="reportCol">Activity</div>
-                        <div class="reportCol">Users</div>
-                        <div class="reportCol">Locations</div>
-                    </div>
-
-                    <div class="reportRow" v-for="resource in this.selectedResources" :key="'resource:'+resource.id">
-                        <div class="reportCol">
-                            <div class="colText">{{resource.name}}</div>
-                        </div>
-                        <div class="reportCol">
-                            <div class="colText">{{resource.hours}}</div>
-                        </div>
-                        <div class="reportCol">
-                            <div class="barGraph" :style="styleBar(bar, resource.activity)" v-for="(bar, index) in resource.activity" :key="'bar3::'+index"></div>
-                        </div>
-                        <div class="reportCol">
-                            <select class='selectMenu'>
-                                <option class="colText" v-for="(user, index) in resource.users" :key="'use3:'+user.id+index">
-                                    {{getUserName(user.id) + '   |   hours: ' + user.hours}}
-                                </option>
-                            </select>
-                        </div>
-                        <div class="reportCol">
-                            <select class='selectMenu'>
-                                <option class="colText" v-for="location in resource.locations" :key="'loc3:'+location.id">
-                                    {{getLocationName(location.id) + '   |   hours: ' + location.hours}}
-                                </option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
+                <AnalysisView viewType='Resources' v-if="viewSelected === 2"/>
             
             </div>
 
@@ -236,7 +133,21 @@
 <script>
     import * as api from '@/services/api_access';
 
+    //Views
+    import Users from './analysisComponents/Users.vue';
+    import Locations from './analysisComponents/Locations.vue';
+    import Resources from './analysisComponents/Resources.vue';
+    import AnalysisView from './analysisComponents/AnalysisView.vue';
+
     export default {
+        components: {
+            //Views
+            Users,
+            Locations,
+            Resources,
+            AnalysisView
+        },
+
         data() {
             return {
                 viewSelected: 0,
@@ -301,6 +212,7 @@
                 return users;
             },
             sortLocations(locations) {
+                // Sort
                 var room = [];
                 var desk = [];
                 for (var i = 0; i < locations.length; i++) {
@@ -539,12 +451,11 @@
             },
 
             // Style
-            styleUnderline(viewSelected) {
-                if (this.viewSelected == viewSelected)
-                    return 'width: 100%;';
-                return 'width: 0px;';
+            styleRow(index) {
+                if (index % 2 == 0)
+                    return "background: DeepSkyBlue; color: white";
+                return "background: white";
             },
-
             styleBar(bar, graph) {
                 var max = 0;
                 for (var i = 0; i < graph.length; i++) {
@@ -554,6 +465,40 @@
                 if (max > 0)
                     return 'height: ' + (bar / max) * 100 + '%; background: purple; border: 1px indigo solid; border-top: 0px indigo solid;';
                 return 'border-bottom: 1px indigo solid;';
+            },
+            getBarTime(index) {
+                switch(index) {
+                    case 0:
+                        return 7;
+                    case 1:
+                        return 8;
+                    case 2:
+                        return 9;
+                    case 3:
+                        return 10;
+                    case 4:
+                        return 11;
+                    case 5:
+                        return 12;
+                    case 6:
+                        return 1;
+                    case 7:
+                        return 2;
+                    case 8:
+                        return 3;
+                    case 9:
+                        return 4;
+                    case 10:
+                        return 5;
+                    case 11:
+                        return 6;
+                    case 12:
+                        return 7;
+                    case 13:
+                        return 8;
+                    case 14:
+                        return 9;
+                }
             },
             getUserName(id) {
                 for (var i = 0; i < this.users.length; i++) {

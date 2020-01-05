@@ -8,21 +8,21 @@
         <div class="container" style='margin-bottom: 20px;'>
             <div class='buttonGroup'>
                 <div class="text" v-if="load" @click="selectView(0)">Users
-                    <div class="underline" :style="styleUnderline(0)"></div>
+                    <div class="underline" :style="viewSelected === 0 ? 'width: 100%' : null"></div>
                 </div>
                 <div class="text" v-if="load" @click="selectView(1)">Locations
-                    <div class="underline" :style="styleUnderline(1)"></div>
+                    <div class="underline" :style="viewSelected === 1 ? 'width: 100%' : null"></div>
                 </div>
                 <div class="text" v-if="load" @click="selectView(2)">Resources
-                    <div class="underline" :style="styleUnderline(2)"></div>
+                    <div class="underline" :style="viewSelected === 2 ? 'width: 100%' : null"></div>
                 </div>
             </div>
         </div>
         
         <!-- Views -->
-        <Users ref="Users" v-if="viewSelected == 0 && load"></Users>
-        <Locations ref="Locations" v-if="viewSelected == 1 && load"></Locations>
-        <Resources ref="Resources" v-if="viewSelected == 2 && load"></Resources>
+        <Users ref="Users" v-if="viewSelected === 0 && load"></Users>
+        <Locations ref="Locations" v-if="viewSelected === 1 && load"></Locations>
+        <Resources ref="Resources" v-if="viewSelected === 2 && load"></Resources>
 
     </div>
 </template>
@@ -263,12 +263,6 @@
             },
 
             //Style
-            styleUnderline(viewSelected) {
-                if (this.viewSelected == viewSelected)
-                    return 'width: 100%;';
-                return 'width: 0px;';
-            },
-
             styleRow(index) {
                 if (index % 2 == 0)
                     return "background: DeepSkyBlue; color: white";

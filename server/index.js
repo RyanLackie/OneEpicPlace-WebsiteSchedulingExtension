@@ -17,13 +17,12 @@ app.use("/", express.static(__dirname + "/../dist/"));
 const controller = require('./app/controller');
 app.use('/app', controller);
 
+// Server Stuff
+const dotenv = require('dotenv');
+dotenv.config();
+
+const server = process.env.MySQL_HOST;
 const port = 81;
-
-//Server Stuff (Local Production)
-// const server = 'localhost';
-
-//Server Stuff (Server Deployment)
-const server = '165.227.84.63';
 
 //Port listen and message
 app.listen(port);
