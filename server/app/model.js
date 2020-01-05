@@ -159,11 +159,18 @@ class Model {
             const roomNames = ['DaVinci Room', 'Green Room', 'Sunshine Room', 'Zen Room', 'Studio'];
 
             if (location.type === 'desk') {
-                return call_back(percent * 2.5);
+                return call_back(percent * booking.lowerCost);
             }
             else if (location.type === 'room') {
                 if (roomNames.includes(location.name)) {
-                    return call_back(percent * 10);
+                    console.log(booking.meetingType);
+                    console.log(booking.meetingType +'>'+ 1);
+                    console.log(booking.meetingType > 1);
+                    console.log(parseInt(booking.meetingType) > 1);
+                    if (parseInt(booking.meetingType) > 1) {
+                        return call_back(percent * booking.higherCost);
+                    }
+                    return call_back(percent * booking.lowerCost);
                 }
                 else if (location.name === 'Loft') {
                     let rate = 0;

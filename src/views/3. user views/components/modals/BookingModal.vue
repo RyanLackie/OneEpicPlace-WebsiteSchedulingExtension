@@ -1,9 +1,10 @@
 <template>
-    <div class="PopUpModal BookingModal" id="BookingModal" aria-hidden="true">
+    <div :class="'PopUpModal BookingModal ' + locationType === 'room' ? 'lg-booking-modal' : 'sm-booking-modal'" 
+    id="BookingModal" aria-hidden="true">
                 
         <div class="modal-header">
             <div class="text">Create Booking</div>
-            <div class="date" id='BookingModal-HeaderDate'></div>
+            <div class="date">{{getDayOfTheWeek(date)+', '+getMonthName(date)+' '+date.getDate()+' '+date.getFullYear()}}</div>
             
             <button type="button" class="close" aria-label="Close" @click="closeModal()">
                 <span aria-hidden="true">&times;</span>
@@ -15,67 +16,75 @@
             <div class="label-sm">Location
                 <span class="required">*</span>
             </div>
-            <select id="BookingModal-Location" class="form-control" required>
-                <option v-for="location in $parent.locations" :key='location.id' :id="'loc'+location.id" :value='location.id'>{{location.name}}</option>
+            <select class="form-control" v-model='locationID' required>
+                <option v-for="location in $parent.locations" :key='location.id' :value='location.id'>
+                    {{location.name}}
+                </option>
             </select>
 
-            <div v-if='checkFormType() == "room"'>
+            <div v-if='locationType === "room"'>
                 <div class="label-sm">Meeting Type
                     <span class="required">*</span>
                 </div>
-                <select id="BookingModal-Type" class="form-control" required>
+                <select class="form-control" v-model='meetingType' required>
                     <option v-for="type in $parent.types" :key='type.id' :value='type.id'>{{type.type}}</option>
                 </select>
             </div>
                 
-            <div v-if='checkFormType() == "room"'>
+            <div v-if='locationType === "room"'>
                 <div class="label-sm">Title</div>
-                <input type="text" id="BookingModal-Title" class="input-box form-control" placeholder="Title of your booking..." autofocus>
+                <input type="text" class="input-box form-control" placeholder="Title of your booking..." v-model='title'>
             </div>
 
-            <div v-if='checkFormType() == "room"'>
+            <div v-if='locationType === "room"'>
                 <div class="label-sm">Description</div>
-                <textarea type="text" id="BookingModal-Description" class="input-box form-control" placeholder="Describe your booking..."></textarea>
+                <textarea type="text" class="input-box form-control" placeholder="Describe your booking..." v-model='description'></textarea>
             </div>
 
             <div class="leftContainer-sm">
                 <div class="label-sm">Start Time
                     <span class="required">*</span>
                 </div>
-                <input type="time" min="7:00" max="22:00" step="300" id="BookingModal-StartTime" class="input-box form-control" required>
+                <input type="time" min="7:00" max="22:00" step="300" class="input-box form-control" v-model='startTime' required>
             </div>
             
             <div class="rightContainer-sm">
                 <div class="label-sm">End Time
                     <span class="required">*</span>
                 </div>
-                <input type="time" min="7:00" max="22:00" step="300" id="BookingModal-EndTime" class="input-box form-control" required>
+                <input type="time" min="7:00" max="22:00" step="300" class="input-box form-control" v-model='endTime' required>
             </div>
             
-            <div class="sliderContainer" v-if='checkFormType() == "room"'>
+            <div class="sliderContainer" v-if='locationType === "room"'>
                 <div class="label-sm">Noise Level
                     <span class="required">*</span>
                 </div>
-                <div class="value" id="BookingModal-NoiseValue">Quite</div>
-                <input type="range" min="-1" max="1" value="0" class="slider" id="BookingModal-NoiseSlider" @input="getRangeValue()">
+                <div class="value">
+                    {{parseInt(noiseLevel) === -1 ? 'Requires Quiet' : parseInt(noiseLevel) === 0 ? 'Quiet' : parseInt(noiseLevel) === 1 ? 'Loud' : 'Error'}}
+                </div>
+                <input type="range" min="-1" max="1" value="0" class="slider" v-model="noiseLevel">
             </div>
 
             <div class="privacyContainer">
                 <div class="label-sm">Private</div>
-                <input class='checkbox' id='BookingModal-Privacy' type="checkbox">
+                <input class='checkbox' type="checkbox" v-model='privacy'>
             </div>
 
 
             <!-- Advanced Options -->            
-            <button class="btn btn-outline-secondary advancedBtn" type="button" @click="changeOptions()">{{showMoreText}}</button>
+            <button class="btn btn-outline-secondary advancedBtn" type="button" @click="showMore = !showMore">
+                {{showMore ? 'Show More' : 'Show Less'}}
+            </button>
 
-            <div class='advancedOptions' id="BookingModal-AdvancedOptions">
+            <div class='advancedOptions' :style="showMore ? 'height: auto;' : 'height: 0px;'">
 
                 <div class="label-lg" style="margin-top: 10px;">Resources</div>
                 <div class="resourceContainer">
                     <div class="resource" v-for="resource in $parent.resources" :key='resource.id'>
                         <div class="checkboxLabel">{{resource.name}}</div>
-                        <input type="checkbox" class="checkbox" :id="'res'+resource.id">
+                        <input type="checkbox" class="checkbox"
+                        :checked="resourceCheck(resource.id)"
+                        v-on:input="toggleResource(resource.id)">
                     </div>
                 </div>
 
@@ -103,7 +112,14 @@
 </template>
 
 <style scoped lang="scss">
-
+    .sm-booking-modal {
+        height: 90%;
+        max-height: 490px;
+    }
+    .lg-booking-modal {
+        height: 90%;
+        max-height: 730px;
+    }
 </style>
 
 <script>
@@ -112,112 +128,100 @@
     export default {
         data() {
             return {
-                date: new Date(),
-                location: null,
-                selectedDates: [new Date()],
+                locationType: null,
 
-                showMoreText: 'Show More',
-                showMore: false,     
+                date: new Date(),
+                locationID: null,
+                resourceID: [],
+                meetingType: null,
+                title: null,
+                description: null,
+                startTime: null,
+                endTime: null,
+                noiseLevel: null,
+                privacy: null,
+
+                showMore: false,
+
+                selectedDates: [new Date()],
             }
         },
 
         methods: {
             openModal(date, location, startTime, endTime) {
+                this.locationType = location.type;
+
                 this.date = date;
-                this.location = location;
+                this.locationID = location.id;
                 this.selectedDates = [date];
+                this.meetingType = null;
+                this.title = null;
+                this.description = null;
+                this.startTime = startTime;
+                this.endTime = endTime;
+                this.noiseLevel = 0;
+                this.privacy = false;
 
-                //Style Modal
-                if (this.checkFormType() == 'room') {
-                    document.getElementById('BookingModal').style.height = 90+'%';
-                    document.getElementById('BookingModal').style.maxHeight = 730+'px';
-                }
-                else {
-                    document.getElementById('BookingModal').style.height = 90+'%';
-                    document.getElementById('BookingModal').style.maxHeight = 490+'px';
-                }
-
-                //Modal Header
-                document.getElementById('BookingModal-HeaderDate').innerHTML = this.getDayOfTheWeek(this.date)+', '+this.getMonthName(date)+' '+date.getDate()+' '+date.getFullYear();
-
-                //Modal Location
-                document.getElementById('BookingModal-Location').value = location.id;
-
-                //Time
-                document.getElementById('BookingModal-StartTime').value = startTime;
-                document.getElementById('BookingModal-EndTime').value = endTime;
-
-                //Advanced Options
-                this.showMoreText = 'Show More';
-                this.showMore = false;
-                document.getElementById('BookingModal-AdvancedOptions').style.height = '0px';
-
-                //Scroll
+                // Scroll
                 document.getElementById('BookingModal').scrollTo(0, 0);
 
-                //Visibility
+                // Visibility
                 document.getElementById("BookingModal").style.opacity = "1.0";
                 document.getElementById("BookingModal").style.visibility = "visible";
             },
             closeModal() {
-                //Visibility
+                // Visibility
                 document.getElementById("BookingModal").style.opacity = "0.0";
                 document.getElementById("BookingModal").style.visibility = "hidden";
+            },
 
-                //inputs
-                this.selectedDates = [];
-                if (this.checkFormType() == 'room') {
-                    document.getElementById('BookingModal-Type').value = 0;
-                    document.getElementById('BookingModal-Title').value = '';  
-                    document.getElementById('BookingModal-Description').value = '';
-                    document.getElementById('BookingModal-NoiseSlider').value = 0;
-                    document.getElementById('BookingModal-NoiseValue').innerHTML = 'Quiet';
+            resourceCheck(id) {
+                for (var i = 0; i < this.resourceID.length; i++) {
+                    if (this.resourceID[i] === id) {
+                        return true;
+                    }
                 }
-                document.getElementById('BookingModal-Privacy').checked = false;
+                return false;
+            },
+            toggleResource(id) {
+                let removed = false;
+                this.resourceID = this.resourceID.filter(function(indexedID) {
+                    if (indexedID === id) {
+                        removed = true;
+                        return false;
+                    }
+                    return true;
+                });
+                if (!removed) {
+                    this.resourceID.push(id);
+                }
             },
             
             submitBooking(event) {
-                var locationID = document.getElementById('BookingModal-Location').value;
-                
-                var resourceID = '';
-                for (var i = 0; i < this.$parent.resources.length; i++) {
-                    if (document.getElementById('res'+this.$parent.resources[i].id) != null && document.getElementById('res'+this.$parent.resources[i].id).checked)
-                        resourceID += this.$parent.resources[i].id + ',';
-                }
-                if (resourceID == '')
-                    resourceID = '0';
-                else
-                    resourceID = resourceID.substring(0, resourceID.length - 1);
+                var locationID = this.locationID;
+                var resourceID = this.resourceID;
+                // var resourceID = '';
+                // for (var i = 0; i < this.$parent.resources.length; i++) {
+                //     if (document.getElementById('res'+this.$parent.resources[i].id) != null && document.getElementById('res'+this.$parent.resources[i].id).checked)
+                //         resourceID += this.$parent.resources[i].id + ',';
+                // }
+                // if (resourceID == '')
+                //     resourceID = '0';
+                // else
+                //     resourceID = resourceID.substring(0, resourceID.length - 1);
 
                 var date = [];
                 for (var j = 0; j < this.selectedDates.length; j++) {
                     date[date.length] = this.selectedDates[j].toJSON().slice(0, 10);
                 }
 
-                var startTime = document.getElementById('BookingModal-StartTime').value;
-                var endTime = document.getElementById('BookingModal-EndTime').value;
-
-                var meetingType = '-1';
-                if (document.getElementById('BookingModal-Type'))
-                    meetingType = document.getElementById('BookingModal-Type').value;
-                
-                var title = '';
-                if (document.getElementById('BookingModal-Title'))
-                    title = document.getElementById('BookingModal-Title').value;
-
-                var description = '';
-                if (document.getElementById('BookingModal-Description'))
-                    description = document.getElementById('BookingModal-Description').value;
-                
-                var noiseLevel = 0;
-                if (document.getElementById('BookingModal-NoiseSlider'))
-                    noiseLevel = document.getElementById('BookingModal-NoiseSlider').value;
-
-                var privacy = document.getElementById('BookingModal-Privacy').checked;
-                if (privacy)
-                    privacy = 1;
-                else
-                    privacy = 0;
+                var startTime = this.startTime;
+                var endTime = this.endTime;
+                var meetingType = this.meetingType;
+                var title = this.title;
+                var description = this.description;
+                var noiseLevel = this.noiseLevel;
+                var privacy = this.privacy;
                 
                 api.insertBooking(locationID, resourceID, date, startTime, endTime, meetingType, title, description, noiseLevel, privacy).then(
                     bookingResult => {
@@ -252,40 +256,11 @@
                     }
                 );
                 
-                //Prevent submit refresh
+                // Prevent submit refresh
                 event.preventDefault();
             },
 
-            //Modal
-            checkFormType() {
-                var type = 'room';
-                if (this.location != null && this.location.type != undefined)
-                    type = this.location.type;
-                return type;
-            },
-            getRangeValue() {
-                if (document.getElementById('BookingModal-NoiseSlider').value == -1)
-                    document.getElementById('BookingModal-NoiseValue').innerHTML = 'Requires Quiet';
-                else if (document.getElementById('BookingModal-NoiseSlider').value == 0)
-                    document.getElementById('BookingModal-NoiseValue').innerHTML = 'Quiet';
-                else if (document.getElementById('BookingModal-NoiseSlider').value == 1)
-                    document.getElementById('BookingModal-NoiseValue').innerHTML = 'Loud';
-            },
-
-            changeOptions() {
-                this.showMore = !this.showMore;
-                if (this.showMore) {
-                    this.showMoreText = 'Show Less';
-                    document.getElementById('BookingModal-AdvancedOptions').style.height = 'auto';
-                }
-
-                else {
-                    this.showMoreText = 'Show More';
-                    document.getElementById('BookingModal-AdvancedOptions').style.height = '0px';
-                }
-            },
-
-            //Booking Modal
+            // Booking Modal
             getDayOfTheWeek(date) {
                 switch(date.getDay()) {
                     case 0: return 'Sunday';

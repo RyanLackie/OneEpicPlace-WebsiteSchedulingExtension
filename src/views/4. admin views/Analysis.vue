@@ -69,8 +69,8 @@
                 </div>
                 
                 <div class="inputContainer inputContainerRight">
-                    <input type='date' id='startDate' class="form-control date leftDate" :value="startDate">
-                    <input type='date' id='endDate' class="form-control date rightDate" :value="endDate">
+                    <input type='date' id='startDate' class="form-control date leftDate" v-model="startDate">
+                    <input type='date' id='endDate' class="form-control date rightDate" v-model="endDate">
                 </div>
                 
             </div>
@@ -109,7 +109,6 @@
                     resources   (hours rented, most active times, most active users, most active locations)
                 -->
 
-                <!-- <Users v-if="viewSelected === 0"/> -->
                 <AnalysisView viewType='Users' v-if="viewSelected === 0"/>
 
                 <AnalysisView viewType='Locations' v-if="viewSelected === 1"/>
