@@ -134,17 +134,11 @@
     import * as api from '@/services/api_access';
 
     //Views
-    import Users from './analysisComponents/Users.vue';
-    import Locations from './analysisComponents/Locations.vue';
-    import Resources from './analysisComponents/Resources.vue';
     import AnalysisView from './analysisComponents/AnalysisView.vue';
 
     export default {
         components: {
             //Views
-            Users,
-            Locations,
-            Resources,
             AnalysisView
         },
 
