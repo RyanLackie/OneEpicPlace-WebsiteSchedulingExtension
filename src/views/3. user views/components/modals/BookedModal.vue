@@ -306,7 +306,7 @@
             removeBooking() {
                 var responce = confirm("Are you sure you want to delete this booking by - " + this.username);
                 if (responce) {
-                    api.removeBooking(this.id, this.userID, this.date, this.startTime).then(
+                    api.removeBooking(this.bookingID, this.userID, this.date, this.startTime).then(
                         removeResponce => {
                             this.$parent.closeModals();
                             this.$parent.checkBookings();

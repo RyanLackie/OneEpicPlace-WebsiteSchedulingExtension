@@ -145,7 +145,7 @@ export function updateBooking(bookingID, userID, locationID, resourceID, date, s
 export function removeBooking(bookingID, userID, date, startTime) {
     var username = user.username, password = user.password;
     return myFetch(api_root + "/app/removeBooking", {
-        username, password, bookingID, userID, date, startTime
+        username, password, bookingID
     });
 }
 /*////////////////////////////////////////////////////////////////////////////////////////////////////////

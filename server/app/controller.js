@@ -161,7 +161,6 @@ app.post('/updateBooking', (req, res) => {
 app.post('/removeBooking', (req, res) => {
     model.removeBooking(
         req.body.username, req.body.password, req.body.bookingID,
-        req.body.userID, req.body.date, req.body.startTime,
         removeResult => res.send(removeResult)
     );
 })

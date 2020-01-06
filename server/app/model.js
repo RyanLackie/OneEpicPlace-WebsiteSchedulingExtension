@@ -114,6 +114,7 @@ class Model {
                 for (let i = 0; i < 3; i++) {
                     if (newPoints[i] >= cost) {
                         newPoints[i] -= cost;
+                        cost = 0;
                         break;
                     }
                     else if (newPoints[i] > 0) {
@@ -163,14 +164,10 @@ class Model {
             }
             else if (location.type === 'room') {
                 if (roomNames.includes(location.name)) {
-                    console.log(booking.meetingType);
-                    console.log(booking.meetingType +'>'+ 1);
-                    console.log(booking.meetingType > 1);
-                    console.log(parseInt(booking.meetingType) > 1);
                     if (parseInt(booking.meetingType) > 1) {
-                        return call_back(percent * booking.higherCost);
+                        return call_back(percent * location.higherCost);
                     }
-                    return call_back(percent * booking.lowerCost);
+                    return call_back(percent * location.lowerCost);
                 }
                 else if (location.name === 'Loft') {
                     let rate = 0;
@@ -665,6 +662,7 @@ class Model {
         });
     }
     updateBooking(username, password, bookingID, userID, locationID, resourceID, date, startTime, endTime, meetingType, title, description, noiseLevel, privacy, call_back) {
+        console.log(username, password, bookingID, userID, locationID, resourceID, date, startTime, endTime, meetingType, title, description, noiseLevel, privacy);
         this.getAccount(username, password, fetchedUser => {
             if (fetchedUser == '404' || fetchedUser.memberLevel < MIN_MEMBER_PRIVILEGE)
                 return call_back(['404', null]);
@@ -809,19 +807,15 @@ class Model {
         }
     }
 
-    removeBooking(username, password, bookingID, userID, date, startTime, call_back) {
+    removeBooking(username, password, bookingID, call_back) {
         this.getAccount(username, password, fetchedUser => {
-            if (fetchedUser == '404' || fetchedUser.memberLevel < MIN_MEMBER_PRIVILEGE)
+            if (fetchedUser == '404' || fetchedUser.memberLevel < ADMIN_PRIVILEGE)
                 return call_back('404');
-            
-            var bookingDate = new Date(date);
-            bookingDate.setHours(startTime.split(':')[0], startTime.split(':')[1]);
-            if (fetchedUser.memberLevel == ADMIN_PRIVILEGE || (userID == fetchedUser.id && (bookingDate - new Date()) / (1000*60*60) > 22)) {
-                conn.query('DELETE FROM bookings WHERE id = ' + mysql.escape(bookingID), (err) => {
-                    if (err) throw err;
-                    return call_back('100');
-                });
-            }
+
+            conn.query('DELETE FROM bookings WHERE id = ' + mysql.escape(bookingID), (err) => {
+                if (err) throw err;
+                return call_back('100');
+            });
         });
     }
     /*////////////////////////////////////////////////////////////////////////////////////////////////////////

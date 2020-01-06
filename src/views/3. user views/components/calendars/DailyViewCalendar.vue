@@ -52,10 +52,10 @@
                     :style='styleBooking(location, booking)' @click='bookingClicked(booking)'>
                         <div class="container-fluid">
                             <div v-if="location.type == 'room'" class="row">
-                                <div class="title col-9">
+                                <div class="title col-md-9">
                                     {{booking.title}}
                                 </div>
-                                <div class="noiseIcon col-2"
+                                <div class="noiseIcon col-md-2"
                                 :style='booking.noiseLevel > 0 ? volume : booking.noiseLevel < 0 ? silent : null'></div>
                             </div>
                             <div v-if="location.type == 'room'" class="row">

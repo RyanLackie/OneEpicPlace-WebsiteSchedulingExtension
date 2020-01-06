@@ -1,5 +1,5 @@
 <template>
-    <div :class="'PopUpModal BookingModal ' + locationType === 'room' ? 'lg-booking-modal' : 'sm-booking-modal'" 
+    <div class='PopUpModal BookingModal' :class="locationType === 'room' ? 'lg-booking-modal' : 'sm-booking-modal'" 
     id="BookingModal" aria-hidden="true">
                 
         <div class="modal-header">
@@ -154,9 +154,9 @@
                 this.date = date;
                 this.locationID = location.id;
                 this.selectedDates = [date];
-                this.meetingType = null;
-                this.title = null;
-                this.description = null;
+                this.meetingType = 0;
+                this.title = '';
+                this.description = '';
                 this.startTime = startTime;
                 this.endTime = endTime;
                 this.noiseLevel = 0;
