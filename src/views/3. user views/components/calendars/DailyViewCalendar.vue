@@ -124,9 +124,6 @@
         methods: {
             getDate() {
                 this.checkBookings();
-                clearTimeout(this.timeHighlighterTimeout);
-                this.timeHighlighterDelay = 0;
-                this.styleTimeHighlighterLoop();
             },
 
             /* Date Functions */
@@ -143,57 +140,40 @@
 
             /* JavaScript Styling */
             styleDeskElements(location) {
-                if (location.type == 'room') {
+                if (location.type === 'room') {
                     for (var i = 0; i < this.locations.length; i++) {
-                        if (this.locations[i] == location && i+1 < this.locations.length && this.locations[i+1].type == 'desk')
+                        if (this.locations[i] == location && i+1 < this.locations.length && this.locations[i+1].type === 'desk')
                             return 'margin-bottom: 20px;';
                     }
                 }
-                else if (location.type == 'desk')
+                else if (location.type === 'desk')
                     return 'height: 30px;';
             },
             styleTimeSlot(timeSlot) {
-                if (timeSlot%3 == 0)
-                    return 'border-right: 1px black solid;';
-            },
-            styleTimeHighlighterLoop() {
-                var THIS = this;
-                this.timeHighlighterTimeout = setTimeout(function() {
-                    THIS.timeHighlighterDelay = (60 - new Date().getSeconds()) * 1000;
+                let style = '';
 
-                    var currentDate = new Date();
-                    currentDate.setHours(0, 0, 0, 0);
-                    var selectedDate = new Date(THIS.date);
-                    selectedDate.setHours(0, 0, 0, 0);
+                let currentDate = new Date();
+                let selectedDate = new Date(this.$parent.date);
+                selectedDate.setHours(
+                    parseInt((timeSlot-1) / 12) + parseInt(this.hours[0].time.substring(0, this.hours[0].time.length - 2)),
+                    (timeSlot-1) % 12 * 5,
+                    0,
+                    0
+                );
 
-                    var currentHour = parseInt(new Date().getHours());
-                    var currentMin = parseInt(new Date().getMinutes());
-                    
-                    for (var row = 0; row < THIS.locations.length; row++) {
-                        for (var timeSlot = 1; timeSlot <= THIS.hours.length*12; timeSlot++) {
-                            var timeSlotHour = parseInt((timeSlot-1)/12, 10) + parseInt(THIS.hours[0].time.substring(0, THIS.hours[0].time.length - 2));
-                            var timeSlotMin = (timeSlot-1) % 12 * 5;
-                            
-                            document.getElementById('timeSlot'+row+':'+timeSlot).style.backgroundColor = 'white';
-                            
-                            if (currentDate.getTime() == selectedDate.getTime()) {
-                                if (timeSlotHour == currentHour) {
-                                    if (currentMin >= 0 && currentMin < 15 && timeSlotMin >= 0 && timeSlotMin < 15)
-                                        document.getElementById('timeSlot'+row+':'+timeSlot).style.backgroundColor = 'Gainsboro';
-                                    else if (currentMin >= 15 && currentMin < 30 && timeSlotMin >= 15 && timeSlotMin < 30)
-                                        document.getElementById('timeSlot'+row+':'+timeSlot).style.backgroundColor = 'Gainsboro';
-                                    else if (currentMin >= 30 && currentMin < 45 && timeSlotMin >= 30 && timeSlotMin < 45)
-                                        document.getElementById('timeSlot'+row+':'+timeSlot).style.backgroundColor = 'Gainsboro';
-                                    else if (currentMin >= 45 && currentMin < 60 && timeSlotMin >= 45 && timeSlotMin < 60)
-                                        document.getElementById('timeSlot'+row+':'+timeSlot).style.backgroundColor = 'Gainsboro';
-                                }
-                            }
-                        }
-                    }
-                    
-                    THIS.styleTimeHighlighterLoop();
-                }, this.timeHighlighterDelay)
+                if (timeSlot % 3 === 0) {
+                    style += 'border-right: 1px black solid;';
+                }
+
+                if (selectedDate.getTime() < currentDate.getTime()) {
+                    style += 'background: Gainsboro;';
+                    return style;
+                }
+               
+                style += 'background: white;';
+                return style;
             },
+
             styleBooking(location, booking) {
                 if (location.id === booking.locationID) {
                     var startTime = booking.startTime;
@@ -300,17 +280,13 @@
         },
         
         mounted() {
-            //console.log('mounted');
             this.getDate();
             //Start page scroll listener
             window.addEventListener('scroll', this.handlePageScroll);
         },
         beforeDestroy() {
-            //console.log('beforeDestroy');
             //End check booking loop
             clearTimeout(this.checkBookingsTimeout);
-            //End time highlighter loop
-            clearTimeout(this.timeHighlighterTimeout);
             //End page scroll listener
             window.removeEventListener('scroll', this.handlePageScroll);
         }

@@ -175,10 +175,12 @@
                     return 'height: 26px;';
             },
             styleCurrentDay(day) {
-                if (new Date().toJSON().slice(0, 10) == day.toJSON().slice(0, 10))
+                let yesterdayDate = new Date();
+                yesterdayDate.setDate((new Date().getDate() - 1));
+                let selectedDate = new Date(day);
+                if (selectedDate.getTime() < yesterdayDate.getTime()) {
                     return 'background-color: Gainsboro;';
-                else    //Done to reset yestday on DOM lifecycle refresh
-                    return 'background-color: white;';
+                }
             },
             getDayOfTheWeek(day) {
                 switch(day.getDay()) {
@@ -294,18 +296,15 @@
         },
         
         beforeMount() {
-            //console.log('beforeMount');
             this.getWeek();
         },
         mounted() {
-            //console.log('mounted');
             //Start check booking loop
             this.checkBookingsLoop();
             //Start page scroll listener
             window.addEventListener('scroll', this.handlePageScroll);
         },
         beforeDestroy() {
-            //console.log('beforeDestroy');
             //End check booking loop
             clearTimeout(this.checkBookingsTimeout);
             //End page scroll listener

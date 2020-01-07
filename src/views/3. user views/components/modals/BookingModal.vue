@@ -153,6 +153,7 @@
 
                 this.date = date;
                 this.locationID = location.id;
+                this.resourceID = [];
                 this.selectedDates = [date];
                 this.meetingType = 0;
                 this.title = '';
@@ -161,6 +162,8 @@
                 this.endTime = endTime;
                 this.noiseLevel = 0;
                 this.privacy = false;
+
+                this.showMore = false;
 
                 // Scroll
                 document.getElementById('BookingModal').scrollTo(0, 0);
@@ -200,15 +203,6 @@
             submitBooking(event) {
                 var locationID = this.locationID;
                 var resourceID = this.resourceID;
-                // var resourceID = '';
-                // for (var i = 0; i < this.$parent.resources.length; i++) {
-                //     if (document.getElementById('res'+this.$parent.resources[i].id) != null && document.getElementById('res'+this.$parent.resources[i].id).checked)
-                //         resourceID += this.$parent.resources[i].id + ',';
-                // }
-                // if (resourceID == '')
-                //     resourceID = '0';
-                // else
-                //     resourceID = resourceID.substring(0, resourceID.length - 1);
 
                 var date = [];
                 for (var j = 0; j < this.selectedDates.length; j++) {

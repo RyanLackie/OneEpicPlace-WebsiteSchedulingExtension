@@ -4,7 +4,7 @@
         <!-- Text -->
         <div class="text-container">
             <router-link class="text" exact-active-class="active" to="/">
-                One EPIC Place
+                EPIC Spaces
             </router-link>
         </div>
 

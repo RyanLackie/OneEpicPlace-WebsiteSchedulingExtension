@@ -73,13 +73,13 @@ class Model {
                         points = 0;
                         break;
                 }
-
+                
                 if (updatedLast !== currentMonth) {
                     conn.query('Update users SET ' + 
                                 'points_1 = ' + mysql.escape(points) +
                                 ', points_2 = ' + mysql.escape(user.points_2) +
                                 ', points_3 = ' + mysql.escape(user.points_3) +
-                                ', pointsLastUpdated = ' + mysql.escape(date) +
+                                ', pointsLastUpdated = ' + mysql.escape(date.toJSON().slice(0, 10)) +
                                 ' WHERE id = ' + mysql.escape(user.id), (err) => {
                         if (err) throw err;
                     });
@@ -104,6 +104,7 @@ class Model {
     }
 
     payBookingCost(userID, booking, call_back) {
+        console.log('pay booking id: ' + booking.id);
         conn.query('SELECT * FROM users WHERE id = ' + mysql.escape(userID), (err, result) => {
             if (err) throw err;
 
@@ -111,6 +112,8 @@ class Model {
             let originalPoints = [user.points_1, user.points_2, user.points_3];
             let newPoints = [user.points_1, user.points_2, user.points_3];
             this.calculatePointCost(user, booking, cost => {
+                console.log('cost: ' + cost);
+                console.log('points before: ', newPoints);
                 for (let i = 0; i < 3; i++) {
                     if (newPoints[i] >= cost) {
                         newPoints[i] -= cost;
@@ -125,6 +128,8 @@ class Model {
                 if (cost !== 0) {
                     newPoints[0] -= cost;
                 }
+                console.log('points after: ', newPoints);
+                console.log('booking points: ', originalPoints[0] - newPoints[0], originalPoints[1] - newPoints[1], originalPoints[2] - newPoints[2]);
 
                 conn.query('Update users SET ' + 
                             'points_1 = ' + mysql.escape(newPoints[0]) +
@@ -160,7 +165,7 @@ class Model {
             const roomNames = ['DaVinci Room', 'Green Room', 'Sunshine Room', 'Zen Room', 'Studio'];
 
             if (location.type === 'desk') {
-                return call_back(percent * booking.lowerCost);
+                return call_back(percent * location.lowerCost);
             }
             else if (location.type === 'room') {
                 if (roomNames.includes(location.name)) {
@@ -630,7 +635,7 @@ class Model {
                 async.forEachOf(date, function (indexedDate, i, inner_call_back) {
                     let sql = 
                     "INSERT INTO bookings (userID, locationID, resourceID, date, startTime, endTime, meetingType, title, description, noiseLevel, private)"+
-                    "VALUES ('"+fetchedUser.id+"', '"+locationID+"', '"+resourceID+"', '"+indexedDate+"', '"+startTime+"', '"+endTime+"', '"+meetingType+"', '"+title+
+                    "VALUES ('"+fetchedUser.id+"', '"+locationID+"', '"+JSON.stringify(resourceID)+"', '"+indexedDate+"', '"+startTime+"', '"+endTime+"', '"+meetingType+"', '"+title+
                     "', '"+description+"', '"+noiseLevel+"', '"+privacy+"')";
                     conn.query(sql, function(err, result) {
                         if (err) throw err;
@@ -662,7 +667,6 @@ class Model {
         });
     }
     updateBooking(username, password, bookingID, userID, locationID, resourceID, date, startTime, endTime, meetingType, title, description, noiseLevel, privacy, call_back) {
-        console.log(username, password, bookingID, userID, locationID, resourceID, date, startTime, endTime, meetingType, title, description, noiseLevel, privacy);
         this.getAccount(username, password, fetchedUser => {
             if (fetchedUser == '404' || fetchedUser.memberLevel < MIN_MEMBER_PRIVILEGE)
                 return call_back(['404', null]);

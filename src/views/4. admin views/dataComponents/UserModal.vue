@@ -126,14 +126,14 @@
                 modalType: null,
 
                 id: null,                // For update
-                memberLevel: null,
+                memberLevel: 0,
                 previousUsername: null,  // For update
                 username: null,
                 password: null,
                 points_1: 0,
                 points_2: 0,
                 points_3: 0,
-                pointsLastUpdated: new Date().getFullYear()+'-'+new Date().getMonth()+'-'+new Date().getDate(),
+                pointsLastUpdated: new Date().toJSON().slice(0, 10),
                 notes: '',
 
                 picture: '',
@@ -173,13 +173,13 @@
                 }
                 // For create
                 else {
-                    this.memberLevel = null;
+                    this.memberLevel = 0;
                     this.username = null;
                     this.password = null;
                     this.points_1 = 0;
                     this.points_2 = 0;
                     this.points_3 = 0;
-                    this.pointsLastUpdated = new Date().getFullYear()+'-'+(new Date().getMonth()+1)+'-'+new Date().getDate();
+                    this.pointsLastUpdated = new Date().toJSON().slice(0, 10);
                     this.notes = '';
 
                     this.picture = '';

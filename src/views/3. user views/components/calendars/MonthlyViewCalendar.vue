@@ -152,7 +152,9 @@
             /* JavaScript Styling */
             styleCurrentDay(week, day) {
                 var date = this.days[(7*(week-1) + day) - 1];
-                if (date.getDate() == new Date().getDate() && date.getMonth() == new Date().getMonth()) {
+                let yesterdayDate = new Date();
+                yesterdayDate.setDate((new Date().getDate() - 1));
+                if (date.getTime() < yesterdayDate.getTime()) {
                     return 'background-color: Gainsboro;';
                 }
                 else {
@@ -284,18 +286,15 @@
         },
         
         beforeMount() {
-            //console.log('beforeMount');
             this.getMonth();
         },
         mounted() {
-            //console.log('mounted');
             //Start check booking loop
             this.checkBookingsLoop();
             //Start page scroll listener
             window.addEventListener('scroll', this.handlePageScroll);
         },
         beforeDestroy() {
-            //console.log('beforeDestroy');
             //End check booking loop
             clearTimeout(this.checkBookingsTimeout);
             //End page scroll listener
