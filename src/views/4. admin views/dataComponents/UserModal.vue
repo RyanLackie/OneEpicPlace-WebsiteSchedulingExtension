@@ -80,7 +80,7 @@
 
             <div class="label-lg">Personal Info</div>
 
-            <div class="picture" id='picture'></div>
+            <!-- <div class="picture" id='picture'></div> -->
 
             <div class="leftContainer">
                 <label class="label-sm">First Name</label>

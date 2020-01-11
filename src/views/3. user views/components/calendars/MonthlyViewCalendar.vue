@@ -94,7 +94,7 @@
             /* Date Functions */
             getMonth() {
                 //Get first day of the month for date selector
-                let day = this.$parent.date;
+                let day = new Date(this.$parent.date);
                 this.firstDay = new Date(day.setDate(1));
 
                 //Reset days

@@ -144,7 +144,8 @@
         methods: {
             /* Date Functions */
             getWeek() {
-                this.week[0] = new Date(this.$parent.date.setDate(this.$parent.date.getDate() - (this.$parent.date.getDay())));
+                let date = new Date(this.$parent.date);
+                this.week[0] = new Date(date.setDate(date.getDate() - (date.getDay())));
                 this.week[0].setHours(0, 0, 0, 0);
                 var previous = new Date(this.week[0]);
                 for (var i = 1; i < 7; i++) {

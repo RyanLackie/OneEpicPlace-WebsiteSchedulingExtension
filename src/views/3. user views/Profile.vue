@@ -3,9 +3,9 @@
 
         <form class="form-container" id="profileForm">
 
-            <img class="picture" id='shownImg'>
+            <!-- <img class="picture" id='shownImg'>
             <br/>
-            <input id="picture" type="file" value="" onchange="">
+            <input id="picture" type="file" value="" onchange=""> -->
             
             <div class="label-lg">ABOUT</div>
             <div class="leftContainer">
