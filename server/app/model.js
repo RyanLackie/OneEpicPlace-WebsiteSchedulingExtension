@@ -10,7 +10,7 @@ var conn = mysql.createPool({
     
     database: process.env.MySQL_DB,
     user: process.env.MySQL_USER,
-    password: process.env.MySQL_PASS,
+    password: process.env.MySQL_PASSWORD,
     
     connectionLimit: process.env.CONNECTION_LIMIT
 });
