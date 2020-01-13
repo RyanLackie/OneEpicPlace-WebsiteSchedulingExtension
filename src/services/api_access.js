@@ -22,6 +22,7 @@ export function getAccount_local() {
     }).then(fetchedUser => user = fetchedUser);
 }
 export function getAccount(identity, password) {
+    console.log('api_root: ' + api_root);
     return myFetch(api_root + "/app/getAccount", {
         identity, password
     }).then(fetchedUser => user = fetchedUser);
