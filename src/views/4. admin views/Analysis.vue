@@ -9,34 +9,52 @@
             <div class="inputSection">
 
                 <div id="users" class="dropdown-check-list inputContainer inputContainerLeft noselect"
-                style="z-index: 2;">
-                    <span class="anchor" @click="clickList('users')">Users</span>
+                :class="usersListToggle ? 'visible' : ''" style="z-index: 2;">
+                    <span class="anchor"
+                    @click="() => {
+                        usersListToggle = !usersListToggle;
+                        locationsListToggle = false;
+                        resourcesListToggle = false;
+                    }">
+                        Users
+                    </span>
                     <div class="items">
                         <label class="container" @click="selectAll('usersSelectAllBtn')">
                             <div class="text">Select All</div>
-                            <input type="checkbox" id='usersSelectAllBtn' checked>
+                            <input type="checkbox" v-model="selectAllUsersToggle">
                             <span class="checkmark"></span>
                         </label>
-                        <label class="container" v-for="user in this.users" :key='user.id' :value='user.id'>
+                        <label class="container" v-for="user in this.users" :key='user.id'>
                             <div class="text">{{user.username}}</div>
-                            <input type="checkbox" :id="'use'+user.id" checked>
+                            <input type="checkbox"
+                            :checked="itemCheck('users', user)"
+                            v-on:input="toggleItem('users', user)">
                             <span class="checkmark"></span>
                         </label>
                     </div>
                 </div>
 
                 <div id="locations" class="dropdown-check-list inputContainer inputContainerRight noselect"
-                style="z-index: 2;">
-                    <span class="anchor" @click="clickList('locations')">Locations</span>
+                :class="locationsListToggle ? 'visible' : ''" style="z-index: 2;">
+                    <span class="anchor"
+                    @click="() => {
+                        usersListToggle = false;
+                        locationsListToggle = !locationsListToggle;
+                        resourcesListToggle = false;
+                    }">
+                        Locations
+                    </span>
                     <div class="items">
                         <label class="container" @click="selectAll('locationsSelectAllBtn')">
                             <div class="text">Select All</div>
-                            <input type="checkbox" id='locationsSelectAllBtn' checked>
+                            <input type="checkbox" v-model="selectAllLocationsToggle">
                             <span class="checkmark"></span>
                         </label>
-                        <label class="container" v-for="location in this.locations" :key='location.id' :value='location.id'>
+                        <label class="container" v-for="location in this.locations" :key='location.id'>
                             <div class="text">{{location.name}}</div>
-                            <input type="checkbox" :id="'loc'+location.id" checked>
+                            <input type="checkbox"
+                            :checked="itemCheck('locations', location)"
+                            v-on:input="toggleItem('locations', location)">
                             <span class="checkmark"></span>
                         </label>
                     </div>
@@ -47,22 +65,26 @@
             <div class="inputSection">
 
                 <div id="resources" class="dropdown-check-list inputContainer inputContainerLeft noselect"
-                style="z-index: 1;">
-                    <span class="anchor" @click="clickList('resources')">Resources</span>
+                :class="resourcesListToggle ? 'visible' : ''" style="z-index: 1;">
+                    <span class="anchor"
+                    @click="() => {
+                        usersListToggle = false;
+                        locationsListToggle = false;
+                        resourcesListToggle = !resourcesListToggle;
+                    }">
+                        Resources
+                    </span>
                     <div class="items">
                         <label class="container" @click="selectAll('resourcesSelectAllBtn')">
                             <div class="text">Select All</div>
-                            <input type="checkbox" id='resourcesSelectAllBtn' checked>
+                            <input type="checkbox" v-model="selectAllResourcesToggle">
                             <span class="checkmark"></span>
                         </label>
-                        <label class="container">
-                            <div class="text">None</div>
-                            <input type="checkbox" id='res0' checked>
-                            <span class="checkmark"></span>
-                        </label>
-                        <label class="container" v-for="resource in this.resources" :key='resource.id' :value='resource.id'>
+                        <label class="container" v-for="resource in this.resources" :key='resource.id'>
                             <div class="text">{{resource.name}}</div>
-                            <input type="checkbox" :id="'res'+resource.id" checked>
+                            <input type="checkbox"
+                            :checked="itemCheck('resources', resource)"
+                            v-on:input="toggleItem('resources', resource)">
                             <span class="checkmark"></span>
                         </label>
                     </div>
@@ -155,8 +177,16 @@
                 locations: [],
                 resources: [],
 
+                usersListToggle: false,
+                selectAllUsersToggle: true,
                 selectedUsers: [],
+
+                locationsListToggle: false,
+                selectAllLocationsToggle: true,
                 selectedLocations: [],
+
+                resourcesListToggle: false,
+                selectAllResourcesToggle: true,
                 selectedResources: []
             }
         },
@@ -168,10 +198,17 @@
                     data => {
                         //Users
                         this.users = this.sortUsers(data[0]);
+                        this.selectedUsers = this.users;
+
                         //Locations
                         this.locations = this.sortLocations(data[1]);
+                        this.selectedLocations = this.locations;
+
                         //Resources
                         this.resources = data[2];
+                        this.resources.unshift({ id: -1, name: 'None' })
+                        this.selectedResources = this.resources;
+
                         //Complete
                         this.load = true;
                     }
@@ -218,211 +255,224 @@
                 return locations;
             },
 
-            clickList(id) {
-                if (id != 'users')
-                    document.getElementById('users').classList.remove('visible');
-                if (id != 'locations')  
-                    document.getElementById('locations').classList.remove('visible');
-                if (id != 'resources')
-                    document.getElementById('resources').classList.remove('visible');
-
-                var checkList = document.getElementById(id);
-                if (checkList.classList.contains('visible'))
-                    checkList.classList.remove('visible');
-                else
-                    checkList.classList.add('visible');
-            },
             selectAll(id) {
-                var checked = document.getElementById(id).checked;
+                if (id === 'usersSelectAllBtn') {
+                    if (!this.selectAllUsersToggle) {
+                        this.selectedUsers = this.users;
+                    }
+                    else {
+                        this.selectedUsers = [];
+                    }
+                }
+                else if (id === 'locationsSelectAllBtn') {
+                    if (!this.selectAllLocationsToggle) {
+                        this.selectedLocations = this.locations;
+                    }
+                    else {
+                        this.selectedLocations = [];
+                    }
+                }
+                else if (id === 'resourcesSelectAllBtn') {
+                    if (!this.selectAllResourcesToggle) {
+                        this.selectedResources = this.resources;
+                    }
+                    else {
+                        this.selectedResources = [];
+                    }
+                }
+            },
 
-                if (id == 'usersSelectAllBtn') {
-                    for (var user = 0; user < this.users.length; user++) {
-                        document.getElementById('use'+this.users[user].id).checked = checked;
+            itemCheck(type, item) {
+                if (type === 'users') {
+                    for (var i = 0; i < this.selectedUsers.length; i++) {
+                        if (this.selectedUsers[i].id === item.id) {
+                            return true;
+                        }
+                    }
+                    return false;
+                }
+                else if (type === 'locations') {
+                    for (var i = 0; i < this.selectedLocations.length; i++) {
+                        if (this.selectedLocations[i].id === item.id) {
+                            return true;
+                        }
+                    }
+                    return false;
+                }
+                else if (type === 'resources') {
+                    for (var i = 0; i < this.selectedResources.length; i++) {
+                        if (this.selectedResources[i].id === item.id) {
+                            return true;
+                        }
+                    }
+                    return false;
+                }
+            },
+            toggleItem(type, item) {
+                let removed = false;
+                if (type === 'users') {
+                    this.selectedUsers = this.selectedUsers.filter(function(index) {
+                        if (index.id === item.id) {
+                            removed = true;
+                            return false;
+                        }
+                        return true;
+                    });
+                    if (!removed) {
+                        this.selectedUsers.push(item);
                     }
                 }
-                else if (id == 'locationsSelectAllBtn') {
-                    for (var loc = 0; loc < this.locations.length; loc++) {
-                        document.getElementById('loc'+this.locations[loc].id).checked = checked;
+                else if (type === 'locations') {
+                    this.selectedLocations = this.selectedLocations.filter(function(index) {
+                        if (index.id === item.id) {
+                            removed = true;
+                            return false;
+                        }
+                        return true;
+                    });
+                    if (!removed) {
+                        this.selectedLocations.push(item);
                     }
                 }
-                else if (id == 'resourcesSelectAllBtn') {
-                    document.getElementById('res0').checked = checked;
-                    for (var res = 0; res < this.resources.length; res++) {
-                        document.getElementById('res'+this.resources[res].id).checked = checked;
+                else if (type === 'resources') {
+                    this.selectedResources = this.selectedResources.filter(function(index) {
+                        if (index.id === item.id) {
+                            removed = true;
+                            return false;
+                        }
+                        return true;
+                    });
+                    if (!removed) {
+                        this.selectedResources.push(item);
                     }
                 }
             },
 
             runReport() {
                 this.reportLoad = false;
-
-                this.startDate = document.getElementById('startDate').value;
-                this.endDate = document.getElementById('endDate').value;
                 
-                document.getElementById('users').classList.remove('visible');
-                document.getElementById('locations').classList.remove('visible');
-                document.getElementById('resources').classList.remove('visible');
+                this.usersListToggle = false;
+                this.locationsListToggle = false;
+                this.resourcesListToggle = false;
 
-                var users = [];
-                var locations = [];
-                var resources = [];
-
-                for (var use = 0; use < this.users.length; use++) {
-                    if (document.getElementById('use'+this.users[use].id).checked)
-                        users[users.length] = this.users[use];
-                }
-                for (var loc = 0; loc < this.locations.length; loc++) {
-                    if (document.getElementById('loc'+this.locations[loc].id).checked)
-                        locations[locations.length] = this.locations[loc];
-                }
-                if (document.getElementById('res0').checked)
-                    resources[0] = { id: 0, name: 'None' };
-                for (var res = 0; res < this.resources.length; res++) {
-                    if (document.getElementById('res'+this.resources[res].id).checked)
-                        resources[resources.length] = this.resources[res];
-                }
-
-                var startDate = document.getElementById('startDate').value;
-                var endDate = document.getElementById('endDate').value;
+                let users = this.selectedUsers;
+                let locations = this.selectedLocations;
+                let resources = this.selectedResources;
+                let startDate = this.startDate;
+                let endDate = this.endDate;
 
                 api.admin_RunReport(users, locations, resources, startDate, endDate).then(
                     bookings => {
                         if (bookings.length != 0) {
 
-                            for (var j = 0; j < users.length; j++) {
+                            for (let j = 0; j < users.length; j++) {
                                 users[j].hours = 0;
                                 users[j].activity = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
                                 users[j].locations = [];
                                 users[j].resources = [];
                             }
-                            for (var jj = 0; jj < locations.length; jj++) {
-                                locations[jj].hours = 0;
-                                locations[jj].activity = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-                                locations[jj].users = [];
-                                locations[jj].resources = [];
+                            for (let j = 0; j < locations.length; j++) {
+                                locations[j].hours = 0;
+                                locations[j].activity = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+                                locations[j].users = [];
+                                locations[j].resources = [];
                             }
-                            for (var jjj = 0; jjj < resources.length; jjj++) {
-                                resources[jjj].hours = 0;
-                                resources[jjj].activity = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-                                resources[jjj].users = [];
-                                resources[jjj].locations = [];
+                            for (let j = 0; j < resources.length; j++) {
+                                resources[j].hours = 0;
+                                resources[j].activity = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+                                resources[j].users = [];
+                                resources[j].locations = [];
                             }
 
-                            for (var booking = 0; booking < bookings.length; booking++) {
+                            bookings.forEach(booking => {
 
-                                var hours = Math.abs(bookings[booking].endTime.split(':')[0] - bookings[booking].startTime.split(':')[0]);
-                                var mins = Math.abs(bookings[booking].endTime.split(':')[1] - bookings[booking].startTime.split(':')[1]);
+                                let hours = Math.abs(booking.endTime.split(':')[0] - booking.startTime.split(':')[0]);
+                                let mins = Math.abs(booking.endTime.split(':')[1] - booking.startTime.split(':')[1]);
 
-                                var MIN_HOUR = 7;
-                                var MAX_HOUR = 21;
+                                let MIN_HOUR = 7;
+                                let MAX_HOUR = 21;
 
-                                for (var user = 0; user < users.length; user++) {
-                                    if (bookings[booking].userID == users[user].id) {
-                                        //Hours
-                                        users[user].hours += Math.round( (hours + mins/60) * 100 ) / 100;
-                                        //Activity
-                                        for (var i = 0; i < hours+1; i++) {
-                                            var index = (parseInt(bookings[booking].startTime.split(':')[0], 10) - MIN_HOUR + i);
-                                            var value = users[user].activity[index] + 1;
-                                            if (index < users[user].activity.length)
-                                                users[user].activity[index] = value;
+                                let arraysToCheck = [
+                                    { type: 'users', array: users }, 
+                                    { type: 'locations', array: locations },
+                                    { type: 'resources', array: resources },
+                                ];
+
+                                arraysToCheck.forEach(object => {
+                                    object.array.forEach(item => {
+                                        // Hours
+                                        item.hours += Math.round( (hours + mins/60) * 100 ) / 100;
+                                        // Activity
+                                        for (let i = 0; i < hours+1; i++) {
+                                            let index = (parseInt(booking.startTime.split(':')[0], 10) - MIN_HOUR + i);
+                                            let value = item.activity[index] + 1;
+                                            if (index < item.activity.length)
+                                                item.activity[index] = value;
                                         }
-                                        //Location
-                                        var foundLocation = false;
-                                        for (var ii = 0; ii < users[user].locations.length; ii++) {
-                                            if (users[user].locations[ii].id == bookings[booking].locationID) {
-                                                foundLocation = true;
-                                                users[user].locations[ii].hours += Math.round( (hours + mins/60) * 100 ) / 100;
-                                            }
-                                        }
-                                        if (!foundLocation)
-                                            users[user].locations[users[user].locations.length] = {id: bookings[booking].locationID, hours: hours};
-                                        //Resources
-                                        var foundResource = false;
-                                        for (var j = 0; j < bookings[booking].resourceID.length; j++) {
-                                            for (var jj = 0; jj < users[user].resources.length; jj++) {
-                                                if (bookings[booking].resourceID[j] == users[user].resources[jj].id) {
-                                                    foundResource = true;
-                                                    users[user].resources[jj].hours += Math.round( (hours + mins/60) * 100 ) / 100;
+                                        // Users
+                                        if (object.type !== 'users') {
+                                            let foundUser = false;
+                                            for (let i = 0; i < item.users.length; i++) {
+                                                if (item.users[i].id === booking.userID) {
+                                                    foundUser = true;
+                                                    item.users[i].hours += Math.round( (hours + mins/60) * 100 ) / 100;
+                                                    break;
                                                 }
                                             }
-                                            if (!foundResource)
-                                                users[user].resources[users[user].resources.length] = {id: bookings[booking].resourceID[j], hours: hours};
-                                        }
-                                    }
-                                }
-                                
-                                for (var loc = 0; loc < locations.length; loc++) {
-                                    if (bookings[booking].locationID == locations[loc].id) {
-                                        //Hours
-                                        locations[loc].hours += Math.round( (hours + mins/60) * 100 ) / 100;
-                                        //Activity
-                                        for (var i = 0; i < hours+1; i++) {
-                                            var index = (parseInt(bookings[booking].startTime.split(':')[0], 10) - MIN_HOUR + i);
-                                            var value = locations[loc].activity[index] + 1;
-                                            if (index < locations[loc].activity.length)
-                                                locations[loc].activity[index] = value;
-                                        }
-                                        //Users
-                                        var foundUser = false;
-                                        for (var ii = 0; ii < locations[loc].users.length; ii++) {
-                                            if (locations[loc].users[ii].id == bookings[booking].userID) {
-                                                foundUser = true;
-                                                locations[loc].users[ii].hours += Math.round( (hours + mins/60) * 100 ) / 100;
+                                            if (!foundUser) {
+                                                item.users[item.users.length] = {
+                                                    id: booking.userID,
+                                                    name: this.getUserName(booking.userID),
+                                                    hours: hours
+                                                };
                                             }
+                                            console.log(booking.userID, this.getUserName(booking.userID));
                                         }
-                                        if (!foundLocation)
-                                            locations[loc].users[locations[loc].users.length] = {id: bookings[booking].userID, hours: hours};
-                                        //Resources
-                                        var foundResource = false;
-                                        for (var j = 0; j < bookings[booking].resourceID.length; j++) {
-                                            for (var jj = 0; jj < locations[loc].resources.length; jj++) {
-                                                if (bookings[booking].resourceID[j] == locations[loc].resources[jj].id) {
-                                                    foundResource = true;
-                                                    locations[loc].resources[jj].hours += Math.round( (hours + mins/60) * 100 ) / 100;
+                                        // Locations
+                                        if (object.type !== 'locations') {
+                                            let foundLocation = false;
+                                            for (let i = 0; i < item.locations.length; i++) {
+                                                if (item.locations[i].id === booking.locationID) {
+                                                    foundLocation = true;
+                                                    item.locations[i].hours += Math.round( (hours + mins/60) * 100 ) / 100;
+                                                    break;
                                                 }
                                             }
-                                            if (!foundResource)
-                                                locations[loc].resources[locations[loc].resources.length] = {id: bookings[booking].resourceID[j], hours: hours};
-                                        }
-                                    }
-                                }
-
-                                for (var res = 0; res < resources.length; res++) {
-                                    if (bookings[booking].resourceID == resources[res].id) {
-                                        //Hours
-                                        resources[res].hours += Math.round( (hours + mins/60) * 100 ) / 100;
-                                        //Activity
-                                        for (var i = 0; i < hours+1; i++) {
-                                            var index = (parseInt(bookings[booking].startTime.split(':')[0], 10) - MIN_HOUR + i);
-                                            var value = resources[res].activity[index] + 1;
-                                            if (index < resources[res].activity.length)
-                                                resources[res].activity[index] = value;
-                                        }
-                                        //Users
-                                        var foundUser = false;
-                                        for (var ii = 0; ii < resources[res].users.length; ii++) {
-                                            if (resources[res].users[ii].id == bookings[booking].userID) {
-                                                foundUser = true;
-                                                resources[res].users[ii].hours += Math.round( (hours + mins/60) * 100 ) / 100;
+                                            if (!foundLocation) {
+                                                item.locations[item.locations.length] = {
+                                                    id: booking.locationID,
+                                                    name: this.getLocationName(booking.locationID),
+                                                    hours: hours
+                                                };
                                             }
                                         }
-                                        if (!foundLocation)
-                                            resources[res].users[resources[res].users.length] = {id: bookings[booking].userID, hours: hours};
-                                        //Location
-                                        var foundLocation = false;
-                                        for (var iii = 0; iii < resources[res].locations.length; iii++) {
-                                            if (resources[res].locations[iii].id == bookings[booking].locationID) {
-                                                foundLocation = true;
-                                                resources[res].locations[iii].hours += Math.round( (hours + mins/60) * 100 ) / 100;
+                                        // Resources
+                                        if (object.type !== 'resources') {
+                                            let foundResource = false;
+                                            for (let i = 0; i < booking.resourceID.length; i++) {
+                                                booking.resourceID[i] = parseInt(booking.resourceID[i]);
                                             }
+                                            booking.resourceID.forEach(resource => {
+                                                for (let i = 0; i < item.resources.length; i++) {
+                                                    if (resource == item.resources[i].id) {
+                                                        foundResource = true;
+                                                        item.resources[i].hours += Math.round( (hours + mins/60) * 100 ) / 100;
+                                                        break;
+                                                    }
+                                                }
+                                                if (!foundResource) {
+                                                    item.resources[item.resources.length] = {
+                                                        id: resource,
+                                                        name: this.getResourceName(resource),
+                                                        hours: hours
+                                                    };
+                                                }
+                                            });
                                         }
-                                        if (!foundLocation)
-                                            resources[res].locations[resources[res].locations.length] = {id: bookings[booking].locationID, hours: hours};
-                                    }
-                                }
+                                    });
+                                });
                                 
-                            }
+                            });
 
                         }
 

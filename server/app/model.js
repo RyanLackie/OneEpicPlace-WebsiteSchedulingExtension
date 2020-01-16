@@ -860,7 +860,7 @@ class Model {
             
             this.getBookingsDate(user_username, user_password, startDate, endDate, bookings => {
                 for (var booking = 0; booking < bookings.length; booking++) {
-                    //Users
+                    // Users
                     var keep = false;
                     for (var user = 0; user < users.length; user++) {
                         if (bookings[booking].userID == users[user].id) {
@@ -873,7 +873,7 @@ class Model {
                         booking--;
                         continue;
                     }
-                    //Locations
+                    // Locations
                     keep = false;
                     for (var loc = 0; loc < locations.length; loc++) {
                         if (bookings[booking].locationID == locations[loc].id) {
@@ -886,12 +886,14 @@ class Model {
                         booking--;
                         continue;
                     }
-                    //Resources
+                    // Resources
                     keep = false;
-                    bookings[booking].resourceID = bookings[booking].resourceID.split(',');             //put into array format
-                    for (var res1 = 0; res1 < resources.length; res1++) {                               //filtered resources
-                        for (var res2 = 0; res2 < bookings[booking].resourceID.length; res2++) {        //found resources
-                            if (bookings[booking].resourceID[res2] == resources[res1].id) {             //if found resource is apart of the filtered condition
+                    bookings[booking].resourceID = bookings[booking].resourceID.replace('[', '');       // put into array format
+                    bookings[booking].resourceID = bookings[booking].resourceID.replace(']', '');
+                    bookings[booking].resourceID = bookings[booking].resourceID.split(',');
+                    for (var res1 = 0; res1 < resources.length; res1++) {                               // filtered resources
+                        for (var res2 = 0; res2 < bookings[booking].resourceID.length; res2++) {        // found resources
+                            if (bookings[booking].resourceID[res2] == resources[res1].id) {             // if found resource is apart of the filtered condition
                                 keep = true;
                                 break;
                             }

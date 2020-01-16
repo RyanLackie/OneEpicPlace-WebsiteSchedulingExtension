@@ -1,8 +1,8 @@
 //Local Production
-// const api_root = "http://localhost:81";
+const api_root = "http://localhost:81";
 
 //Server Deployment
-const api_root = "http://165.227.84.63:81";
+// const api_root = "http://165.227.84.63:81";
 
 var user = null;
 

@@ -6,8 +6,9 @@
             </div>
             <div class="col">Hours Booked</div>
             <div class="col">Activity</div>
-            <div class="col">Locations</div>
-            <div class="col">Resources</div>
+            <div class="col" v-if='viewType !== "Users"'>Users</div>
+            <div class="col" v-if='viewType !== "Locations"'>Locations</div>
+            <div class="col" v-if='viewType !== "Resources"'>Resources</div>
         </div>
 
         <div v-for="(data, index) in getViewData()" :key="'data:'+data.id"
@@ -41,7 +42,7 @@
             <div v-if='viewType !== "Users"' class="col">
                 <select style='width: 100%;'>
                     <option v-for="(user, index) in data.users" :key="'user:'+index">
-                        {{$parent.getUserName(user.id) + '   |   hours: ' + user.hours}}
+                        {{user.username + '   |   hours: ' + user.hours}}
                     </option>
                 </select>
             </div>
@@ -49,7 +50,7 @@
             <div v-if='viewType !== "Resources"' class="col">
                 <select style='width: 100%;'>
                     <option v-for="(resource, index) in data.resources" :key="'resource:'+index">
-                        {{$parent.getResourceName(resource.id) + '   |   hours: ' + resource.hours}}
+                        {{resource.name + '   |   hours: ' + resource.hours}}
                     </option>
                 </select>
             </div>
@@ -57,7 +58,7 @@
             <div v-if='viewType !== "Locations"' class="col">
                 <select style='width: 100%;'>
                     <option v-for="(location, index) in data.locations" :key="'location:'+index">
-                        {{$parent.getLocationName(location.id) + '   |   hours: ' + location.hours}}
+                        {{location.name + '   |   hours: ' + location.hours}}
                     </option>
                 </select>
             </div>
