@@ -632,6 +632,7 @@ class Model {
 
                 // Insert Bookings If No Overlaps
                 let THIS = this;
+                privacy = privacy ? 1 : 0;
                 async.forEachOf(date, function (indexedDate, i, inner_call_back) {
                     let sql = 
                     "INSERT INTO bookings (userID, locationID, resourceID, date, startTime, endTime, meetingType, title, description, noiseLevel, private)"+
