@@ -106,9 +106,10 @@
             </div>
 
         </div>
-
+        {{!disableFields}}
+        {{getMemberLevel() === 6}}
         <button v-if='!disableFields' class="btn btn-success leftBtn" @click="updateBooking()">Update</button>
-        <button v-if='!disableFields && getMemberLevel() === 6' class="btn btn-danger rightBtn" @click="removeBooking()">Delete</button>
+        <button v-if='getMemberLevel() === 6' class="btn btn-danger rightBtn" @click="removeBooking()">Delete</button>
         <button v-if='!disableFields && getMemberLevel() !== 6' class="btn btn-danger rightBtn"
         @click="() => {
             canceled = true;
