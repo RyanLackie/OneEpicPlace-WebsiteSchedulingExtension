@@ -104,53 +104,58 @@ class Model {
     }
 
     payBookingCost(userID, booking, call_back) {
-        console.log('pay booking id: ' + booking.id);
-        conn.query('SELECT * FROM users WHERE id = ' + mysql.escape(userID), (err, result) => {
-            if (err) throw err;
+        if (!booking.canceled) {
+            console.log('pay booking id: ' + booking.id);
+            conn.query('SELECT * FROM users WHERE id = ' + mysql.escape(userID), (err, result) => {
+                if (err) throw err;
 
-            const user = result[0];
-            let originalPoints = [user.points_1, user.points_2, user.points_3];
-            let newPoints = [user.points_1, user.points_2, user.points_3];
-            this.calculatePointCost(user, booking, cost => {
-                console.log('cost: ' + cost);
-                console.log('points before: ', newPoints);
-                for (let i = 0; i < 3; i++) {
-                    if (newPoints[i] >= cost) {
-                        newPoints[i] -= cost;
-                        cost = 0;
-                        break;
+                const user = result[0];
+                let originalPoints = [user.points_1, user.points_2, user.points_3];
+                let newPoints = [user.points_1, user.points_2, user.points_3];
+                this.calculatePointCost(user, booking, cost => {
+                    console.log('cost: ' + cost);
+                    console.log('points before: ', newPoints);
+                    for (let i = 0; i < 3; i++) {
+                        if (newPoints[i] >= cost) {
+                            newPoints[i] -= cost;
+                            cost = 0;
+                            break;
+                        }
+                        else if (newPoints[i] > 0) {
+                            cost -= newPoints[i];
+                            newPoints[i] = 0;
+                        }
                     }
-                    else if (newPoints[i] > 0) {
-                        cost -= newPoints[i];
-                        newPoints[i] = 0;
+                    if (cost !== 0) {
+                        newPoints[0] -= cost;
                     }
-                }
-                if (cost !== 0) {
-                    newPoints[0] -= cost;
-                }
-                console.log('points after: ', newPoints);
-                console.log('booking points: ', originalPoints[0] - newPoints[0], originalPoints[1] - newPoints[1], originalPoints[2] - newPoints[2]);
+                    console.log('points after: ', newPoints);
+                    console.log('booking points: ', originalPoints[0] - newPoints[0], originalPoints[1] - newPoints[1], originalPoints[2] - newPoints[2]);
 
-                conn.query('Update users SET ' + 
-                            'points_1 = ' + mysql.escape(newPoints[0]) +
-                            ', points_2 = ' + mysql.escape(newPoints[1]) +
-                            ', points_3 = ' + mysql.escape(newPoints[2]) +
-                            ' WHERE id = ' + mysql.escape(user.id), (err) => {
-                    if (err) throw err;
-
-                    conn.query('Update bookings SET ' +
-                            'points_1_cost = ' + mysql.escape(originalPoints[0] - newPoints[0]) +
-                            ', points_2_cost = ' + mysql.escape(originalPoints[1] - newPoints[1]) +
-                            ', points_3_cost = ' + mysql.escape(originalPoints[2] - newPoints[2]) +
-                            ', paid = ' + mysql.escape(1) +
-                            ' WHERE id = ' + mysql.escape(booking.id), (err) => {
+                    conn.query('Update users SET ' + 
+                                'points_1 = ' + mysql.escape(newPoints[0]) +
+                                ', points_2 = ' + mysql.escape(newPoints[1]) +
+                                ', points_3 = ' + mysql.escape(newPoints[2]) +
+                                ' WHERE id = ' + mysql.escape(user.id), (err) => {
                         if (err) throw err;
 
-                        return call_back(100);
+                        conn.query('Update bookings SET ' +
+                                'points_1_cost = ' + mysql.escape(originalPoints[0] - newPoints[0]) +
+                                ', points_2_cost = ' + mysql.escape(originalPoints[1] - newPoints[1]) +
+                                ', points_3_cost = ' + mysql.escape(originalPoints[2] - newPoints[2]) +
+                                ', paid = ' + mysql.escape(1) +
+                                ' WHERE id = ' + mysql.escape(booking.id), (err) => {
+                            if (err) throw err;
+
+                            return call_back(100);
+                        });
                     });
                 });
             });
-        });
+        }
+        else {
+            return call_back(100);
+        }
     }
     calculatePointCost(user, booking, call_back) {
         conn.query('SELECT * FROM locations WHERE id = ' + mysql.escape(booking.locationID), (err, result) => {
@@ -207,6 +212,7 @@ class Model {
     }
 
     refundPointCost(userID, oldBooking, newBooking, call_back) {
+        console.log('refund booking id: ' + oldBooking.id);
         conn.query('SELECT * FROM users WHERE id = ' + mysql.escape(userID), (err, result) => {
             let user = result[0];
 
@@ -214,10 +220,13 @@ class Model {
             currentDate = currentDate.split('-');
             let bookingDate = oldBooking.date;
             bookingDate = bookingDate.toJSON().slice(0, 10).split('-');
-
+            
             // Make sure we only refund points if they were spent in the first place
-            if (currentDate[0] === bookingDate[0] && currentDate[1] === bookingDate[1]) {
-                // console.log('refund');
+            if (parseInt(currentDate[0]) === parseInt(bookingDate[0]) && parseInt(currentDate[1]) === parseInt(bookingDate[1])) {
+                console.log('points before: ', user.points_1, user.points_2, user.points_3);
+                console.log('points after: ', user.points_1 + newBooking.points_1_cost, 
+                                                user.points_2 + newBooking.points_2_cost,
+                                                user.points_3 + newBooking.points_3_cost);
                 conn.query('Update users SET ' + 
                         'points_1 = ' + mysql.escape(user.points_1 + newBooking.points_1_cost) +
                         ', points_2 = ' + mysql.escape(user.points_2 + newBooking.points_2_cost) +
@@ -588,7 +597,11 @@ class Model {
                 conn.query('SELECT * FROM users', (err, result) => {
                     if (err) throw err;
                     var users = result;
+                    let returnBookings = [];
                     for (var i = 0; i < bookings.length; i++) {
+                        if (fetchedUser.memberLevel !== ADMIN_PRIVILEGE && bookings[i].canceled) {
+                            continue;
+                        }
                         if (fetchedUser.id !== bookings[i].userID && bookings[i].private && fetchedUser.memberLevel !== ADMIN_PRIVILEGE) {
                             bookings[i].userID = null;
                             bookings[i].username = 'Private Booking';
@@ -596,17 +609,18 @@ class Model {
                             bookings[i].title = 'Private Booking';
                             bookings[i].description = 'Private Booking';
                             bookings[i].resourceID = '[]';
+                            returnBookings.push(bookings[i]);
+                            continue;
                         }
-                        else {
-                            for (var j = 0; j < users.length; j++) {
-                                if (bookings[i].userID == users[j].id) {
-                                    bookings[i].username = users[j].username;
-                                    break;
-                                }
+                        for (var j = 0; j < users.length; j++) {
+                            if (bookings[i].userID === users[j].id) {
+                                bookings[i].username = users[j].username;
+                                returnBookings.push(bookings[i]);
+                                continue;
                             }
                         }
                     }
-                    return call_back(bookings);
+                    return call_back(returnBookings);
                 });
             });
         });
@@ -648,8 +662,7 @@ class Model {
                             let currentDate = new Date().getFullYear()+'-'+(new Date().getMonth()+1)+'-'+new Date().getDate();
                             currentDate = currentDate.split('-');
                             let bookingDate = result[0].date.toJSON().slice(0, 10).split('-');
-
-                            if (currentDate[0] === bookingDate[0] && currentDate[1] === bookingDate[1]) {
+                            if (parseInt(currentDate[0]) === parseInt(bookingDate[0]) && parseInt(currentDate[1]) === parseInt(bookingDate[1])) {
                                 THIS.payBookingCost(result[0].userID, result[0], payReturn => {
                                     // console.log('payBookingCost complete');
                                     inner_call_back(['100', null]);
@@ -667,7 +680,7 @@ class Model {
             });
         });
     }
-    updateBooking(username, password, bookingID, userID, locationID, resourceID, date, startTime, endTime, meetingType, title, description, noiseLevel, privacy, call_back) {
+    updateBooking(username, password, bookingID, userID, locationID, resourceID, date, startTime, endTime, meetingType, title, description, noiseLevel, privacy, canceled, call_back) {
         this.getAccount(username, password, fetchedUser => {
             if (fetchedUser == '404' || fetchedUser.memberLevel < MIN_MEMBER_PRIVILEGE)
                 return call_back(['404', null]);
@@ -695,7 +708,8 @@ class Model {
                         return call_back(checkCallBack);
                     }
 
-                    // const THIS = this;
+                    privacy = privacy ? 1 : 0;
+                    canceled = canceled ? 1 : 0;
                     conn.query('SELECT * FROM bookings WHERE id = ' + mysql.escape(bookingID), (err, oldBooking) => {
                         if (err) throw err;
                     
@@ -711,30 +725,22 @@ class Model {
                                     ', description = ' + mysql.escape(description) +
                                     ', noiseLevel = ' + mysql.escape(noiseLevel) +
                                     ', private = ' + mysql.escape(privacy) +
+                                    ', canceled = ' + mysql.escape(canceled) +
                                     ' WHERE id = ' + mysql.escape(bookingID), (err) => {
                             if (err) throw err;
 
                             conn.query('SELECT * FROM bookings WHERE id = ' + mysql.escape(bookingID), (err, newBooking) => {
                                 if (err) throw err;
-                            
+                                
                                 this.refundPointCost(newBooking[0].userID, oldBooking[0], newBooking[0], refundReturn => {
                                     // if (refundReturn === 100) {
-                                    //     console.log('refundPointCost complete');
+                                        // console.log('refundPointCost complete');
                                     // }
-
-                                    // Calculate cost and subtract from points if current month
-                                    let currentDate = new Date().getFullYear()+'-'+(new Date().getMonth()+1)+'-'+new Date().getDate();
-                                    currentDate = currentDate.split('-');
-                                    let bookingDate = newBooking[0].date.toJSON().slice(0, 10).split('-');
-
-                                    if (currentDate[0] === bookingDate[0] && currentDate[1] === bookingDate[1]) {
-                                        this.payBookingCost(newBooking[0].userID, newBooking[0], payReturn => {
-                                            return call_back(['100', null]);
-                                        });
-                                    }
-                                    else {
+                                    
+                                    // Calculate cost and subtract from points if current month and not canceled
+                                    this.payBookingCost(newBooking[0].userID, newBooking[0], payReturn => {
                                         return call_back(['100', null]);
-                                    }
+                                    });
                                 });
                             });
                         });
@@ -751,10 +757,11 @@ class Model {
             if (result[0].userID !== userID)
                 return capabilityResult('404');
             // Not 22 hours before booking
+            let bookingDate = result[0].date;
             bookingDate.setHours(result[0].startTime.split(':')[0], result[0].startTime.split(':')[1]);
-            if (this.booking.userID == api.getLocalUser().id && (bookingDate - new Date())/(1000*60*60) > 22)
-                return capabilityResult('404');
-            return capabilityResult('100');
+            if (result[0].userID === userID && (bookingDate - new Date())/(1000*60*60) > 22)
+                return capabilityResult('100');
+            return capabilityResult('404');
         });
     }
     checkTimeFormating(startTime, endTime, insertStartTime, insertEndTime) {
@@ -775,8 +782,12 @@ class Model {
                 if (err) throw err;
 
                 for (var index = 0; index < result.length; index++) {
-                    if (bookingID == result[index].id)
+                    if (result[index].canceled) {
                         continue;
+                    }
+                    if (bookingID == result[index].id) {
+                        continue;
+                    }
 
                     var checkStartTime = new Date();
                     checkStartTime.setHours(result[index].startTime.split(":")[0], result[index].startTime.split(":")[1], 0, 0)
@@ -860,7 +871,7 @@ class Model {
                 return call_back('404');
             
             this.getBookingsDate(user_username, user_password, startDate, endDate, bookings => {
-                for (var booking = 0; booking < bookings.length; booking++) {
+                bookings.forEach(booking => {
                     // Users
                     var keep = false;
                     for (var user = 0; user < users.length; user++) {
@@ -907,7 +918,7 @@ class Model {
                         booking--;
                         continue;
                     }
-                }
+                });
 
                 call_back(bookings);
             });

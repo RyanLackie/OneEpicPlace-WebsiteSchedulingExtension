@@ -154,7 +154,7 @@ app.post('/updateBooking', (req, res) => {
         req.body.username, req.body.password, req.body.bookingID,
         req.body.userID, req.body.locationID, req.body.resourceID, req.body.date,
         req.body.startTime, req.body.endTime, req.body.meetingType,
-        req.body.title, req.body.description, req.body.noiseLevel, req.body.privacy,
+        req.body.title, req.body.description, req.body.noiseLevel, req.body.privacy, req.body.canceled,
         updateResult => res.send(updateResult)
     );
 })

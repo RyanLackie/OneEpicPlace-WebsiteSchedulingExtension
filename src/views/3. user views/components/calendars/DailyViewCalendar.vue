@@ -176,24 +176,30 @@
 
             styleBooking(location, booking) {
                 if (location.id === booking.locationID) {
-                    var startTime = booking.startTime;
-                    var startTimeHour = parseInt(startTime.split(':')[0], 10);
-                    var startTimeMin = parseInt(startTime.split(':')[1], 10);
-                    var startTimeSlot = ((startTimeHour - this.hours[0].time.substring(0, this.hours[0].time.length - 2)) * 12) + (startTimeMin / 5) + 1;
+                    let startTime = booking.startTime;
+                    let startTimeHour = parseInt(startTime.split(':')[0], 10);
+                    let startTimeMin = parseInt(startTime.split(':')[1], 10);
+                    let startTimeSlot = ((startTimeHour - this.hours[0].time.substring(0, this.hours[0].time.length - 2)) * 12) + (startTimeMin / 5) + 1;
                     
-                    var endTime = booking.endTime;
-                    var endTimeHour = parseInt(endTime.split(':')[0], 10);
-                    var endTimeMin = parseInt(endTime.split(':')[1], 10);
-                    var endTimeSlot = ((endTimeHour - this.hours[0].time.substring(0, this.hours[0].time.length - 2)) * 12) + (endTimeMin / 5) + 1;
+                    let endTime = booking.endTime;
+                    let endTimeHour = parseInt(endTime.split(':')[0], 10);
+                    let endTimeMin = parseInt(endTime.split(':')[1], 10);
+                    let endTimeSlot = ((endTimeHour - this.hours[0].time.substring(0, this.hours[0].time.length - 2)) * 12) + (endTimeMin / 5) + 1;
 
                     /*  
                     Left is tricky because getting the bounds is not relative to inside the row, getting the left value of the 
                     first slot and subtractiing it from the used slot solves this problem
                     */
-                    var left = document.getElementById('timeSlot'+location.id+':'+startTimeSlot).getBoundingClientRect().left - document.getElementById('timeSlot'+location.id+':'+1).getBoundingClientRect().left;
-                    var width = (endTimeSlot - startTimeSlot) * document.getElementById('timeSlot'+location.id+':'+startTimeSlot).getBoundingClientRect().width;
+                    let left = document.getElementById('timeSlot'+location.id+':'+startTimeSlot).getBoundingClientRect().left - document.getElementById('timeSlot'+location.id+':'+1).getBoundingClientRect().left;
+                    let width = (endTimeSlot - startTimeSlot) * document.getElementById('timeSlot'+location.id+':'+startTimeSlot).getBoundingClientRect().width;
 
-                    return 'left:'+left+'px; width:'+width+'px;background-color:'+location.color+';';
+                    let style = 'left:'+left+'px; width:'+width+'px;background-color:'+location.color+';';
+
+                    if (booking.canceled) {
+                        style += 'opacity: 0.5;';
+                    }
+
+                    return style;
                 }
                 return 'left: 0px; width: 0px; height: 0px; display: none;';
             },

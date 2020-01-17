@@ -166,7 +166,6 @@
 .PopUpModal .privacyContainer {
     position: relative;
     display: inline-block;
-    width: 15%;
     min-width: 30px;
     margin: 10px 0px 0px 0px;
 }

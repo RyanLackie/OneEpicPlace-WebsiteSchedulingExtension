@@ -136,10 +136,10 @@ export function insertBooking(locationID, resourceID, date, startTime, endTime, 
         username, password, locationID, resourceID, date, startTime, endTime, meetingType, title, description, noiseLevel, privacy
     });
 }
-export function updateBooking(bookingID, userID, locationID, resourceID, date, startTime, endTime, meetingType, title, description, noiseLevel, privacy) {
+export function updateBooking(bookingID, userID, locationID, resourceID, date, startTime, endTime, meetingType, title, description, noiseLevel, privacy, canceled) {
     var username = user.username, password = user.password;
     return myFetch(api_root + "/app/updateBooking", {
-        username, password, bookingID, userID, locationID, resourceID, date, startTime, endTime, meetingType, title, description, noiseLevel, privacy
+        username, password, bookingID, userID, locationID, resourceID, date, startTime, endTime, meetingType, title, description, noiseLevel, privacy, canceled
     });
 }
 export function removeBooking(bookingID, userID, date, startTime) {

@@ -11,7 +11,8 @@
         </div>
 
         <div class="booking" v-for="booking in bookings" :key="'booking'+booking.id" :id="'booking'+booking.id"
-        :style='"background-color:"+$parent.getLocation(booking.locationID).color+";"' @click="openBookedModal(booking)">
+        :style='"background:"+$parent.getLocation(booking.locationID).color+";"'
+        @click="openBookedModal(booking)">
             <div class="line">
                 {{booking.username}}
             </div>

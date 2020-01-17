@@ -81,6 +81,11 @@
             <input class='checkbox' type="checkbox" v-model='privacy' :disabled='disableFields'>
         </div>
 
+        <div v-if='getMemberLevel() === 6' class="privacyContainer">
+            <div class="label-sm">Canceled</div>
+            <input class='checkbox' type="checkbox" v-model='canceled'>
+        </div>
+
 
         <!-- Advanced Options -->            
         <button class="btn btn-outline-secondary advancedBtn" type="button" @click="showMore = !showMore">
@@ -103,8 +108,13 @@
         </div>
 
         <button v-if='!disableFields' class="btn btn-success leftBtn" @click="updateBooking()">Update</button>
-        <button v-if='!disableFields' class="btn btn-danger rightBtn" @click="removeBooking()">Delete</button>
-
+        <button v-if='!disableFields && getMemberLevel() === 6' class="btn btn-danger rightBtn" @click="removeBooking()">Delete</button>
+        <button v-if='!disableFields && getMemberLevel() !== 6' class="btn btn-danger rightBtn"
+        @click="() => {
+            canceled = true;
+            updateBooking();
+        }">Cancel</button>
+        
         <button v-if='disableFields' class="btn btn-secondary centerBtn" @click="closeModal()">Close</button>
 
     </div>
@@ -133,6 +143,7 @@
                 endTime: null,
                 noiseLevel: null,
                 privacy: null,
+                canceled: null,
 
                 showMore: false,
 
@@ -185,6 +196,7 @@
 
                 this.noiseLevel = booking.noiseLevel;
                 this.privacy = booking.private;
+                this.canceled = booking.canceled;
                 this.showMore = false;
 
                 // Are fields disabled
@@ -257,59 +269,71 @@
             },
 
             updateBooking() {
-                var bookingID = this.bookingID;
-                var userID = this.userID;
-                var locationID = this.locationID;
-                var resourceID = this.resourceID;
-                var date = [this.date];
-                var startTime = this.startTime;
-                var endTime = this.endTime;
-                var meetingType = this.meetingType;
-                var title = this.title
-                var description = this.description;
-                var noiseLevel = this.noiseLevel;
-                var privacy = this.privacy;
+                let bookingID = this.bookingID;
+                let userID = this.userID;
+                let locationID = this.locationID;
+                let resourceID = this.resourceID;
+                let date = [this.date];
+                let startTime = this.startTime;
+                let endTime = this.endTime;
+                let meetingType = this.meetingType;
+                let title = this.title
+                let description = this.description;
+                let noiseLevel = this.noiseLevel;
+                let privacy = this.privacy;
+                let canceled = this.canceled;
 
-                api.updateBooking(bookingID, userID, locationID, resourceID, date, startTime, endTime, meetingType, title, description, noiseLevel, privacy).then(
-                    updateResponce => {
-                        var messageDate;
+                if (canceled) {
+                    let responce = confirm("Are you sure you want to cancel this booking?");
+                    if (responce) {
+                        api.updateBooking(bookingID, userID, locationID, resourceID, date, startTime,
+                        endTime, meetingType, title, description, noiseLevel, privacy, canceled).then(
+                            updateResponce => {
+                                let messageDate;
 
-                        if (updateResponce[0] == '100') {
-                            this.$parent.closeModals();
-                            this.$parent.checkBookings();
-                        }
-                        
-                        else if (updateResponce[0] == '404')
-                            alert('You dont have permission to update this booking');
-                        else if (updateResponce[0] == '405')
-                            alert('Booking time must be within the time range (watch out for AM - PM)');
-                        else if (updateResponce[0] == '406')
-                            alert('Start Time must be before End Time');
-                        else if (updateResponce[0] == '407')
-                            alert('Time is not within a 5 minoute interval');
-                        else if (updateResponce[0] == '408') {
-                            messageDate = updateResponce[1].split('-');
-                            alert('Time Overlap on ' + messageDate[1]+'/'+messageDate[2]+'/'+messageDate[0]);
-                        }
-                        else if (updateResponce[0] == '409') {
-                            messageDate = updateResponce[1].split('-');
-                            alert('A Silent Reservation Has Already Been Made On ' + messageDate[1]+'/'+messageDate[2]+'/'+messageDate[0] + ' During This Time');
-                        }
-                        else if (updateResponce[0] == '410') {
-                            messageDate = updateResponce[1].split('-');
-                            alert('A Loud Reservation Has Already Been Made On ' + messageDate[1]+'/'+messageDate[2]+'/'+messageDate[0] + ' During This Time');
-                        }
+                                if (updateResponce[0] == '100') {
+                                    this.$parent.closeModals();
+                                    this.$parent.checkBookings();
+                                }
+                                
+                                else if (updateResponce[0] == '404')
+                                    alert('You dont have permission to update this booking');
+                                else if (updateResponce[0] == '405')
+                                    alert('Booking time must be within the time range (watch out for AM - PM)');
+                                else if (updateResponce[0] == '406')
+                                    alert('Start Time must be before End Time');
+                                else if (updateResponce[0] == '407')
+                                    alert('Time is not within a 5 minoute interval');
+                                else if (updateResponce[0] == '408') {
+                                    messageDate = updateResponce[1].split('-');
+                                    alert('Time Overlap on ' + messageDate[1]+'/'+messageDate[2]+'/'+messageDate[0]);
+                                }
+                                else if (updateResponce[0] == '409') {
+                                    messageDate = updateResponce[1].split('-');
+                                    alert('A Silent Reservation Has Already Been Made On ' + messageDate[1]+'/'+messageDate[2]+'/'+messageDate[0] + ' During This Time');
+                                }
+                                else if (updateResponce[0] == '410') {
+                                    messageDate = updateResponce[1].split('-');
+                                    alert('A Loud Reservation Has Already Been Made On ' + messageDate[1]+'/'+messageDate[2]+'/'+messageDate[0] + ' During This Time');
+                                }
+                            }
+                        );
                     }
-                );
+                }
             },
             
             removeBooking() {
-                var responce = confirm("Are you sure you want to delete this booking by - " + this.username);
+                let responce = confirm("Are you sure you want to delete this booking by - " + this.username);
                 if (responce) {
                     api.removeBooking(this.bookingID, this.userID, this.date, this.startTime).then(
                         removeResponce => {
-                            this.$parent.closeModals();
-                            this.$parent.checkBookings();
+                            if (removeResponce === 404) {
+                                alert('You dont have permission to update this booking');
+                            }
+                            else {
+                                this.$parent.closeModals();
+                                this.$parent.checkBookings();
+                            }
                         }
                     );
                 }
