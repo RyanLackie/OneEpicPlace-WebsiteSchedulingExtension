@@ -744,14 +744,14 @@ class Model {
         });
     }
     checkForCapability(bookingID, userID, memberLevel, capabilityResult) {
-        if (memberLevel == ADMIN_PRIVILEGE)
+        if (memberLevel === ADMIN_PRIVILEGE)
             return capabilityResult('100');
         conn.query('SELECT * FROM bookings WHERE id = ' + mysql.escape(bookingID), (err, result) => {
             // Not the user that created the booking
-            if (result.userID != userID)
+            if (result[0].userID !== userID)
                 return capabilityResult('404');
             // Not 22 hours before booking
-            bookingDate.setHours(result.startTime.split(':')[0], result.startTime.split(':')[1]);
+            bookingDate.setHours(result[0].startTime.split(':')[0], result[0].startTime.split(':')[1]);
             if (this.booking.userID == api.getLocalUser().id && (bookingDate - new Date())/(1000*60*60) > 22)
                 return capabilityResult('404');
             return capabilityResult('100');
