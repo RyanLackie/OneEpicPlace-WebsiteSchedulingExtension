@@ -385,7 +385,7 @@
                             }
 
                             bookings.forEach(booking => {
-
+                                
                                 let hours = Math.abs(booking.endTime.split(':')[0] - booking.startTime.split(':')[0]);
                                 let mins = Math.abs(booking.endTime.split(':')[1] - booking.startTime.split(':')[1]);
 
@@ -399,76 +399,118 @@
                                 ];
 
                                 arraysToCheck.forEach(object => {
+                                    // console.log('type: ' + object.type);
                                     object.array.forEach(item => {
-                                        // Hours
-                                        item.hours += Math.round( (hours + mins/60) * 100 ) / 100;
-                                        // Activity
-                                        for (let i = 0; i < hours+1; i++) {
-                                            let index = (parseInt(booking.startTime.split(':')[0], 10) - MIN_HOUR + i);
-                                            let value = item.activity[index] + 1;
-                                            if (index < item.activity.length)
-                                                item.activity[index] = value;
+                                        let idInBookings;
+                                        let innerArraysToCheck = [];
+
+                                        if (object.type === 'users') {
+                                            idInBookings = booking.userID;
+                                            innerArraysToCheck = [ 
+                                                { type: 'locations', array: item.locations },
+                                                { type: 'resources', array: item.resources }
+                                            ];
                                         }
-                                        // Users
-                                        if (object.type !== 'users') {
-                                            let foundUser = false;
-                                            for (let i = 0; i < item.users.length; i++) {
-                                                if (item.users[i].id === booking.userID) {
-                                                    foundUser = true;
-                                                    item.users[i].hours += Math.round( (hours + mins/60) * 100 ) / 100;
-                                                    break;
-                                                }
-                                            }
-                                            if (!foundUser) {
-                                                item.users[item.users.length] = {
-                                                    id: booking.userID,
-                                                    name: this.getUserName(booking.userID),
-                                                    hours: hours
-                                                };
-                                            }
-                                            console.log(booking.userID, this.getUserName(booking.userID));
+                                        else if (object.type === 'locations') {
+                                            idInBookings = booking.locationID;
+                                            innerArraysToCheck = [ 
+                                                { type: 'users', array: item.users },
+                                                { type: 'resources', array: item.resources }
+                                            ];
                                         }
-                                        // Locations
-                                        if (object.type !== 'locations') {
-                                            let foundLocation = false;
-                                            for (let i = 0; i < item.locations.length; i++) {
-                                                if (item.locations[i].id === booking.locationID) {
-                                                    foundLocation = true;
-                                                    item.locations[i].hours += Math.round( (hours + mins/60) * 100 ) / 100;
-                                                    break;
-                                                }
-                                            }
-                                            if (!foundLocation) {
-                                                item.locations[item.locations.length] = {
-                                                    id: booking.locationID,
-                                                    name: this.getLocationName(booking.locationID),
-                                                    hours: hours
-                                                };
-                                            }
+                                        else if (object.type === 'resources') {
+                                            idInBookings = booking.resourceID;
+                                            // console.log(idInBookings);
+                                            innerArraysToCheck = [ 
+                                                { type: 'users', array: item.users },
+                                                { type: 'locations', array: item.locations }
+                                            ];
                                         }
-                                        // Resources
-                                        if (object.type !== 'resources') {
-                                            let foundResource = false;
-                                            for (let i = 0; i < booking.resourceID.length; i++) {
-                                                booking.resourceID[i] = parseInt(booking.resourceID[i]);
-                                            }
-                                            booking.resourceID.forEach(resource => {
-                                                for (let i = 0; i < item.resources.length; i++) {
-                                                    if (resource == item.resources[i].id) {
-                                                        foundResource = true;
-                                                        item.resources[i].hours += Math.round( (hours + mins/60) * 100 ) / 100;
-                                                        break;
+                                        
+                                        // Make sure idInBookings is iterable
+                                        if (typeof(idInBookings) !== 'object') {
+                                            idInBookings = [idInBookings];
+                                        }
+                                        // Iterate though idInBooking
+                                        idInBookings.forEach(idInBooking => {
+                                            // console.log(item.id, idInBooking);
+                                            if (item.id === idInBooking) {
+                                                // Activity
+                                                let startHour = parseInt(booking.startTime.split(':')[0]) - MIN_HOUR;
+                                                let startMin = parseInt(booking.startTime.split(':')[1]);
+                                                let endHour = parseInt(booking.endTime.split(':')[0]) - MIN_HOUR;
+                                                let endMin = parseInt(booking.endTime.split(':')[1]);
+                                                for (let hour = startHour; hour <= endHour; hour++) {
+                                                    if (hour < endHour) {
+                                                        let minDif = 60 - startMin;
+                                                        startMin = 0;
+                                                        item.activity[hour] += minDif;
+                                                    }
+                                                    else {
+                                                        let minDif = endMin - startMin;
+                                                        item.activity[hour] += minDif;
                                                     }
                                                 }
-                                                if (!foundResource) {
-                                                    item.resources[item.resources.length] = {
-                                                        id: resource,
-                                                        name: this.getResourceName(resource),
-                                                        hours: hours
-                                                    };
-                                                }
-                                            });
-                                        }
+                                                // console.log(item.activity);
+                                                // Hours
+                                                item.hours += Math.round( (hours + mins/60) * 100 ) / 100;
+                                                // Related item hours
+                                                innerArraysToCheck.forEach(innerArrayToCheck => {
+                                                    // console.log(innerArrayToCheck.type);
+                                                    let subIDsInBooking = [];
+                                                    if (innerArrayToCheck.type === 'users') {
+                                                        subIDsInBooking = [parseInt(booking.userID)];
+                                                    }
+                                                    else if (innerArrayToCheck.type === 'locations') {
+                                                        subIDsInBooking = [parseInt(booking.locationID)];
+                                                    }
+                                                    else if (innerArrayToCheck.type === 'resources') {
+                                                        // console.log(booking.resourceID);
+                                                        subIDsInBooking = booking.resourceID;
+                                                    }
+                                                    for (let i = 0; i < subIDsInBooking.length; i++) {
+                                                        let duplicateFound = false;
+
+                                                        for (let ii = 0; ii < innerArrayToCheck.array.length; ii++) {
+                                                            if (parseInt(subIDsInBooking[i]) === parseInt(innerArrayToCheck.array[ii].id)) {
+                                                                // console.log('found');
+                                                                // console.log('before');
+                                                                // console.log(innerArrayToCheck.array);
+                                                                duplicateFound = true;
+                                                                innerArrayToCheck.array[ii].hours += Math.round( (hours + mins/60) * 100 ) / 100;
+                                                                // console.log('after');
+                                                                // console.log(innerArrayToCheck.array);
+                                                                break;
+                                                            }
+                                                        }
+
+                                                        if (!duplicateFound) {
+                                                            let name;
+                                                            // console.log('not found');
+                                                            // console.log('before');
+                                                            // console.log(innerArrayToCheck.array);
+                                                            if (innerArrayToCheck.type === 'users') {
+                                                                name = this.getUserName(subIDsInBooking[i]);
+                                                            }
+                                                            else if (innerArrayToCheck.type === 'locations') {
+                                                                name = this.getLocationName(subIDsInBooking[i]);
+                                                            }
+                                                            else if (innerArrayToCheck.type === 'resources') {
+                                                                name = this.getResourceName(subIDsInBooking[i]);
+                                                            }
+                                                            innerArrayToCheck.array.push({
+                                                                id: subIDsInBooking[i],
+                                                                name: name,
+                                                                hours: Math.round( (hours + mins/60) * 100 ) / 100
+                                                            });
+                                                            // console.log('after');
+                                                            // console.log(innerArrayToCheck.array);
+                                                        }
+                                                    }
+                                                });
+                                            }
+                                        });
+
                                     });
                                 });
                                 
@@ -500,14 +542,12 @@
                 return "background: white";
             },
             styleBar(bar, graph) {
-                var max = 0;
+                let total = 0;
                 for (var i = 0; i < graph.length; i++) {
-                    if (graph[i] > max)
-                        max = graph[i];
+                    total += graph[i];
                 }
-                if (max > 0)
-                    return 'height: ' + (bar / max) * 100 + '%; background: purple; border: 1px indigo solid; border-top: 0px indigo solid;';
-                return 'border-bottom: 1px indigo solid;';
+                let height = (bar / total) * 100;
+                return 'height: ' + height + '%; background: purple; border: 1px indigo solid; border-top: 0px indigo solid;';
             },
             getBarTime(index) {
                 switch(index) {

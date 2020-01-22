@@ -42,15 +42,7 @@
             <div v-if='viewType !== "Users"' class="col">
                 <select style='width: 100%;'>
                     <option v-for="(user, index) in data.users" :key="'user:'+index">
-                        {{user.username + '   |   hours: ' + user.hours}}
-                    </option>
-                </select>
-            </div>
-
-            <div v-if='viewType !== "Resources"' class="col">
-                <select style='width: 100%;'>
-                    <option v-for="(resource, index) in data.resources" :key="'resource:'+index">
-                        {{resource.name + '   |   hours: ' + resource.hours}}
+                        {{user.name + '   |   hours: ' + user.hours}}
                     </option>
                 </select>
             </div>
@@ -59,6 +51,14 @@
                 <select style='width: 100%;'>
                     <option v-for="(location, index) in data.locations" :key="'location:'+index">
                         {{location.name + '   |   hours: ' + location.hours}}
+                    </option>
+                </select>
+            </div>
+
+            <div v-if='viewType !== "Resources"' class="col">
+                <select style='width: 100%;'>
+                    <option v-for="(resource, index) in data.resources" :key="'resource:'+index">
+                        {{resource.name + '   |   hours: ' + resource.hours}}
                     </option>
                 </select>
             </div>

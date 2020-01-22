@@ -144,6 +144,7 @@
                 noiseLevel: null,
                 privacy: null,
                 canceled: null,
+                originalCanceledStatus: null,
 
                 showMore: false,
 
@@ -161,13 +162,15 @@
                 this.date = booking.date.slice(0, 10);
                 this.locationID = booking.locationID;
 
-                this.resourceID = booking.resourceID;
-                this.resourceID = this.resourceID.replace('[', '');
-                this.resourceID = this.resourceID.replace(']', '');
-                this.resourceID = this.resourceID.split(',');
-                let THIS = this;
-                for (let i = 0; i < this.resourceID.length; i++) {
-                    this.resourceID[i] = parseInt(this.resourceID[i]);
+                this.resourceID = []
+                booking.resourceID = booking.resourceID.replace('[', '');
+                booking.resourceID = booking.resourceID.replace(']', '');
+                if (booking.resourceID.length > 0) {
+                    booking.resourceID = booking.resourceID.split(',');
+                    for (let i = 0; i < booking.resourceID.length; i++) {
+                        let resource = parseInt(booking.resourceID[i]) 
+                        this.resourceID.push(resource);
+                    }
                 }
 
                 this.meetingType = booking.meetingType;
@@ -197,6 +200,7 @@
                 this.noiseLevel = booking.noiseLevel;
                 this.privacy = booking.private;
                 this.canceled = booking.canceled;
+                this.originalCanceledStatus = booking.canceled;
                 this.showMore = false;
 
                 // Are fields disabled
@@ -282,43 +286,45 @@
                 let noiseLevel = this.noiseLevel;
                 let privacy = this.privacy;
                 let canceled = this.canceled;
+                let originalCanceledStatus = this.originalCanceledStatus;
 
-                if (canceled) {
-                    let responce = confirm("Are you sure you want to cancel this booking?");
-                    if (responce) {
-                        api.updateBooking(bookingID, userID, locationID, resourceID, date, startTime,
-                        endTime, meetingType, title, description, noiseLevel, privacy, canceled).then(
-                            updateResponce => {
-                                let messageDate;
+                let responce = true;
+                if (!originalCanceledStatus && canceled) {
+                    responce = confirm("Are you sure you want to cancel this booking?");
+                }
+                if (responce) {
+                    api.updateBooking(bookingID, userID, locationID, resourceID, date, startTime,
+                    endTime, meetingType, title, description, noiseLevel, privacy, canceled).then(
+                        updateResponce => {
+                            let messageDate;
 
-                                if (updateResponce[0] == '100') {
-                                    this.$parent.closeModals();
-                                    this.$parent.checkBookings();
-                                }
-                                
-                                else if (updateResponce[0] == '404')
-                                    alert('You dont have permission to update this booking');
-                                else if (updateResponce[0] == '405')
-                                    alert('Booking time must be within the time range (watch out for AM - PM)');
-                                else if (updateResponce[0] == '406')
-                                    alert('Start Time must be before End Time');
-                                else if (updateResponce[0] == '407')
-                                    alert('Time is not within a 5 minoute interval');
-                                else if (updateResponce[0] == '408') {
-                                    messageDate = updateResponce[1].split('-');
-                                    alert('Time Overlap on ' + messageDate[1]+'/'+messageDate[2]+'/'+messageDate[0]);
-                                }
-                                else if (updateResponce[0] == '409') {
-                                    messageDate = updateResponce[1].split('-');
-                                    alert('A Silent Reservation Has Already Been Made On ' + messageDate[1]+'/'+messageDate[2]+'/'+messageDate[0] + ' During This Time');
-                                }
-                                else if (updateResponce[0] == '410') {
-                                    messageDate = updateResponce[1].split('-');
-                                    alert('A Loud Reservation Has Already Been Made On ' + messageDate[1]+'/'+messageDate[2]+'/'+messageDate[0] + ' During This Time');
-                                }
+                            if (updateResponce[0] == '100') {
+                                this.$parent.closeModals();
+                                this.$parent.checkBookings();
                             }
-                        );
-                    }
+                            
+                            else if (updateResponce[0] == '404')
+                                alert('You dont have permission to update this booking');
+                            else if (updateResponce[0] == '405')
+                                alert('Booking time must be within the time range (watch out for AM - PM)');
+                            else if (updateResponce[0] == '406')
+                                alert('Start Time must be before End Time');
+                            else if (updateResponce[0] == '407')
+                                alert('Time is not within a 5 minoute interval');
+                            else if (updateResponce[0] == '408') {
+                                messageDate = updateResponce[1].split('-');
+                                alert('Time Overlap on ' + messageDate[1]+'/'+messageDate[2]+'/'+messageDate[0]);
+                            }
+                            else if (updateResponce[0] == '409') {
+                                messageDate = updateResponce[1].split('-');
+                                alert('A Silent Reservation Has Already Been Made On ' + messageDate[1]+'/'+messageDate[2]+'/'+messageDate[0] + ' During This Time');
+                            }
+                            else if (updateResponce[0] == '410') {
+                                messageDate = updateResponce[1].split('-');
+                                alert('A Loud Reservation Has Already Been Made On ' + messageDate[1]+'/'+messageDate[2]+'/'+messageDate[0] + ' During This Time');
+                            }
+                        }
+                    );
                 }
             },
             

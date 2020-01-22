@@ -871,56 +871,67 @@ class Model {
                 return call_back('404');
             
             this.getBookingsDate(user_username, user_password, startDate, endDate, bookings => {
-                bookings.forEach(booking => {
+                let filteredBookings = [];
+                for (let booking = 0; booking < bookings.length; booking++) {
                     // Users
-                    var keep = false;
-                    for (var user = 0; user < users.length; user++) {
-                        if (bookings[booking].userID == users[user].id) {
+                    let keep = false;
+                    for (let i = 0; i < users.length; i++) {
+                        if (bookings[booking].userID == users[i].id) {
                             keep = true;
                             break;
                         }
                     }
                     if (!keep) {
-                        bookings.splice(booking, 1);
-                        booking--;
                         continue;
                     }
                     // Locations
                     keep = false;
-                    for (var loc = 0; loc < locations.length; loc++) {
-                        if (bookings[booking].locationID == locations[loc].id) {
+                    for (let i = 0; i < locations.length; i++) {
+                        if (bookings[booking].locationID == locations[i].id) {
                             keep = true;
                             break;
                         }
                     }
                     if (!keep) {
-                        bookings.splice(booking, 1);
-                        booking--;
                         continue;
                     }
                     // Resources
                     keep = false;
-                    bookings[booking].resourceID = bookings[booking].resourceID.replace('[', '');       // put into array format
+                    bookings[booking].resourceID = bookings[booking].resourceID.replace('[', '');
                     bookings[booking].resourceID = bookings[booking].resourceID.replace(']', '');
-                    bookings[booking].resourceID = bookings[booking].resourceID.split(',');
-                    for (var res1 = 0; res1 < resources.length; res1++) {                               // filtered resources
-                        for (var res2 = 0; res2 < bookings[booking].resourceID.length; res2++) {        // found resources
-                            if (bookings[booking].resourceID[res2] == resources[res1].id) {             // if found resource is apart of the filtered condition
+                    if (bookings[booking].resourceID.length > 0) {
+                        bookings[booking].resourceID = bookings[booking].resourceID.split(',');
+                        for (let i = 0; i < resources.length; i++) {
+                            for (let ii = 0; ii < bookings[booking].resourceID.length; ii++) {
+                                bookings[booking].resourceID[ii] = parseInt(bookings[booking].resourceID[ii]);
+                                if (!keep) {
+                                    if (bookings[booking].resourceID[ii] === resources[i].id) {
+                                        keep = true;
+                                    }
+                                }
+                            }
+                            if (keep) {
+                                break;
+                            }
+                        }
+                    }
+                    else {
+                        bookings[booking].resourceID = [];
+                        for (let i = 0; i < resources.length; i++) {
+                            if (resources[i].name === 'None') {
                                 keep = true;
                                 break;
                             }
                         }
-                        if(keep)
-                            break;
                     }
                     if (!keep) {
-                        bookings.splice(booking, 1);
-                        booking--;
                         continue;
                     }
-                });
+                    
+                    filteredBookings.push(bookings[booking]);
+                }
 
-                call_back(bookings);
+                call_back(filteredBookings);
             });
         });
     }
