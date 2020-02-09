@@ -71,7 +71,7 @@
             },
 
             openBookedModal(booking) {
-                this.$parent.$refs.BookedModal.openModal(booking);
+                this.$parent.$refs.BookingModal.openBookedModal(booking);
             },
 
             getDayOfTheWeek(date) {

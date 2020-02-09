@@ -27,7 +27,6 @@
         <!-- Modals -->
         <BookedDayModal ref="BookedDayModal"></BookedDayModal>
         <BookingModal ref="BookingModal"></BookingModal>
-        <BookedModal ref="BookedModal"></BookedModal>
 
         <DateSelector ref="DateSelector"></DateSelector>
 
@@ -50,7 +49,6 @@
     //Modals
     import BookedDayModal from './components/modals/BookedDayModal.vue';
     import BookingModal from './components/modals/BookingModal.vue';
-    import BookedModal from './components/modals/BookedModal.vue';
 
     import DateSelector from './components/modals/DateSelector.vue';
     
@@ -64,7 +62,6 @@
             //Modals
             BookedDayModal,
             BookingModal,
-            BookedModal,
 
             DateSelector
         },
@@ -138,7 +135,6 @@
 
             closeModals() {
                 this.$refs.BookingModal.closeModal();
-                this.$refs.BookedModal.closeModal();
                 this.$refs.BookedDayModal.closeModal();
                 this.$refs.DateSelector.closeModal();
             },

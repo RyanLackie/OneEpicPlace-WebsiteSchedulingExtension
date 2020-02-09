@@ -51,19 +51,19 @@
                     <div class="booking" v-for="booking in bookings" :key="'booking'+booking.id" 
                     :style='styleBooking(location, booking)' @click='bookingClicked(booking)'>
                         <div class="container-fluid">
-                            <div v-if="location.type == 'room'" class="row">
+                            <div v-if="location.type === 'room'" class="row">
                                 <div class="title col-md-9">
                                     {{booking.title}}
                                 </div>
                                 <div class="noiseIcon col-md-2"
                                 :style='booking.noiseLevel > 0 ? volume : booking.noiseLevel < 0 ? silent : null'></div>
                             </div>
-                            <div v-if="location.type == 'room'" class="row">
+                            <div v-if="location.type === 'room'" class="row">
                                 <div class="name col-12">
                                     {{booking.username}}
                                 </div>
                             </div>
-                            <div v-if="location.type == 'desk'" class="row">
+                            <div v-if="location.type === 'desk'" class="row">
                                 <div class="centerText col-12">
                                     {{booking.username}}
                                 </div>
@@ -276,12 +276,12 @@
                     endTime[1] = '0'+endTime[1];
                 
                 this.$parent.closeModals();
-                this.$parent.$refs.BookingModal.openModal(this.$parent.date, location, startTime[0]+':'+startTime[1], endTime[0]+':'+endTime[1]);
+                this.$parent.$refs.BookingModal.openBookingModal(this.$parent.date, location, startTime[0]+':'+startTime[1], endTime[0]+':'+endTime[1]);
             },
 
             bookingClicked(booking) {
                 this.$parent.closeModals();
-                this.$parent.$refs.BookedModal.openModal(booking);
+                this.$parent.$refs.BookingModal.openBookedModal(booking);
             }
         },
         
