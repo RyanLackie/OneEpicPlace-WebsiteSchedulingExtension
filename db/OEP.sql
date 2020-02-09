@@ -3,9 +3,9 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Jan 05, 2020 at 04:11 PM
--- Server version: 5.7.28-0ubuntu0.16.04.2
--- PHP Version: 7.0.33-0ubuntu0.16.04.7
+-- Generation Time: Feb 09, 2020 at 06:19 PM
+-- Server version: 5.7.29-0ubuntu0.16.04.1
+-- PHP Version: 7.0.33-0ubuntu0.16.04.9
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
@@ -52,8 +52,15 @@ CREATE TABLE `bookings` (
 --
 
 INSERT INTO `bookings` (`id`, `userID`, `locationID`, `resourceID`, `date`, `startTime`, `endTime`, `meetingType`, `title`, `description`, `noiseLevel`, `private`, `paid`, `canceled`, `points_1_cost`, `points_2_cost`, `points_3_cost`, `log`) VALUES
-(333, 35, 1, '0', '2020-01-02', '11:00', '12:05', 0, '', '', 0, 0, 1, 0, '10.80', '0.00', '10.80', ''),
-(334, 35, 1, '0', '2020-01-03', '12:00', '13:00', 0, 'lll', 'test', 0, 0, 1, 0, '10.00', '0.00', '10.00', '');
+(340, 44, 3, '[]', '2020-01-19', '12:40', '14:45', 0, '', '', 0, 0, 1, 0, '20.80', '0.00', '0.00', ''),
+(341, 44, 3, '[null]', '2020-01-20', '12:30', '14:35', 0, '', '', 0, 1, 0, 1, '0.00', '0.00', '0.00', ''),
+(342, 35, 2, '[null]', '2020-01-20', '13:00', '13:05', 0, '', '', 0, 0, 0, 1, '0.00', '0.00', '0.00', ''),
+(343, 35, 1, '[]', '2020-01-21', '09:50', '10:55', 0, 'test', 'test', 0, 0, 1, 0, '10.80', '0.00', '0.00', ''),
+(344, 35, 1, '[]', '2020-01-22', '13:55', '15:00', 0, '', '', 1, 0, 1, 0, '10.80', '0.00', '0.00', ''),
+(345, 35, 1, '[]', '2020-01-20', '13:30', '13:35', 0, '', '', -1, 0, 1, 0, '0.80', '0.00', '0.00', ''),
+(347, 35, 5, '[]', '2020-01-28', '12:00', '14:05', 2, '', '', 0, 0, 1, 0, '31.20', '0.00', '0.00', ''),
+(348, 35, 5, '[]', '2020-02-04', '12:00', '14:00', 2, '', '', 0, 0, 1, 0, '30.00', '0.00', '0.00', ''),
+(349, 35, 5, '[]', '2020-01-21', '12:00', '14:00', 2, '', '', 0, 0, 1, 0, '30.00', '0.00', '0.00', '');
 
 -- --------------------------------------------------------
 
@@ -119,7 +126,7 @@ INSERT INTO `resources` (`id`, `name`, `cost`, `quantity`) VALUES
 (1, 'White Board', 0, 2),
 (2, 'Projector', 0, 2),
 (3, 'HDMI Cable', 0, 5),
-(5, '36" Flat Screen', 0, 1),
+(5, 'Monitor', 0, 1),
 (6, 'Chairs (Specify in Description)', 0, 10),
 (7, 'Room Setup (Specify in Description)', 0, 1),
 (8, 'Cleaning Service', 0, 1),
@@ -155,8 +162,8 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `picture`, `username`, `password`, `firstName`, `lastName`, `companyName`, `bio`, `email`, `phoneNumber`, `memberLevel`, `points_1`, `points_2`, `points_3`, `pointsLastUpdated`, `notes`) VALUES
-(35, '', 'admin', 'admin', 'Ryan', 'Lackie', '', 'bio', 'admin@gmail.com', '484-343-2834', 6, '-20.80', '0.00', '177.80', '2020-01-02 00:00:00.000', 'note'),
-(44, '', 'user', 'user', 'user', 'user', '', '', 'user@gmail.com', '', 1, '100.00', '0.00', '0.00', '2020-01-02 00:00:00.000', '');
+(35, '', 'admin', 'admin', 'Ryan', 'Lackie', '', 'bio', 'admin@gmail.com', '484-343-2834', 6, '-30.00', '0.00', '0.00', '2020-02-03', 'note'),
+(44, '', 'user', 'user', 'user', 'user', '', '', 'user@gmail.com', '', 1, '100.00', '0.00', '0.00', '2020-02-03', '');
 
 --
 -- Indexes for dumped tables
@@ -194,7 +201,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `bookings`
 --
 ALTER TABLE `bookings`
-  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=335;
+  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=350;
 --
 -- AUTO_INCREMENT for table `locations`
 --
@@ -209,7 +216,7 @@ ALTER TABLE `resources`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=50;
+  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=45;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

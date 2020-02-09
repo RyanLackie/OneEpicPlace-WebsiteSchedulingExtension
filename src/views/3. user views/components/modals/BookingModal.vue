@@ -71,9 +71,9 @@
             </div>
 
 
-            <!-- Advanced Options -->            
+            <!-- Advanced Options -->
             <button class="btn btn-outline-secondary advancedBtn" type="button" @click="showMore = !showMore">
-                {{showMore ? 'Show More' : 'Show Less'}}
+                {{showMore ? 'Show Less' : 'Show More'}}
             </button>
 
             <div class='advancedOptions' :style="showMore ? 'height: auto;' : 'height: 0px;'">
@@ -142,7 +142,7 @@
                 privacy: null,
 
                 showMore: false,
-
+                
                 selectedDates: [new Date()],
             }
         },

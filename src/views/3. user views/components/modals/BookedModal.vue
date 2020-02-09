@@ -87,9 +87,9 @@
         </div>
 
 
-        <!-- Advanced Options -->            
+        <!-- Advanced Options -->
         <button class="btn btn-outline-secondary advancedBtn" type="button" @click="showMore = !showMore">
-            {{showMore ? 'Show More' : 'Show Less'}}
+            {{showMore ? 'Show Less' : 'Show More'}}
         </button>
 
         <div class='advancedOptions' :style="showMore ? 'height: auto;' : 'height: 0px;'">
@@ -130,9 +130,12 @@
     export default {
         data() {
             return {
+                locationType: null,
+
                 bookingID: null,
                 userID: null,
                 username: null,
+
                 date: new Date(),
                 locationID: null,
                 resourceID: [],
@@ -143,14 +146,12 @@
                 endTime: null,
                 noiseLevel: null,
                 privacy: null,
+
                 canceled: null,
                 originalCanceledStatus: null,
 
                 showMore: false,
-
                 disableFields: false,
-
-                locationType: null,
             }
         },
         methods: {
@@ -227,7 +228,7 @@
                     }
                 }
 
-                //Style Modal
+                // Style Modal
                 if (this.locationType === 'room') {
                     document.getElementById('BookedModal').style.height = 90+'%';
                     document.getElementById('BookedModal').style.maxHeight = 750+'px';
