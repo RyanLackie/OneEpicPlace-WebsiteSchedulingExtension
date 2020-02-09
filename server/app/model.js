@@ -627,22 +627,29 @@ class Model {
     }
     insertBooking(username, password, locationID, resourceID, date, startTime, endTime, meetingType, title, description, noiseLevel, privacy, call_back) {
         this.getAccount(username, password, fetchedUser => {
-            if (fetchedUser == '404' || fetchedUser.memberLevel < MIN_MEMBER_PRIVILEGE)
-                return call_back(['404', null]);
+            if (fetchedUser == '404' || fetchedUser.memberLevel < MIN_MEMBER_PRIVILEGE) {
+                return call_back({ statusCode: 401, message: 'Unauthorized' });
+            }
+
+            if (locationID === null) {
+                return call_back({statusCode: 400, message: 'A location must be chosen'});
+            }
 
             var insertStartTime = new Date();
             insertStartTime.setHours(parseInt(startTime.split(":")[0]), parseInt(startTime.split(":")[1]), 0, 0);
             var insertEndTime = new Date();
             insertEndTime.setHours(parseInt(endTime.split(":")[0]), parseInt(endTime.split(":")[1]), 0, 0);
 
-            var error = this.checkTimeFormating(startTime, endTime, insertStartTime, insertEndTime);
-            if (error == '405' || error == '406' || error == '407')
-                return call_back([error, null]);
+            var checkTimeFormatingResponse = this.checkTimeFormating(startTime, endTime, insertStartTime, insertEndTime);
+            if (checkTimeFormatingResponse.statusCode !== 200) {
+                return call_back(checkTimeFormatingResponse);
+            }
 
             // Check For Booking Overlaps
             this.checkForOverlap(null, insertStartTime, insertEndTime, date, locationID, noiseLevel, checkCallBack => {
-                if (checkCallBack[0] == '408' || checkCallBack[0] == '409' || checkCallBack[0] == '410')
+                if (checkCallBack.statusCode !== 200) {
                     return call_back(checkCallBack);
+                }
 
                 // Insert Bookings If No Overlaps
                 let THIS = this;
@@ -674,7 +681,7 @@ class Model {
                         });
                     });
                 }, (result) => {
-                    return call_back(['100', null]);
+                    return call_back({ statusCode: 200, message: 'Success' });
                 });
 
             });
@@ -682,29 +689,29 @@ class Model {
     }
     updateBooking(username, password, bookingID, userID, locationID, resourceID, date, startTime, endTime, meetingType, title, description, noiseLevel, privacy, canceled, call_back) {
         this.getAccount(username, password, fetchedUser => {
-            if (fetchedUser == '404' || fetchedUser.memberLevel < MIN_MEMBER_PRIVILEGE)
-                return call_back(['404', null]);
+            if (fetchedUser == '404' || fetchedUser.memberLevel < MIN_MEMBER_PRIVILEGE) {
+                return call_back({ statusCode: 401, message: 'Unauthorized' });
+            }
 
             // Ensure Creator or Admin is Editing
             this.checkForCapability(bookingID, fetchedUser.id, fetchedUser.memberLevel, capabilityResult => {
-                if (capabilityResult == '404')
-                    return call_back(['404', null]);
+                if (capabilityResult.statusCode !== 200) {
+                    return call_back(capabilityResult);
+                }
             
                 var insertStartTime = new Date();
                 insertStartTime.setHours(parseInt(startTime.split(":")[0]), parseInt(startTime.split(":")[1]), 0, 0);
                 var insertEndTime = new Date();
                 insertEndTime.setHours(parseInt(endTime.split(":")[0]), parseInt(endTime.split(":")[1]), 0, 0);
 
-                var error = this.checkTimeFormating(startTime, endTime, insertStartTime, insertEndTime);
-                if (error == '405' || error == '406' || error == '407') {
-                    // console.log('time error');
-                    return call_back([error, null]);
+                var checkTimeFormatingResponse = this.checkTimeFormating(startTime, endTime, insertStartTime, insertEndTime);
+                if (checkTimeFormatingResponse.statusCode !== 200) {
+                    return call_back(checkTimeFormatingResponse);
                 }
 
                 // Check For Booking Overlaps
                 this.checkForOverlap(bookingID, insertStartTime, insertEndTime, date, locationID, noiseLevel, checkCallBack => {
-                    if (checkCallBack[0] == '408' || checkCallBack[0] == '409' || checkCallBack[0] == '410') {
-                        // console.log('overlap error');
+                    if (checkCallBack.statusCode !== 200) {
                         return call_back(checkCallBack);
                     }
 
@@ -739,7 +746,7 @@ class Model {
                                     
                                     // Calculate cost and subtract from points if current month and not canceled
                                     this.payBookingCost(newBooking[0].userID, newBooking[0], payReturn => {
-                                        return call_back(['100', null]);
+                                        return call_back({ statusCode: 200, message: 'Success' });
                                     });
                                 });
                             });
@@ -750,30 +757,35 @@ class Model {
         });
     }
     checkForCapability(bookingID, userID, memberLevel, capabilityResult) {
-        if (memberLevel === ADMIN_PRIVILEGE)
-            return capabilityResult('100');
+        if (memberLevel === ADMIN_PRIVILEGE) {
+            return capabilityResult({ statusCode: 200, message: 'Success' });
+        }
         conn.query('SELECT * FROM bookings WHERE id = ' + mysql.escape(bookingID), (err, result) => {
             // Not the user that created the booking
-            if (result[0].userID !== userID)
-                return capabilityResult('404');
+            if (result[0].userID !== userID) {
+                return capabilityResult({ statusCode: 401, message: 'Unauthorized' });
+            }
             // Not 22 hours before booking
             let bookingDate = result[0].date;
             bookingDate.setHours(result[0].startTime.split(':')[0], result[0].startTime.split(':')[1]);
-            if (result[0].userID === userID && (bookingDate - new Date())/(1000*60*60) > 22)
-                return capabilityResult('100');
-            return capabilityResult('404');
+            if (result[0].userID === userID && (bookingDate - new Date())/(1000*60*60) > 22) {
+                return capabilityResult({ statusCode: 401, message: 'Unauthorized' });
+            }
+
+            return capabilityResult({ statusCode: 200, message: 'Success' });
         });
     }
     checkTimeFormating(startTime, endTime, insertStartTime, insertEndTime) {
-        //Booking time must be between 7AM and 10PM (used to be dates with set hours)
-        if (insertStartTime.getHours() < 7 || insertEndTime.getHours() > 22)
-            return '405';
-        //endTime must be larger than startTime
-        if (insertStartTime > insertEndTime)
-            return '406';
-        //Booking time not in a multiple of 5
-        if (parseInt(startTime.split(":")[1]) % 5 != 0 || parseInt(endTime.split(":")[1]) % 5 != 0)
-            return '407';
+        if (insertStartTime.getHours() < 7 || insertEndTime.getHours() > 22) {
+            return { statusCode: 403, message: 'Booking time must be within the time range (7AM - 10PM)' };
+        }
+        if (insertStartTime > insertEndTime) {
+            return { statusCode: 403, message: 'Start Time must be before End Time' };
+        }
+        if (parseInt(startTime.split(":")[1]) % 5 != 0 || parseInt(endTime.split(":")[1]) % 5 != 0) {
+            return { statusCode: 403, message: 'Booking time is not within a 5 minute interval' };
+        }
+        return {statusCode: 200, message: 'Success'}
     }
     checkForOverlap(bookingID, insertStartTime, insertEndTime, date, locationID, noiseLevel, checkCallBack) {
         var j = 0;
@@ -807,18 +819,37 @@ class Model {
                     var check9 = insertStartTime.getTime() == checkStartTime.getTime() && checkEndTime.getTime() == insertEndTime.getTime();
                     
                     if (check1 || check2 || check3 || check4 || check5 || check6 || check7 || check8 || check9) {
-                        if (result[index].locationID == locationID)
-                            return checkCallBack(['408', date[j]]);
-                        else if (result[index].noiseLevel == -1 && noiseLevel == 1)
-                            return checkCallBack(['409', date[j]]);
-                        else if (result[index].noiseLevel == 1 && noiseLevel == -1)
-                            return checkCallBack(['410', date[j]]);
+                        if (result[index].locationID == locationID) {
+                            let messageDate = date[j].split('-');
+                            return checkCallBack({
+                                statusCode: 403,
+                                message: 'Time Overlap on ' + messageDate[1]+'/'+messageDate[2]+'/'+messageDate[0]
+                            });
+                        }
+                            // return checkCallBack(['408', date[j]]);
+                        else if (result[index].noiseLevel == -1 && noiseLevel == 1) {
+                            let messageDate = date[j].split('-');
+                            return checkCallBack({
+                                statusCode: 403,
+                                message: 'A Silent Reservation Has Already Been Made On ' + messageDate[1]+'/'+messageDate[2]+'/'+messageDate[0] + ' During This Time'
+                            });
+                        }
+                            // return checkCallBack(['409', date[j]]);
+                        else if (result[index].noiseLevel == 1 && noiseLevel == -1) {
+                            let messageDate = date[j].split('-');
+                            return checkCallBack({
+                                statusCode: 403,
+                                message: 'A Loud Reservation Has Already Been Made On ' + messageDate[1]+'/'+messageDate[2]+'/'+messageDate[0] + ' During This Time'
+                            });
+                        }
+                            // return checkCallBack(['410', date[j]]);
                     }
                 }
 
                 j++;
-                if (i == j)
-                    return checkCallBack('100');
+                if (i == j) {
+                    return checkCallBack({ statusCode: 200, message: 'Success' });
+                }
             });
         }
     }
@@ -826,11 +857,11 @@ class Model {
     removeBooking(username, password, bookingID, call_back) {
         this.getAccount(username, password, fetchedUser => {
             if (fetchedUser == '404' || fetchedUser.memberLevel < ADMIN_PRIVILEGE)
-                return call_back('404');
+                return call_back({ statusCode: 401, message: 'Unauthorized' });
 
             conn.query('DELETE FROM bookings WHERE id = ' + mysql.escape(bookingID), (err) => {
                 if (err) throw err;
-                return call_back('100');
+                return call_back({ statusCode: 200, message: 'Success' });
             });
         });
     }

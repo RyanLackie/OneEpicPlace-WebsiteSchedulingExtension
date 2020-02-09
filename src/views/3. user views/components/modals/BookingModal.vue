@@ -39,6 +39,7 @@
             <span class="required">*</span>
         </div>
         <select class="form-control" v-model='locationID' :disabled='disableFields' required>
+            <option value='null' style='display: none'>Choose your room</option>
             <option v-for="location in $parent.locations" :key='location.id' :value='location.id'>
                 {{location.name}}
             </option>
@@ -204,10 +205,20 @@
             openBookingModal(date, location, startTime, endTime) {
                 this.modalType = 'booking';
 
-                this.locationType = location.type;
+                if (location !== null) {
+                    this.locationType = location.type;
+                }
+                else {
+                    this.locationType = 'room';
+                }
 
                 this.date = date;
-                this.locationID = location.id;
+                if (location !== null) {
+                    this.locationID = location.id;
+                }
+                else {
+                    this.locationID = null;
+                }
                 this.resourceID = [];
                 this.selectedDates = [date];
                 this.meetingType = 0;
@@ -246,35 +257,12 @@
                 
                 api.insertBooking(locationID, resourceID, date, startTime, endTime, meetingType, title, description, noiseLevel, privacy).then(
                     bookingResult => {
-                        if (bookingResult[0] == '100') {
+                        if (bookingResult.statusCode === 200) {
                             this.closeModal();
                             this.$parent.checkBookings();
                         }
-                        
-                        else if (bookingResult[0] == '404')
-                            alert('You dont have permission to make a booking');
-                        else if (bookingResult[0] == '405')
-                            alert('Booking time must be within the time range (watch out for AM - PM)');
-                        else if (bookingResult[0] == '406')
-                            alert('Start Time must be before End Time');
-                        else if (bookingResult[0] == '407')
-                            alert('Time is not within a 5 minoute interval');
-                        
                         else {
-                            let messageDate;
-
-                            if (bookingResult[0] == '408') {
-                                messageDate = bookingResult[1].split('-');
-                                alert('Time Overlap on ' + messageDate[1]+'/'+messageDate[2]+'/'+messageDate[0]);
-                            }
-                            else if (bookingResult[0] == '409') {
-                                messageDate = bookingResult[1].split('-');
-                                alert('A Silent Reservation Has Already Been Made On ' + messageDate[1]+'/'+messageDate[2]+'/'+messageDate[0] + ' During This Time');
-                            }
-                            else if (bookingResult[0] == '410') {
-                                messageDate = bookingResult[1].split('-');
-                                alert('A Loud Reservation Has Already Been Made On ' + messageDate[1]+'/'+messageDate[2]+'/'+messageDate[0] + ' During This Time');
-                            }
+                            alert(bookingResult.message);
                         }
                     }
                 );
@@ -394,35 +382,12 @@
                     api.updateBooking(bookingID, userID, locationID, resourceID, date, startTime,
                     endTime, meetingType, title, description, noiseLevel, privacy, canceled).then(
                         updateResponce => {
-                            if (updateResponce[0] == '100') {
+                            if (updateResponce.statusCode === 200) {
                                 this.$parent.closeModals();
                                 this.$parent.checkBookings();
                             }
-                            
-                            else if (updateResponce[0] == '404')
-                                alert('You dont have permission to update this booking');
-                            else if (updateResponce[0] == '405')
-                                alert('Booking time must be within the time range (watch out for AM - PM)');
-                            else if (updateResponce[0] == '406')
-                                alert('Start Time must be before End Time');
-                            else if (updateResponce[0] == '407')
-                                alert('Time is not within a 5 minoute interval');
-
                             else {
-                                let messageDate;
-
-                                if (updateResponce[0] == '408') {
-                                    messageDate = updateResponce[1].split('-');
-                                    alert('Time Overlap on ' + messageDate[1]+'/'+messageDate[2]+'/'+messageDate[0]);
-                                }
-                                else if (updateResponce[0] == '409') {
-                                    messageDate = updateResponce[1].split('-');
-                                    alert('A Silent Reservation Has Already Been Made On ' + messageDate[1]+'/'+messageDate[2]+'/'+messageDate[0] + ' During This Time');
-                                }
-                                else if (updateResponce[0] == '410') {
-                                    messageDate = updateResponce[1].split('-');
-                                    alert('A Loud Reservation Has Already Been Made On ' + messageDate[1]+'/'+messageDate[2]+'/'+messageDate[0] + ' During This Time');
-                                }
+                                alert(updateResponce.message);
                             }
                         }
                     );
@@ -433,12 +398,12 @@
                 if (responce) {
                     api.removeBooking(this.bookingID, this.userID, this.date, this.startTime).then(
                         removeResponce => {
-                            if (removeResponce === 404) {
-                                alert('You dont have permission to update this booking');
-                            }
-                            else {
+                            if (removeResponce.statusCode === 200) {
                                 this.$parent.closeModals();
                                 this.$parent.checkBookings();
+                            }
+                            else {
+                                alert(removeResponce.message);
                             }
                         }
                     );
