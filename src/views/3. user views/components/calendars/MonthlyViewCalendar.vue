@@ -263,7 +263,7 @@
 
             addBookingClicked(week, day) {
                 this.$parent.closeModals();
-                this.$parent.$refs.BookingModal.openModal(this.days[(7*(week-1) + day) - 1], this.locations[0], '12:00', '12:00');
+                this.$parent.$refs.BookingModal.openBookingModal(this.days[(7*(week-1) + day) - 1], this.locations[0], '12:00', '12:00');
             },
 
             viewBookings(week, day) {

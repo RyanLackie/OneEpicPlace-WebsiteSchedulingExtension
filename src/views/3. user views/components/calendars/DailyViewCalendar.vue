@@ -276,12 +276,12 @@
                     endTime[1] = '0'+endTime[1];
                 
                 this.$parent.closeModals();
-                this.$parent.$refs.BookingModal.openModal(this.$parent.date, location, startTime[0]+':'+startTime[1], endTime[0]+':'+endTime[1]);
+                this.$parent.$refs.BookingModal.openBookingModal(this.$parent.date, location, startTime[0]+':'+startTime[1], endTime[0]+':'+endTime[1]);
             },
 
             bookingClicked(booking) {
                 this.$parent.closeModals();
-                this.$parent.$refs.BookedModal.openModal(booking);
+                this.$parent.$refs.BookingModal.openBookedModal(booking);
             }
         },
         

@@ -276,7 +276,7 @@
 
             addBookingClicked(date, location) {
                 this.$parent.closeModals();
-                this.$parent.$refs.BookingModal.openModal(date, location, '12:00', '12:00');
+                this.$parent.$refs.BookingModal.openBookingModal(date, location, '12:00', '12:00');
             },
 
             viewBookings(date, location) {
