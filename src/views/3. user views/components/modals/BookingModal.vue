@@ -133,8 +133,8 @@
         </div>
 
         <!-- Booking -->
-        <button v-if='modalType === "booking"' class="btn btn-success leftBtn" type="submit">Submit</button>
-        <button v-if='modalType === "booking"' class="btn btn-secondary rightBtn" type="button" @click="closeModal()">Cancel</button>
+        <button v-if='modalType === "booking"' class="btn btn-success leftBtn" @click="submitBooking()">Submit</button>
+        <button v-if='modalType === "booking"' class="btn btn-secondary rightBtn" @click="closeModal()">Cancel</button>
 
         <!-- Booked -->
         <button v-if='modalType === "booked" && !disableFields' class="btn btn-success leftBtn" @click="updateBooking()">Update</button>
