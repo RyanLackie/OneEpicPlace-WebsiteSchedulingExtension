@@ -1,5 +1,5 @@
 <template>
-    <div class='PopUpModal BookingModal' :class="locationType === 'room' ? 'lg-booking-modal' : 'sm-booking-modal'" 
+    <div class='PopUpModal BookingModal' :style="locationType === 'room' ? 'max-height: 730px;' : 'max-height: 490px;'" 
     id="BookingModal" aria-hidden="true">
                 
         <div v-if='modalType === "booking"' class="modal-header">
@@ -38,7 +38,8 @@
         <div class="label-sm">Location
             <span class="required">*</span>
         </div>
-        <select class="form-control" v-model='locationID' :disabled='disableFields' required>
+        <select class="form-control" v-model='locationID' :disabled='disableFields' required
+        @change='changeLocationType()'>
             <option value='null' style='display: none'>Choose your room</option>
             <option v-for="location in $parent.locations" :key='location.id' :value='location.id'>
                 {{location.name}}
@@ -55,8 +56,10 @@
         </div>
             
         <div v-if='locationType === "room"'>
-            <div class="label-sm">Title</div>
-            <input type="text" class="input-box form-control" placeholder="Title of your booking..." v-model='title' :disabled='disableFields'>
+            <div class="label-sm">Title
+                <span class="required">*</span>
+            </div>
+            <input type="text" class="input-box form-control" placeholder="Title of your booking..." v-model='title' :disabled='disableFields' required>
         </div>
 
         <div v-if='locationType === "room"'>
@@ -153,14 +156,7 @@
 
 
 <style scoped lang="scss">
-    .sm-booking-modal {
-        height: 90%;
-        max-height: 490px;
-    }
-    .lg-booking-modal {
-        height: 90%;
-        max-height: 730px;
-    }
+
 </style>
 
 
@@ -437,6 +433,20 @@
                 });
                 if (!removed) {
                     this.resourceID.push(id);
+                }
+            },
+
+            changeLocationType() {
+                if (this.locationID !== null) {
+                    for (let i = 0; i < this.$parent.locations.length; i++) {
+                        if (this.$parent.locations[i].id === this.locationID) {
+                            this.locationType = this.$parent.locations[i].type;
+                            return;
+                        }
+                    }
+                }
+                else {
+                    this.locationType = 'room';
                 }
             },
 

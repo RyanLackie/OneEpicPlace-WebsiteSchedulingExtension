@@ -632,7 +632,11 @@ class Model {
             }
 
             if (locationID === null) {
-                return call_back({statusCode: 400, message: 'A location must be chosen'});
+                return call_back({statusCode: 422, message: 'A location must be selected'});
+            }
+
+            if (title.length === 0) {
+                return call_back({ statusCode: 422, message: 'Title must be filled in' });
             }
 
             var insertStartTime = new Date();
@@ -691,6 +695,14 @@ class Model {
         this.getAccount(username, password, fetchedUser => {
             if (fetchedUser == '404' || fetchedUser.memberLevel < MIN_MEMBER_PRIVILEGE) {
                 return call_back({ statusCode: 401, message: 'Unauthorized' });
+            }
+
+            if (locationID === null) {
+                return call_back({statusCode: 422, message: 'A location must be selected'});
+            }
+
+            if (title.length === 0) {
+                return call_back({ statusCode: 422, message: 'Title must be filled in' });
             }
 
             // Ensure Creator or Admin is Editing
